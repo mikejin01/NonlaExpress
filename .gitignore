@@ -9,3 +9,7 @@ node_modules
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .playwright-cli
+
+# Full-resolution photography harvested from the old Wix site (~162MB).
+# Reference only — web renditions live in static/assets/images/.
+docs/assets/original-site/photos/

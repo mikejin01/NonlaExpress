@@ -59,6 +59,17 @@ Recommendation: since this face carries the identity, licensing TT Nooks is the
 honest route (§5 Q2 — now a design-critical decision, not a nicety). Build Phase
 A behind a `--display` variable so swapping the file later is a one-line change.
 
+**Role → CSS mapping** (later phases say "display" and "script" — they mean
+these two classes, both driven by `--display`, so the TT Nooks swap touches one
+variable):
+
+| Class | Font | Used by |
+| --- | --- | --- |
+| `.display` | `--display`, weight 900, upright | statement hero, drinks headline, section headings. Caps come from the copy — **no `text-transform`** |
+| `.script` | `--display`, weight 900, *italic* | marquee rows, "ăn nào!" menu header, company heading, intro red heading |
+| (default) | `--body-font` = Maname 400 | body, nav links, card titles, newsletter heading, captions |
+| `.zh` | Noto Serif SC | 中文 throughout |
+
 ### 1.2 Palette (from Wix `--color_*` vars + screenshots)
 
 | Color | Hex | Role on original site |
@@ -82,8 +93,8 @@ cream-dominant/terracotta is a real direction change → **confirm with client**
 
 **Home** (top→bottom):
 1. Cream header — nav left (OUR MENU · OUR COMPANY · BLOG), centered logo, terracotta ORDER ONLINE pill right.
-2. Cream intro — giant red paper-cut zodiac animals (rooster, pig in nón lá hats) left, small red text block top-right ("Authentic Vietnamese Restaurant in Flushing, Queens" + 2-line blurb). Mostly whitespace; no big headline. (SEO h1 is visually small here.)
-3. Terracotta statement hero — huge Maname "NATURAL INGREDIENTS, FRESH TASTE." + paragraph + `#nonlaexpress` link.
+2. Cream intro — **corrected 2026-08-06, see `screenshots/intro-real-0.png`.** Three columns, not the "animals left, text right" the earlier draft described: a giant red line-art **rooster bleeding off the left edge**, a **centred white-framed photo slideshow** (§1.5 M6 — auto-advancing, with ‹ › arrows), and a giant red **buffalo in a nón lá hat bleeding off the right edge**. The red heading "Authentic Vietnamese Restaurant in Flushing, Queens" (TT Nooks Bold 22.5px) + 3-line Maname blurb sit top-right, above the buffalo. The **pig** is lower-left, below the fold. Generous cream whitespace throughout; no large headline here.
+3. Terracotta statement hero — huge **TT Nooks Bold 157.5px** "NATURAL INGREDIENTS, FRESH TASTE." + Maname 24px paragraph + `#nonlaexpress` link.
 4. Still terracotta — pho favorites: caption line, then 3 cream rounded cards with overhead cut-out pho bowls; below each: name (RIB EYE PHỞ / CHICKEN PHỞ / PHỞ & SPICE) + description in cream text.
 5. Cream marquee band — giant scrolling black "nón lá ✦ express" (TT Nooks bold) interleaved with small red zodiac animals (horse, rooster).
 6. Interior photo grid — 6 photos, 2-row masonry, full-width.
@@ -118,9 +129,17 @@ posts (法拉盛/Flushing pho keywords) + a couple EN. Feeds the footer band.
   - Drinks art: cup `home-11`/`home-32`, phin `home-13`/`home-34`, bean `home-14`, bean cluster `home-12`/`home-33`.
   - Illustrated dishes (company page): `company-29` pho bowl, `company-30` plate, `company-31` spring rolls.
   - Misc UI (ignore): play button, music notes, arrows, hamburger/close glyphs.
-- `photos/` — 32 full-res originals from Wix CDN (13 home: pho trio, interiors, drinks, brand stickers; 18 menu dish cut-outs on cream; 1 company mural shot). **⚠️ 162MB — do NOT commit as-is**; make web renditions into `static/assets/images/` and keep originals out of git (add to `.gitignore` or move to client asset store) — decide in Phase B.
-- `screenshots/` — full-page captures of original home/menu/blog + company hero + our current home baseline + `svg-sheet.png` (contact sheet of all harvested SVGs) + `arc-scroll-5000.png` / `arc-scroll-5300.png` (the footer arc mid-scroll, the state a full-page capture can't show).
-- Saved page HTML lives only in the session scratchpad — everything needed was extracted; re-fetch live site if more is required (company-page video URL was NOT captured — grab from rendered `/company` DOM if we want it).
+- `photos/` — 32 full-res originals from Wix CDN (13 home: pho trio, interiors, drinks, brand stickers; 18 menu dish cut-outs on cream; 1 company mural shot). **162MB — already excluded via `.gitignore`** (added 2026-08-06, before any `git init`). Reference only; web renditions go to `static/assets/images/` in Phase B.
+- `screenshots/` — full-page captures of original home/menu/blog + company hero + our current home baseline, plus:
+  - `intro-real-0.png` / `intro-real-400.png` — the intro at a **real viewport** (the layout to build; the full-page capture gets this wrong)
+  - `arc-scroll-5000.png` / `arc-scroll-5300.png` — the footer arc mid-scroll
+  - `fonttest.png` / `maname-test.png` — the substitute-font comparisons behind §1.1
+  - `svg-sheet.png` — contact sheet of all 34 harvested SVGs
+- `video/company-kitchen-1080p.mp4` — the kitchen video from the original `/company` right pane (7.6MB, 720×1062). Grabbed 2026-08-06; this closes the last "not captured" gap. Use it for the /company media column in Phase E.
+- `source-html.tar.gz` — the four original pages' HTML (home static + home rendered + menu + company), 1.3MB compressed. Insurance only: at DNS cutover nonlaexpress.com becomes **our** site and the Wix original is gone for good, so this is the only way to re-measure anything later. Everything currently needed has already been extracted into this plan.
+
+**Nothing about this research lives outside the repo anymore** — a fresh session
+needs only this file plus `docs/assets/original-site/` and `scripts/cdp.py`.
 
 ### 1.5 Motion & interaction spec (measured live via CDP, 2026-08-06)
 
@@ -179,27 +198,39 @@ The two polaroids drift in **opposite** directions to each other — that
 counter-motion is what sells the collage. Their static rotations (−8° / +9°)
 are part of the look even without motion.
 
-**M4 · Intro animals (cream top section).** Subtle desktop parallax only:
-rooster +18px, buffalo +35px, pig +25px over the first 700px of scroll (rates
-≈0.026–0.05 px/px, all different). **On mobile only (≤750px) they also get
-idle loops** — worth copying, it's where the personality lives on small screens:
+**M4 · Intro animals (cream top section).** Positions at 1440px: rooster left
+(x=63, y=137), buffalo right (x=754, y=278), pig lower-left (x=21, y=614) —
+all three drift on desktop, subtly and at different rates: rooster +18px,
+buffalo +35px, pig +25px over the first 700px of scroll (≈0.026–0.05 px/px).
+**On mobile only (≤750px) they also get idle loops** — worth copying, it's
+where the personality lives on small screens:
 
 - rooster: swing ±5° around a point 50% down, **5.4s**, `linear infinite`
 - buffalo: same swing, **6.7s** (de-synced from the rooster)
 - pig: bounce, **2.9s**, amplitude factor 1.2 (a ~49px arc, easing per keyframe)
 - drinks cup / phin: "breathe" float ±10px, **14.3s / 14.7s**; bean cluster ±25px, **5.0s**
 
+**M6 · Intro slideshow (centre of the intro section).** A white-framed photo
+carousel between the rooster and the buffalo — **3 slides, auto-advancing every
+≈4s** (measured: the frame changes at t+4s and t+8s and is back to the first at
+t+12s), with **Previous / Next arrow buttons** for manual control. Slide
+transition is a horizontal push (Wix's `slideNextIn/Out`, `slidePrevIn/Out`
+keyframes). Photos used are already harvested:
+`pho-near-me-restaurant-flushing-queens-dining-area.jpg` and
+`nonla-express-vietnamese-restaurant-flushing-queens-brand-stickers.jpg`
+(cropped 467×584). Under reduced motion, hold on slide 1 and rely on the arrows.
+
 **M5 · Buttons / links.** ORDER ONLINE pill: `border-radius:50px`, background
 `#D14124`, `transition: border-color .4s, background-color .4s`. No hover
 zoom on photos, **no scroll-entrance/fade-in reveals anywhere** (0 elements) —
-the site's motion budget goes entirely into M1–M4. Don't add fade-ins.
+the site's motion budget goes entirely into M1–M4 and M6. Don't add fade-ins.
 
 ### 1.6 Gap analysis (current build → original)
 
 | # | Gap | Severity |
 | --- | --- | --- |
 | G1 | Palette inverted: dark-green site vs cream/terracotta site | big |
-| G2 | Fonts: Fraunces/Montserrat/Bitter vs Maname/TT-Nooks-Script/Expressway | big |
+| G2 | Fonts: Fraunces/Montserrat/Bitter/Chewy vs **TT Nooks Bold (display) + Maname (everything else)** — see §1.1 | big |
 | G3 | Logo: interim redraw vs real vector (now harvested) | easy win |
 | G4 | Zero illustration language — original leans on folk-art SVGs everywhere | big |
 | G5 | Home structure: video hero + template sections vs intro/statement/cards/marquee/interiors/drinks | big |
@@ -211,35 +242,44 @@ the site's motion budget goes entirely into M1–M4. Don't add fade-ins.
 | G11 | No footer arc — the scroll-grown terracotta circle (M2) is the site's signature move | big |
 | G12 | No scroll parallax anywhere (M3/M4); our motion is one rAF photo marquee | medium |
 | G13 | Drinks collage: no tilted polaroids (−8°/+9°) or scattered illustration art | medium |
+| G14 | No intro slideshow (M6) — our intro is a full-bleed video hero instead | medium |
 
 ---
 
 ## 2. Phases (one session ≈ one phase; check off as done)
 
 ### Phase A — design tokens: fonts + palette flip
-- [ ] Add fonts: Maname (latin + latin-ext + vietnamese subsets), Overpass (label roles). Keep Noto Serif SC for 中文. Self-host woff2 in `static/fonts/` (site is static/GH-Pages; no runtime Google Fonts dependency) with `font-display: swap`.
-- [ ] TT Nooks decision (§5 Q2) — until then map `--script` → Chewy.
+
+Two variables carry the type system, so the TT Nooks decision never blocks work:
+`--display` (statement headlines + marquee) and `--body-font` (everything else).
+
+- [ ] Fonts in: **Maname** 400 (`--body-font`) and **Playfair Display** 900 + 900 italic (`--display`, the TT Nooks stand-in), both with latin + latin-ext + **vietnamese** subsets. Keep Noto Serif SC for 中文. Drop Fraunces/Montserrat/Bitter/Chewy.
+- [ ] Delivery: `src/app.html` currently pulls fonts from the **Google Fonts CDN** via `<link>`. Cheapest correct move is to swap that one URL now and self-host later if we want zero third-party requests — don't spend Phase A on a font pipeline. (Self-hosting to `static/fonts/` stays a nice-to-have, not a blocker.)
+- [ ] Type scale from §1.1 measured values: 157.5 · 105 · 36 · 24 · 22.5 · 18 · 14 · 12.
 - [ ] `src/app.css` `:root` rework: `--bg: cream #F0EAD6`, `--ink: near-black`, `--terracotta: #D14124`, `--charcoal: #2D2926`, green demoted to `--green-accent: #407665`; keep old names aliased during migration so pages don't break mid-phase.
-- [ ] Re-map type utilities: `.display` → Maname regular (NOT bold/uppercase-forced — original sets titles in caps in the content, at normal weight), `.eyebrow`/`.btn` → Overpass caps, new `.script` class.
-- [ ] Buttons: terracotta pill (`#D14124` bg, cream text) as primary; outline variant on cream.
+- [ ] Re-map type utilities: `.display` → `--display` at **weight 900**, caps come from the copy not `text-transform`; `.script` → `--display` italic (marquee); body/nav/headings → Maname 400. `.eyebrow` and `.btn` are the only Expressway-ish roles — any clean grotesque is fine.
+- [ ] Buttons: terracotta pill (`#D14124` bg, cream text), `border-radius: 50px`, `transition: background-color .4s, border-color .4s` (§1.5 M5); outline variant on cream.
 - [ ] Sweep every page after the flip — text/section colors that assumed dark bg (hero overlay, footer, cards, prose pages) must still pass contrast on cream.
 - Verify: rebuild + preview (kill port 4173 first — see §4), capture all pages 1440×900 + full + 540px.
 
 ### Phase B — brand assets
 - [ ] Optimize + rename harvested SVGs into `static/assets/art/` with kebab names (`rooster.svg`, `pig.svg`, `buffalo.svg`, `herb-red.svg`, `herb-green.svg`, `noodles.svg`, `lime.svg`, `cup.svg`, `phin.svg`, `bean.svg`, `dish-pho.svg`, `dish-plate.svg`, `dish-rolls.svg`, `logo-horizontal.svg`, `logo-stacked.svg`). Strip Wix `data-*` attrs; run through svgo if available.
-- [ ] Replace `src/lib/site/Logo.svelte` + `static/favicon.svg` with the real vector lockups; drop Chewy-as-logo (Chewy may stay as script stand-in per Phase A).
-- [ ] Make web renditions of the useful photos (pho trio cut-outs, 6 interiors, 18 menu dishes, drinks) → `static/assets/images/` (max ~1600px, ~80% quality, keep SEO-ish filenames). Keep 162MB originals OUT of git (`.gitignore` `docs/assets/original-site/photos/`).
+- [ ] Replace `src/lib/site/Logo.svelte` + `static/favicon.svg` with the real vector lockups. The logo becomes pure SVG, so Chewy leaves the project entirely (it is no longer the script stand-in either — see §1.1).
+- [ ] ⚠️ **`static/assets/images/` already holds 31 web-ready photos**, and `content.js` MENU items reference them by filename (`img: 'spring-roll.jpg'` etc.). Do **not** bulk-import the harvest over the top — diff first, add only what's genuinely new or better (the 18 cut-out dish shots on cream and the pho-trio cut-outs are the real gain), and **keep existing filenames stable** or update every `img:` field with them.
+- [ ] Web renditions of whatever survives that diff → `static/assets/images/` (max ~1600px, ~80% quality, SEO-ish filenames).
+- [ ] Originals stay out of git — `docs/assets/original-site/photos/` is **already in `.gitignore`** (added 2026-08-06, before any `git init`, so the 162MB never lands in history). Leave that line in place.
+- [ ] Decide the hero video's fate (§5 Q3): `static/assets/videos/` holds a 16MB `.mov` + 18MB `.mp4`. If the video is dropped everywhere, delete both — otherwise they ship 34MB of dead weight to Pages.
 - [ ] Update `docs/website-brief.md` §6: logo-vector question RESOLVED (harvested from Wix site).
 - Verify: favicon + navbar logo render at both sizes; page weight sane.
 
 ### Phase C — homepage restructure (original section order)
 - [ ] Header: cream navbar, centered logo, nav labels OUR MENU · OUR COMPANY (§5 Q4 for BLOG/PRESS), terracotta ORDER ONLINE pill.
-- [ ] Section 1: cream intro — rooster + pig SVGs large left, small terracotta text block right (keep as real `h1` for SEO like original's hidden h1 + visible blurb).
-- [ ] Section 2: terracotta statement hero — "NATURAL INGREDIENTS, FRESH TASTE." in Maname ~105px + paragraph + #nonlaexpress link (→ Instagram). Decide hero-video fate (§5 Q3): default = drop from home, reuse on /company right pane.
+- [ ] Section 1: cream intro — three columns (§1.3 item 2): rooster bleeding off the left edge, **centred photo slideshow** (markup + arrows now; auto-advance in C2), buffalo bleeding off the right edge; red heading + blurb top-right (keep as a real `h1` for SEO); pig lower-left. Let the animals overflow their column and clip at the viewport — that bleed is the whole effect.
+- [ ] Section 2: terracotta statement hero — "NATURAL INGREDIENTS, FRESH TASTE." in `--display` at **~157.5px** (not Maname — §1.1) + Maname 24px paragraph + #nonlaexpress link (→ Instagram). Decide hero-video fate (§5 Q3): default = drop from home, reuse on /company right pane.
 - [ ] Section 3: pho favorites — 3 cream cards w/ cut-out pho photos + names/descriptions (data from `content.js`).
 - [ ] Section 4: type marquee — giant "nón lá ✦ express" in script + inline animal SVGs; **two rows, opposite directions** (§1.5 M1). Retire the rAF photo marquee in favour of the CSS duplicated-track version.
 - [ ] Section 5: interior grid (6 photos, tight masonry).
-- [ ] Section 6: charcoal drinks section — display headline, phin/cup/bean SVGs scattered, 2 polaroids at **−8° / +9°**, EN + 中文 paragraph (bilingual copy already in `content.js` spirit).
+- [ ] Section 6: charcoal drinks section — display headline, phin/cup/bean SVGs scattered, 2 polaroids at **−8° / +9°**, EN + 中文 paragraph. Note the bilingual drinks copy is **not** in `content.js` yet — add `DRINKS_BLURB { en, zh }` from §3.
 - [ ] Section 7: terracotta footer w/ stacked logo, SEO paragraph, cream newsletter panel, link columns, address/phone/©, and the **arc circle** behind it (§1.5 M2 — build the circle div now, wire the scroll-scrub in C2). (Footer is shared — this restyles `Footer.svelte` site-wide.)
 - [ ] Keep, restyled as cream/terracotta bands: Lunch Special panel (real promo the original lacks) and a slim Find Us strip (address/hours/map link) — original buries this in footer; ours earns its keep. Cut: old mission/feature sections (absorbed above).
 - Verify: full-page + 540px captures vs `screenshots/orig-home-full.png` side by side.
@@ -254,13 +294,15 @@ correct with every animation removed.
 - [ ] **M2 footer arc** — `border-radius:50%` terracotta div, centred, `aspect-ratio:1`, width scrubbed ~120vw→255vw across the footer's view progress. Use `animation-timeline: view()`; where unsupported the circle just sits at full size (still looks right). Verify it never introduces horizontal scroll (`overflow-x` clipped on the section).
 - [ ] **M3 drinks parallax** — cup/phin drift ≈±105px, polaroids ≈±60px in opposite directions, bean cluster static. Same `view()` timeline approach; keep rates small and unequal.
 - [ ] **M4 intro parallax** — rooster/buffalo/pig drift ≈+18/+35/+25px over the first ~700px. Mobile (≤750px) idle loops: swing 5.4s / 6.7s, bounce 2.9s, breathe 14.3s / 14.7s / 5.0s.
+- [ ] **M6 intro slideshow** — 3 slides, auto-advance ≈4s, horizontal push transition, working Previous/Next arrows. Pause the auto-advance under reduced motion (arrows still work) and when the section is off-screen.
 - [ ] **M5** — ORDER ONLINE pill transition `.4s` on background/border. Deliberately add **no** scroll-entrance fades (the original has none).
 - [ ] Prefer CSS scroll-driven animations over scroll listeners; if a JS fallback is needed, rAF-throttle it and bail out under reduced-motion.
 - Verify: capture at several scroll offsets (the arc is invisible in a full-page render — see §4), and once with reduced-motion forced.
 
 ### Phase D — menu page re-skin
 - [ ] Cream page; header = lime SVG + script "ăn nào!" + "NónLá Express Menu" + intro; noodle squiggle right.
-- [ ] Sections Appetizers / Phở Noodle Soup / Main Dishes / Drinks w/ thin rules + script headings; 3-col cut-out photo grid (18 harvested dish photos map to `content.js` items), numbered 1–10 items, protein sublists.
+- [ ] ⚠️ **Section mismatch — resolve before building (§5 Q6).** Our `content.js` MENU has five sections: Appetizer $9 · **Burger $12** · Noodle $17 · Main $17 · Signature Drink $6. The original web menu shows only four (Appetizers / Phở Noodle Soup / Main Dishes / Drinks) — **no burgers**. Either the Wix menu is out of date or burgers were dropped. Don't silently delete a real menu section; default is to keep Burger and give it the same treatment.
+- [ ] Sections w/ thin rules + script headings; 3-col cut-out photo grid (18 harvested dish photos map to `content.js` items), numbered 1–10 items, protein sublists.
 - [ ] Prices: original shows none on the web (§5 Q5). Default: keep our prices (useful) but restyle — small terracotta text, retire the price-oval on this page (it's a printed-menu signature, keep for LunchSpecial only).
 - [ ] Keep bilingual EN/中文/Viet names from `content.js` — that's our value-add; set 中文 in Noto Serif SC on cream.
 - [ ] Drinks band: charcoal strip w/ 3 branded cup photos.
@@ -279,19 +321,72 @@ correct with every animation removed.
 - [ ] Contrast audit on cream (terracotta-on-cream body text is borderline — keep body text near-black, terracotta for display sizes only).
 - [ ] Font subset sizes; Lighthouse-ish sanity (static, should be fast).
 - [ ] Update README.md + CLAUDE.md (new design system), refresh `docs/website-brief.md` §6 parked list (logo Q resolved; hours/newsletter/press/redirects still open).
-- [ ] Then resume the original next step: git init (mind the `.gitignore` for original-site photos) + push for Pages deploy.
+- [ ] Then resume the original next step: git init + push for Pages deploy (the 162MB photo exclusion is already in `.gitignore` — just confirm `git status` is clean of it before the first commit).
 
 ---
 
-## 3. Content deltas (copy to adopt from original — already extracted)
+## 3. Content deltas — verbatim copy from the original
 
-- Home hero: "NATURAL INGREDIENTS, FRESH TASTE." + "At Nón Lá Express, we bring fresh Vietnamese flavors to Flushing with warm bowls of pho, flavorful noodle dishes, rice dishes, and refreshing drinks. Our Vietnamese restaurant in Queens focuses on fresh ingredients, bold flavor, and convenient service."
-- SEO h1/blurb: "Authentic Vietnamese Restaurant in Flushing, Queens" / "Nón Lá Express serves fresh pho, Vietnamese noodle soups, rice dishes, and signature drinks in Flushing, Queens."
-- Pho trio: RIB EYE PHỞ · CHICKEN PHỞ · PHỞ & SPICE + the caption "Explore popular pho favorites at Nón Lá Express…".
-- Drinks: "COOL DRINKS WARM MEMORIES IN EVERY SIP." + EN/中文 paragraph pair (in blog/home extraction; 中文 copy captured in research notes).
-- Footer SEO paragraph + newsletter pitch ("Sign up for exclusive promos, new menu drops, store openings, and more.").
-- Order URL: `https://order.snackpass.co/67be450e8c2c2460a8b96002` — confirm `ORDER_URL` in `content.js` matches.
-- Most of this is close to what `content.js` already holds — reconcile rather than replace wholesale (keep our Viet diacritics + bilingual extras).
+The original site is the only source for this text and it disappears at DNS
+cutover, so it is written out in full here rather than referenced. Order URL:
+`https://order.snackpass.co/67be450e8c2c2460a8b96002` (already matches
+`ORDER_URL` in `content.js`).
+
+**Intro / SEO (h1 is visually small on the original):**
+> Authentic Vietnamese Restaurant in Flushing, Queens
+>
+> Nón Lá Express serves fresh pho, Vietnamese noodle soups, rice dishes, and signature drinks in Flushing, Queens.
+
+**Statement hero:**
+> NATURAL INGREDIENTS, FRESH TASTE.
+>
+> At Nón Lá Express, we bring fresh Vietnamese flavors to Flushing with warm bowls of pho, flavorful noodle dishes, rice dishes, and refreshing drinks. Our Vietnamese restaurant in Queens focuses on fresh ingredients, bold flavor, and convenient service.
+
+Followed by a `#nonlaexpress` link (→ Instagram).
+
+**Pho-favorites caption + the three cards** (descriptions match `content.js`
+MENU entries closely — reconcile, don't duplicate):
+> Explore popular pho favorites at Nón Lá Express, including rib eye pho, chicken pho, spicy pho, and Vietnamese noodle soup in Flushing, Queens.
+
+RIB EYE PHỞ · CHICKEN PHỞ · PHỞ & SPICE
+
+**Drinks band** (EN + 中文, one block, centred):
+> COOL DRINKS WARM MEMORIES IN EVERY SIP.
+>
+> Our drinks are crafted to cool you down and bring back warm, familiar moments. From bold Vietnamese coffee to sweet sugarcane juice and refreshing salted limeade, every sip is made to brighten your day and pair perfectly with our authentic Vietnamese food.
+>
+> 我们的饮品为清凉而生，也为温暖回忆而来。从浓郁的越南咖啡，到清甜的甘蔗汁与清爽的咸柠水，每一口都让你感受轻松惬意，也与我们的地道越南美食完美搭配。
+
+**Footer:**
+> Nón Lá Express is a Vietnamese restaurant in Flushing, Queens, serving fresh pho, noodle soups, rice dishes, and signature drinks. Visit us for a quick meal or order online when you are craving Vietnamese food near Flushing.
+>
+> Subscribe to our newsletter — Sign up for exclusive promos, new menu drops, store openings, and more.
+
+Note our `SEO_BLURB` says "Visit us at Tangram Food Hall"; the original says
+"Visit us for a quick meal". Ours is better — keep it.
+
+**Company page** — heading "Serving Fresh Healthy Pho, with Modern Convenience",
+pull-quote «"phở, the new era"», then:
+> Born from a group of friends' shared love for great pho — but they realized that Pho has always been a meal to be savored slowly in a traditional sit-down setting. But as they grew older and their lives became busier, they found it harder to find time for those slow, shared meals and turns to unhealthy fast foods.
+>
+> Thats when they saw their opportunity to create a convenient option for enjoying pho on the go without sacrificing quality or flavor. The group of friends set out to bring the healthiness of Vietnamese food into the fast-food world—offering fresh, nourishing pho and dishes that could be made and enjoyed quickly, but still delivered the same comforting experience of a home-cooked meal.
+
+(The original has two typos — "Thats", and "turns" for "turned". Our `STORY` in
+`content.js` is a cleaned-up rewrite of the same text; **keep ours**.)
+
+Mission + values below the fold, which map onto our `MISSION` / `VALUES`:
+> Our mission is to make healthy & delicious Vietnamese food accessible and convenient for everyone in our community.
+>
+> We're committed to using fresh, quality ingredients to create nourishing meals that fit into busy lives of our customers.
+>
+> We strongly believe that great food can be served up fast, healthy, and satisfying, without compromising on taste.
+
+**Menu page intro:**
+> Our team ensures every dish in our menu is prepared quickly without cutting corners, capturing the rich and aromatic essence of Vietnamese cuisine.
+
+**New `content.js` keys Phase C needs** (everything else already exists):
+`STATEMENT` (headline + paragraph), `PHO_FAVORITES` (caption + 3 card refs),
+`DRINKS_BLURB` (`{ en, zh }`), `INTRO_SEO` (h1 + blurb).
 
 ## 4. Verify workflow (per memory note, every phase)
 
@@ -300,9 +395,20 @@ confirm port in log → headless Chrome captures at `1440×900`, tall full-page,
 and `540px` wide (Chrome clamps narrower). vh-sized sections stretch in tall
 captures — re-check heroes at 1440×900.
 
-**Scroll-driven effects are invisible to `--screenshot`.** A tall full-page
-capture renders every scroll effect in its end state (the footer arc looked
-perfectly flat that way). To see or measure them, use `scripts/cdp.py` — a
+⚠️ **Never judge a page from a tall full-page capture alone.** A
+`--window-size=1440,9000` screenshot lies in two different ways, and both bit
+this project:
+
+1. **Scroll effects render in their end state.** The footer arc measured as a
+   perfectly flat edge that way; it only appears at a real viewport (compare
+   `screenshots/orig-home-full.png` with `arc-scroll-5300.png`).
+2. **Layout itself can differ.** The tall capture showed the intro as two
+   animals and some whitespace. At a real 1440×713 viewport it is three columns
+   with a photo slideshow in the middle (`intro-real-0.png`) — an entire
+   component that the tall capture simply did not render.
+
+So: use tall captures for a rough content inventory only, and confirm every
+layout and motion claim at a real viewport with `scripts/cdp.py` — a
 stdlib-only Chrome DevTools Protocol driver written for this project:
 
 ```python
@@ -322,11 +428,12 @@ were measured, and how to check ours match.
 ## 5. Open questions for the client (batch before Phase C ships)
 
 1. **Palette direction:** OK to go cream-dominant + terracotta like the current Wix site (green becomes an accent, as on the printed menus)? Their earlier "brighter green" note was within our green-dominant layout.
-2. **TT Nooks Script license** (script font for "ăn nào!", headings, marquee): buy (~$59/style × 2) or accept free stand-in (Chewy)?
-3. **Hero video:** keep anywhere (proposal: /company right pane) or drop?
+2. **TT Nooks license — now the biggest one.** §1.1 proved this face carries the hero, the drinks headline, the marquee and the intro text: it *is* the identity, and **no free font matches it** (see `screenshots/fonttest.png`). Buy TT Nooks Bold (+ Regular for the menu/company script headings), or ship Playfair Display 900 as a knowingly-approximate stand-in? Ask whether the client already licensed it for the Wix build — if so we may be able to reuse the license.
+3. **Hero video:** keep anywhere (proposal: /company right pane) or drop? Dropping it removes 34MB from the repo.
 4. **BLOG vs PRESS in nav:** original has an active (Chinese-SEO) Wix blog; our static site has /press instead. Blog content strategy + the parked `/blog`, `/post/*` redirect map are one decision.
 5. **Menu prices on the website:** original shows none; we currently show prices. Keep or hide?
-6. (Existing §6 items still open: hours confirmation, newsletter provider, press details.)
+6. **Burger section:** our menu data has it, the live site's menu doesn't (Phase D). Still on the menu, or discontinued?
+7. (Existing §6 items still open: hours confirmation, newsletter provider, press details.)
 
 ## 6. Session log
 
@@ -339,3 +446,37 @@ were measured, and how to check ours match.
   are **no** scroll-entrance fades. Added **Phase C2 (motion layer)**, gaps
   G11–G13, and committed the reusable CDP driver at `scripts/cdp.py` with usage
   in §4. Next: still Phase A.
+- **2026-08-06 — readiness audit (plan checked against the repo before starting
+  Phase A).** Found and fixed five things that would have cost a session each:
+  1. **§1.1 was wrong.** It was inferred from Wix theme variables; measuring
+     computed styles showed the praised hero face is **TT Nooks Bold**, not
+     Maname, that **nav links are Maname** rather than Expressway, and that
+     **Chewy is a bad stand-in**. Section rewritten from measurements, with a
+     rendered comparison of free substitutes (Playfair Display 900 wins).
+  2. **§3 pointed at scratchpad notes that don't survive a session.** All
+     original copy (including the 中文 drinks paragraph and the company story)
+     is now written out verbatim in the plan, with notes on where ours is
+     already better.
+  3. **`.gitignore` didn't exclude the 162MB photo harvest** while CLAUDE.md
+     said "next: git init" — one `git add .` would have baked it into history.
+     Line added.
+  4. **Phase B would have collided with the 31 existing images** in
+     `static/assets/images/` that `content.js` references by filename.
+  5. **Phase D would have silently dropped the Burger section** (in our menu
+     data, absent from the live site) — now an explicit question (§5 Q6).
+- **2026-08-06 — second pass, same day.** Re-checked every remaining claim at a
+  **real viewport** instead of a tall full-page capture, which turned up two
+  more corrections: the intro is **three columns with an auto-advancing photo
+  slideshow in the middle** (a whole component the tall capture never rendered
+  — new **M6**, gap **G14**), and the statement hero is TT Nooks 157.5px where
+  Phase C still said "Maname ~105px". Also swept out the last stale
+  Maname/Chewy references, marked the `DRINKS_BLURB` copy as a new key, and
+  rewrote §4 to warn that tall captures distort **layout** as well as motion.
+  Verdict: **plan is consistent and ready — start Phase A.**
+- **2026-08-06 — session closed / handoff.** Pulled the last two things that
+  existed only in a disposable scratchpad into the repo: the `/company` kitchen
+  video and a compressed archive of the original pages' HTML. Research is now
+  fully self-contained. **A new session starts here:** read this file, then work
+  Phase A top to bottom; §4 is the verify loop, §5 is what still needs the
+  client. Only Phase A's font choice is provisional (Playfair Display standing
+  in for TT Nooks behind `--display`, §5 Q2).

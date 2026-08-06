@@ -5,9 +5,11 @@ Intake CLOSED 2026-08-06. **Phase 6 scaffold BUILT 2026-08-06** — full site at
 repo root (SvelteKit static, Editorial re-skin, all pages + bilingual menu),
 builds clean (`pnpm build`), verified in headless Chrome. See README.md for
 structure. **REDESIGN in progress (2026-08-06):** matching the original Wix
-site's look (Maname serif, cream/terracotta palette, folk-art SVGs) — plan +
-research + phase checklist in **docs/redesign-plan.md**; original-site assets
-harvested to docs/assets/original-site/ (162MB photos — keep out of git). Real
+site's look (TT Nooks Bold display + Maname body, cream/terracotta palette,
+folk-art SVGs, scroll-driven motion) — plan +
+research + phase checklist in **docs/redesign-plan.md** (self-contained — start
+a new session by reading it). Original-site assets harvested to
+docs/assets/original-site/ (photos are already gitignored). Real
 logo vectors found there (brief §6 logo question RESOLVED). **Next:** redesign
 Phase A (fonts+palette tokens); then git init + push for Pages deploy; remaining
 §6 questions: hours, newsletter provider, press details, /blog redirect map.
