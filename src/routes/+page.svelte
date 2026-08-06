@@ -96,11 +96,11 @@
 		<!-- crisp arc divider into the page bg — a shallow nón-lá curve instead of a gradient fade -->
 		<div class="hero-curve" aria-hidden="true">
 			<svg viewBox="0 0 1440 88" preserveAspectRatio="none">
-				<path d="M0,88 L0,60 Q720,-24 1440,60 L1440,88 Z" fill="var(--bg)" />
-				<path d="M0,60 Q720,-24 1440,60" fill="none" stroke="var(--accent-2)" stroke-width="2.5" opacity="0.85" />
+				<path d="M0,88 L0,60 Q720,-24 1440,60 L1440,88 Z" fill="var(--cream)" />
+				<path d="M0,60 Q720,-24 1440,60" fill="none" stroke="var(--green)" stroke-width="2.5" />
 			</svg>
 		</div>
-		<div class="container container--md text-center hero-content">
+		<div class="container container--md text-center hero-content on-media">
 			<h1 class="sr-only">{BRAND} — {KITCHEN}, Tangram Food Hall, Flushing, Queens</h1>
 			<span class="eyebrow">Tangram Food Hall · Flushing, Queens</span>
 			<p class="display display-xl hero-title">{TAGLINE}</p>
@@ -109,7 +109,7 @@
 				without cutting corners. <em>{AN_NAO}</em>
 			</p>
 			<div class="hero-links">
-				<a class="btn btn-cream" href={ORDER_URL} target="_blank" rel="noopener">Order Online</a>
+				<a class="btn btn-primary" href={ORDER_URL} target="_blank" rel="noopener">Order Online</a>
 				<a class="btn btn-outline" href="{base}/menu/">View Menu</a>
 			</div>
 		</div>
@@ -170,7 +170,7 @@
 		<section class="section padding-sm">
 			<div class="container container--lg">
 				<div class="feature">
-					<div class="feature-panel">
+					<div class="feature-panel on-green">
 						<span class="feature-eyebrow">On the Menu · 河粉</span>
 						<h2 class="display display-lg">Phở, made for right now</h2>
 						<p class="feature-body">
@@ -191,7 +191,7 @@
 		<section class="section padding-sm">
 			<div class="container container--lg">
 				<div class="feature feature--reverse">
-					<div class="feature-panel feature-panel--soft">
+					<div class="feature-panel on-charcoal">
 						<span class="feature-eyebrow">Signature Drinks · 招牌饮品</span>
 						<h2 class="display display-lg">Cà phê, limeade & more</h2>
 						<p class="feature-body">
@@ -232,7 +232,7 @@
 					<div class="info-col">
 						<span class="eyebrow">Order</span>
 						<p class="info-links-stack">
-							<a class="btn btn-cream" href={ORDER_URL} target="_blank" rel="noopener">Order on Snackpass</a>
+							<a class="btn btn-primary" href={ORDER_URL} target="_blank" rel="noopener">Order on Snackpass</a>
 							<a class="btn btn-outline btn-sm" href={SOCIAL.instagram.url} target="_blank" rel="noopener">
 								Instagram {SOCIAL.instagram.label}
 							</a>
@@ -244,7 +244,7 @@
 		</section>
 
 		<!-- ============================== NEWSLETTER ============================== -->
-		<section class="section section--alt padding-md" id="newsletter">
+		<section class="section on-green padding-md" id="newsletter">
 			<div class="container container--md text-center">
 				<span class="eyebrow">Stay in Touch</span>
 				<h2 class="display display-md">Join our mailing list</h2>
@@ -296,11 +296,14 @@
 	.hero-overlay {
 		position: absolute;
 		inset: 0;
-		/* neutral scrim only — no green fade; the arc divider owns the bottom edge.
-		   Slight dark vignette at the base grounds the video behind the curve. */
+		/* Neutral scrim only — the arc divider owns the bottom edge. 0.55 is
+		   measured, not guessed: sampling the actual video across 7 timestamps,
+		   it leaves 0.17% of the pixels behind the hero text below 4.5:1
+		   (0.46 left 2.7%, 0.30 left 8.0%). The video is dark to begin with, so
+		   this costs little. */
 		background:
-			linear-gradient(to top, rgba(15, 30, 25, 0.35), rgba(15, 30, 25, 0) 20%),
-			linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25));
+			linear-gradient(to top, rgba(45, 41, 38, 0.5), rgba(45, 41, 38, 0) 22%),
+			linear-gradient(rgba(26, 22, 19, 0.55), rgba(26, 22, 19, 0.55));
 	}
 	.hero-curve {
 		position: absolute;
@@ -322,8 +325,8 @@
 		padding: 6rem 1.25rem 3rem;
 	}
 	.hero .eyebrow {
-		color: var(--cream);
-		background: rgba(26, 50, 43, 0.55);
+		color: var(--fg);
+		background: rgba(45, 41, 38, 0.55);
 		border-radius: 980px;
 		padding: 7px 16px;
 	}
@@ -333,23 +336,23 @@
 			letter-spacing: 0.16em;
 		}
 	}
+	/* The tagline is lowercase by design ("phở, the new era") — and .display no
+	   longer uppercases anything, so no override is needed here any more. */
 	.hero-title {
-		color: var(--cream);
+		color: var(--fg);
 		margin: 0 0 0.8rem;
-		text-transform: none; /* the tagline is lowercase by design: "phở, the new era" */
-		text-shadow: 0 2px 22px rgba(15, 30, 25, 0.6);
+		text-shadow: 0 2px 22px rgba(26, 22, 19, 0.55);
 	}
 	.hero-sub {
-		font-size: clamp(16px, 2vw, 19px);
-		color: var(--cream);
-		opacity: 0.94;
+		font-size: var(--fs-lead);
+		color: var(--fg-muted);
 		max-width: 52ch;
 		margin: 0 auto 0.5rem;
-		text-shadow: 0 1px 14px rgba(15, 30, 25, 0.65);
+		text-shadow: 0 1px 14px rgba(26, 22, 19, 0.6);
 	}
 	.hero-sub em {
 		font-style: italic;
-		color: var(--accent-2);
+		color: var(--accent-ink);
 	}
 	.hero-links {
 		display: flex;
@@ -368,6 +371,7 @@
 	.scroll-arrow {
 		color: var(--cream);
 		display: block;
+		filter: drop-shadow(0 1px 8px rgba(26, 22, 19, 0.6));
 		animation: bob 2.4s ease-in-out infinite;
 	}
 	.scroll-arrow svg {
@@ -411,7 +415,7 @@
 		height: 520px;
 		border-radius: 18px;
 		overflow: hidden;
-		background: var(--green-soft);
+		background: var(--cream-lift);
 		transition: transform 0.35s ease-in-out;
 	}
 	@media (max-width: 1199.98px) {
@@ -448,13 +452,13 @@
 		width: 32px;
 		height: 32px;
 		background: transparent;
-		opacity: 0.6;
+		opacity: 0.55;
 		transition: opacity 0.35s ease-in-out;
-		color: var(--cream);
+		color: var(--fg);
 		padding: 6px;
 	}
 	.carousel-btn svg {
-		fill: var(--cream);
+		fill: currentColor;
 		width: 100%;
 		height: 100%;
 		display: block;
@@ -472,7 +476,7 @@
 	}
 	.play-pause {
 		background: transparent;
-		border: 2px solid var(--cream);
+		border: 2px solid currentColor;
 		border-radius: 30px;
 		padding: 5px;
 		position: absolute;
@@ -486,7 +490,7 @@
 	.play-pause.playing::after {
 		content: '';
 		position: absolute;
-		background: var(--cream);
+		background: currentColor;
 		top: 0;
 		bottom: 0;
 		margin: auto;
@@ -504,7 +508,7 @@
 		position: absolute;
 		left: 10px;
 		top: 6px;
-		border-left: 9px solid var(--cream);
+		border-left: 9px solid currentColor;
 		border-top: 6px solid transparent;
 		border-bottom: 6px solid transparent;
 		width: 0;
@@ -514,15 +518,13 @@
 
 	/* ---------- mission ---------- */
 	.mission-line {
-		text-transform: none;
-		font-weight: 600;
-		font-variation-settings: 'opsz' 60;
-		line-height: 1.3;
+		line-height: 1.25;
 		max-width: 30ch;
 		margin: 0 auto 1rem;
+		color: var(--accent); /* terracotta is display-size only — this is 24px+ */
 	}
 	.mission-body {
-		color: var(--cream-70);
+		color: var(--fg-muted);
 		max-width: 52ch;
 		margin: 0 auto 1.8rem;
 	}
@@ -548,31 +550,26 @@
 		}
 	}
 	.feature-panel {
-		background: var(--green);
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 		align-items: flex-start;
 		padding: clamp(2.5rem, 5vw, 4.5rem);
 	}
-	.feature-panel--soft {
-		background: var(--green-soft);
-	}
 	.feature-eyebrow {
 		font-family: var(--label);
 		font-weight: 700;
-		font-size: 12px;
+		font-size: var(--fs-fine);
 		letter-spacing: 0.2em;
 		text-transform: uppercase;
-		color: var(--cream-70);
+		color: var(--accent-ink);
 		margin-bottom: 0.9rem;
 	}
 	.feature-body {
-		font-size: 16px;
-		line-height: 1.75;
+		font-size: var(--fs-lead);
+		line-height: 1.65;
 		max-width: 46ch;
-		color: var(--cream);
-		opacity: 0.94;
+		color: var(--fg-muted);
 		margin: 0 0 1.8rem;
 	}
 	.feature-btn {
@@ -581,7 +578,7 @@
 	.feature-media {
 		overflow: hidden;
 		min-height: 320px;
-		background: #efe6d2; /* the food photography's cream backdrop */
+		background: var(--cream-lift); /* the food photography's cream backdrop */
 	}
 	.feature-media img {
 		width: 100%;
@@ -606,21 +603,19 @@
 		}
 	}
 	.info-strong {
-		font-size: 16.5px;
-		line-height: 1.8;
+		font-size: var(--fs-lead);
+		line-height: 1.7;
 	}
 	.info-dim {
-		color: var(--cream-55);
-		font-size: 14px;
+		color: var(--fg-dim);
+		font-size: 0.9375rem;
 	}
 	.info-link {
-		color: var(--cream);
-		opacity: 0.8;
+		color: var(--accent-ink);
 		text-decoration: none;
 	}
 	.info-link:hover {
 		text-decoration: underline;
-		opacity: 1;
 	}
 	.info-links-stack {
 		display: flex;
@@ -635,11 +630,10 @@
 	}
 
 	/* ---------- newsletter ---------- */
-	.section--alt {
-		background: var(--bg-deep);
-	}
+	/* Green, flush against the green footer — the original carries this as a
+	   cream panel INSIDE the footer; Phase C merges the two. */
 	.newsletter-pitch {
-		color: var(--cream-70);
+		color: var(--fg-muted);
 		margin-bottom: 1.6rem;
 	}
 	.mail-form {
@@ -651,43 +645,45 @@
 		align-items: stretch;
 		gap: 12px;
 	}
+	/* Cream field on the terracotta band — the original's newsletter panel is
+	   cream on terracotta at radius 16px (plan §1.3 item 8). */
 	.mail-form input {
 		flex: 1;
 		width: 100%;
 		outline: none;
-		background: rgba(242, 235, 217, 0.07);
-		border: 1px solid var(--cream-25);
-		border-radius: 980px;
-		font-size: 15px;
-		color: var(--cream);
+		background: var(--cream);
+		border: 1.5px solid var(--cream);
+		border-radius: 50px;
+		font-size: 1.0625rem;
+		color: var(--ink);
 		font-family: var(--body-font);
-		padding: 10px 20px;
+		padding: 12px 22px;
 		transition:
-			border-color 0.2s ease,
-			background 0.2s ease;
+			border-color 0.4s ease,
+			box-shadow 0.2s ease;
 	}
 	.mail-form input:focus {
-		border-color: var(--accent-2);
-		background: rgba(242, 235, 217, 0.1);
+		border-color: var(--sand-2);
+		box-shadow: 0 0 0 3px rgba(244, 215, 160, 0.45);
 	}
 	.mail-form input::placeholder {
-		color: var(--cream-55);
+		color: rgba(26, 22, 19, 0.55);
 	}
 	.subscribe-btn {
 		flex: none;
 	}
 	.subscribed-msg {
-		font-size: 19px;
+		font-size: var(--fs-lead);
 		padding: 0.75rem;
 		margin: 0;
 	}
 	.consent {
 		margin-top: 1.4rem;
-		font-size: 12.5px;
-		color: var(--cream-55);
+		font-size: var(--fs-fine);
+		color: var(--fg-dim);
 	}
 	.consent a {
-		color: var(--cream-70);
+		color: var(--fg);
 	}
 	@media (max-width: 575.98px) {
 		.mail-form form {

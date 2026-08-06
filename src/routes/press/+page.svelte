@@ -45,7 +45,6 @@
 <style>
 	.press-hero {
 		padding-top: calc(var(--u) * 9);
-		background: var(--bg-deep);
 	}
 	.press-grid {
 		display: grid;
@@ -58,7 +57,8 @@
 		}
 	}
 	.press-card {
-		background: var(--green-soft);
+		background: var(--cream-lift);
+		border: 1px solid var(--rule);
 		border-radius: 18px;
 		padding: 1.8rem 1.6rem;
 	}
@@ -68,18 +68,19 @@
 		font-size: 11.5px;
 		letter-spacing: 0.18em;
 		text-transform: uppercase;
-		color: var(--accent-2);
+		color: var(--accent-ink);
 	}
 	.press-title {
 		font-family: var(--display);
 		font-weight: 900;
-		font-size: 21px;
+		font-size: 1.5rem;
+		line-height: 1.15;
 		margin: 0.6rem 0 0.4rem;
 	}
 	.press-note {
-		font-size: 14px;
+		font-size: 1rem;
 		font-style: italic;
-		color: var(--cream-55);
+		color: var(--fg-dim);
 		margin: 0;
 	}
 
@@ -103,9 +104,9 @@
 		object-fit: cover;
 	}
 	.press-contact p {
-		color: var(--cream-70);
+		color: var(--fg-muted);
 	}
 	.press-contact a {
-		color: var(--cream);
+		color: var(--accent-ink);
 	}
 </style>

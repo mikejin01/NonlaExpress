@@ -6,7 +6,7 @@
 	const year = new Date().getFullYear();
 </script>
 
-<footer class="site-footer">
+<footer class="site-footer on-green">
 	<div class="container container--lg">
 		<div class="footer-row">
 			<div class="f-col-logo">
@@ -53,10 +53,10 @@
 </footer>
 
 <style>
+	/* Green footer — the original's terracotta slab in the brand color. Phase C adds the stacked-logo
+	   layout, the cream newsletter panel, and the scroll-grown arc (§1.5 M2). */
 	.site-footer {
-		border-top: 1px solid var(--cream-25);
 		padding: calc(var(--u) * 4) 0 calc(var(--u) * 3);
-		background-color: var(--bg-deep);
 	}
 	.footer-row {
 		display: grid;
@@ -75,14 +75,14 @@
 	}
 	.footer-logo {
 		display: inline-block;
-		color: var(--cream);
+		color: var(--fg);
 		text-decoration: none;
 	}
 	.footer-blurb {
 		margin: 1.2rem 0 0;
-		font-size: 13.5px;
+		font-size: var(--fs-fine);
 		line-height: 1.8;
-		color: var(--cream-55);
+		color: var(--fg-dim);
 		max-width: 34ch;
 	}
 	.footer-label {
@@ -92,7 +92,7 @@
 		font-size: 11.5px;
 		letter-spacing: 0.22em;
 		text-transform: uppercase;
-		color: var(--accent-2);
+		color: var(--accent-ink);
 		margin-bottom: 1rem;
 	}
 	.f-col-menu ul {
@@ -104,27 +104,26 @@
 		line-height: 2.3;
 	}
 	.f-col-menu a {
-		font-family: var(--label);
-		font-weight: 500;
-		font-size: 13.5px;
-		color: var(--cream-70);
+		font-family: var(--body-font);
+		font-size: 1rem;
+		color: var(--fg-muted);
 		text-decoration: none;
 		transition: color 0.2s ease;
 	}
 	.f-col-menu a:hover {
-		color: var(--cream);
+		color: var(--fg);
 	}
 	.footer-address {
 		margin-top: 1rem;
 		font-style: normal;
-		font-size: 13px;
+		font-size: 0.9375rem;
 		line-height: 1.9;
-		color: var(--cream-55);
+		color: var(--fg-dim);
 	}
 	.footer-legal {
 		margin-top: calc(var(--u) * 3);
 		padding-top: 1.5rem;
-		border-top: 1px solid var(--cream-25);
+		border-top: 1px solid var(--rule);
 		display: flex;
 		flex-direction: column;
 		gap: 0.75rem;
@@ -139,8 +138,8 @@
 		}
 	}
 	.copyright {
-		font-size: 12px;
-		color: var(--cream-55);
+		font-size: var(--fs-fine);
+		color: var(--fg-dim);
 		margin: 0;
 	}
 	.footer-links {
@@ -153,12 +152,12 @@
 		gap: 0.35rem 1.25rem;
 	}
 	.footer-links a {
-		color: var(--cream-55);
-		font-size: 12px;
+		color: var(--fg-dim);
+		font-size: var(--fs-fine);
 		text-decoration: none;
 		transition: color 0.2s ease;
 	}
 	.footer-links a:hover {
-		color: var(--cream);
+		color: var(--fg);
 	}
 </style>

@@ -4,7 +4,7 @@
 	import { LUNCH_SPECIAL as LS } from '$lib/content.js';
 </script>
 
-<div class="promo">
+<div class="promo on-green">
 	<div class="promo-copy">
 		<span class="window-badge">{LS.window}</span>
 		<h2 class="display display-lg promo-title">{LS.title}</h2>
@@ -28,16 +28,18 @@
 </div>
 
 <style>
+	/* Flat brand green, not the old orange-red gradient. Two reasons: the
+	   original site uses flat color everywhere (no gradients), and the
+	   gradient's #E57923 end measures 2.9:1 against any white — small text
+	   on it could never pass AA. */
 	.promo {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
 		gap: 2rem;
 		flex-wrap: wrap;
-		background: var(--promo-gradient);
 		border-radius: 24px;
 		padding: clamp(2rem, 4vw, 3.5rem) clamp(1.5rem, 5vw, 4rem);
-		color: var(--cream);
 	}
 	.window-badge {
 		display: inline-block;
@@ -46,7 +48,7 @@
 		font-size: 11.5px;
 		letter-spacing: 0.18em;
 		text-transform: uppercase;
-		color: var(--accent);
+		color: var(--green); /* 5.13:1 on cream — passes at this size */
 		background: var(--cream);
 		border-radius: 980px;
 		padding: 5px 14px;
@@ -57,8 +59,8 @@
 	}
 	.promo-caption {
 		margin: 0 0 1.3rem;
-		font-size: 15px;
-		opacity: 0.95;
+		font-size: 1.0625rem;
+		color: var(--fg-muted);
 	}
 	.steps {
 		list-style: none;
@@ -91,14 +93,14 @@
 		text-transform: uppercase;
 	}
 	.step-zh {
-		font-size: 13px;
-		opacity: 0.9;
+		font-size: 0.9375rem;
+		color: var(--fg-muted);
 	}
 	.step-note {
 		flex-basis: 100%;
-		font-size: 12px;
+		font-size: var(--fs-fine);
 		font-style: italic;
-		opacity: 0.85;
+		color: var(--fg-dim);
 	}
 	.promo-price {
 		flex: 0 0 auto;

@@ -42,6 +42,22 @@ Two corrections worth stating plainly, because they invert the earlier plan:
 **Type scale to build from** (measured px at 1440): 157.5 · 105 · 36 · 24 · 22.5
 · 18 · 14 · 12. Maname is used at both display (105px) and caption (12px) sizes.
 
+⚠️ **Maname has two rendering defects — found when it went in, Phase A.** It is
+a Sinhala-first family and its Latin/Vietnamese is clearly secondary. Both are
+inherited from the original site, which uses the same font:
+
+1. **Vietnamese tone marks stack much too high on the horn vowels ơ / ư.** In
+   *phở*, *Cơm*, *Sườn*, *Nướng*, *Cuốn*, *Nước* the mark floats toward the line
+   above with a visible gap. Plain-vowel marks (*Nón*, *Lá*, *Chả*, *Giò*) are
+   fine. This is a font-internal metric — **no CSS fixes it** — and it touches
+   most of the menu, so it is now §5 Q8.
+2. **The `fi` ligature has a broken advance width** ("sacrifi cing"). *Fixed* in
+   Phase A with `font-variant-ligatures: no-common-ligatures` on `body`.
+
+Verified with `CSS.getPlatformFontsForNode` that Maname itself renders all 266
+glyphs in our copy (no fallback font involved), so this is Maname's own drawing.
+Playfair Display sets Vietnamese correctly.
+
 **Substitution reality check.** Rendered candidates against the real hero
 (`screenshots/fonttest.png` vs `orig-home-hero.png`): **no free font is a true
 match** for TT Nooks — it has a condensed, quirky high-contrast character none
@@ -83,11 +99,75 @@ variable):
 | Orange | `#E57923` | Small accents |
 
 **Key inversion vs our build:** original is a LIGHT cream site with terracotta
-statement blocks; green appears only as an accent. Our scaffold is a DARK
-green-page site. Note: client asked for "brighter green" on 2026-08-06 — that
-feedback was about the green *hue*, given our green-dominant layout. Moving to
-cream-dominant/terracotta is a real direction change → **confirm with client**
-(§5 Q1), but it is what the user asked us to pursue.
+statement blocks; green appears only as an accent. Our scaffold was a DARK
+green-page site.
+
+### 1.2a Our palette — cream layout, BRAND green as ACCENT ✅ CURRENT
+
+⚠️ **§5 Q1 is answered, and the answer is a deliberate split from the original.**
+After seeing Phase A ship in the original's terracotta, the client asked to keep
+the light cream layout but **restore the brand green as the accent/primary in
+place of the terracotta-orange**. So we take the original's *layout, typography
+and motion* and run the *brand's own color* through it — as an **accent on a
+cream page**, not as the dominant surface (see §1.2b for why that distinction
+is load-bearing).
+
+| Token | Hex | Role |
+| --- | --- | --- |
+| `--cream` | `#F0EAD6` | **dominant page surface** |
+| `--green` | `#1B6E52` | **primary accent** — buttons, accent text on cream, small accents |
+| `--green-surface` | `#17543E` | the green blocks — footer, newsletter, statement/feature panels, promo |
+| `--green-bright` | `#47927A` | the client's vivid green — **decorative fills only** (3.08:1) |
+| `--green-deep` | `#143F32` | pill hover, deepest accents |
+| `--charcoal` | `#2D2926` | drinks band |
+| `--terracotta` / `--rust` | `#D14124` / `#A94C23` | **warm secondary** |
+
+**Terracotta is demoted, not deleted** — deliberately. The harvested folk-art
+SVGs (rooster, buffalo, pig, herb-red) are *drawn* in that red, and the printed
+menu numbers its dishes in it, so it survives as the warm secondary accent
+against the green. Phase B brings that art in; it should read as accent, not
+theme. `.on-terracotta` stays defined and AA-correct for any block that wants it.
+
+**Why green is the better-behaved brand color here** — this is the practical
+payoff, not just taste: `--green` at 5.13:1 against cream **passes AA in both
+directions**, so one token is both the accent text on cream *and* a fill that
+carries cream text. Terracotta measures 3.88:1 either way and can do neither —
+it forced a near-white text hack and lost its muted ramp entirely. Green keeps a
+real `--fg-muted` / `--fg-dim` ramp. Full numbers in §2.1.
+
+### 1.2b ❌ REJECTED: the green-DOMINANT variant (built and reverted 2026-08-06)
+
+**Do not rebuild this.** On "use more green, like `docs/Menu-1.png`" the whole
+site was flipped to the printed menu's proportions — wide flat green fields
+carrying the content, cream demoted to breathing room between them, and one warm
+red band for the Lunch Special. It was built, it passed the audit, and the
+client rejected it on sight. Green is an **accent on cream**, not the ground.
+
+The research behind it is still good and is kept here so it never has to be
+redone. Sampled pixel-for-pixel from `docs/Menu-1.png`:
+
+| Sampled | Hex | How the printed menu uses it |
+| --- | --- | --- |
+| Green field | `#407666` | one perfectly flat field carrying all menu content |
+| Cream type | `#F1EAD6` | every word on the green — titles, names, 中文, Vietnamese |
+| Warm band | `#DD4307` → `#C31D04` | one strip at the top: the Lunch Special |
+
+Three measurements from that pass that stay useful regardless of direction:
+
+1. **True cream on the sampled `#407666` is 4.36:1** — just under AA. Any future
+   use of the printed green as a text-bearing surface needs ~3% more depth
+   (`#3B6E5F` → 4.87:1) or lifted type.
+2. **`--sand-2` `#F4D7A0` fails on green** (4.21:1) though it looks nearly
+   identical to `--sand` `#FAE6C0` (4.79:1). **This fix was kept** — `--sand` is
+   the warm label accent on every dark surface. Don't "restore" `--sand-2`.
+3. The warm band's light end `#DD4307` is only 3.57:1 with cream; `#C31D04` is
+   4.99:1. If a red band is ever wanted, use the deep end.
+
+**Print ≠ screen, and that is the lesson.** A printed menu is a single held
+object where a saturated field reads as confident; a scrolling site turns the
+same field into an oppressive wall. The printed menu remains the right reference
+for *type, price ovals, bilingual captions and photo treatment* — but not for
+how much of the page the green should own.
 
 ### 1.3 Page structure (original)
 
@@ -138,8 +218,15 @@ posts (法拉盛/Flushing pho keywords) + a couple EN. Feeds the footer band.
 - `video/company-kitchen-1080p.mp4` — the kitchen video from the original `/company` right pane (7.6MB, 720×1062). Grabbed 2026-08-06; this closes the last "not captured" gap. Use it for the /company media column in Phase E.
 - `source-html.tar.gz` — the four original pages' HTML (home static + home rendered + menu + company), 1.3MB compressed. Insurance only: at DNS cutover nonlaexpress.com becomes **our** site and the Wix original is gone for good, so this is the only way to re-measure anything later. Everything currently needed has already been extracted into this plan.
 
+`docs/Menu-1.png` / `Menu-2.png` — the client's printed menu. Sampled
+2026-08-06: green field `#407666`, cream type `#F1EAD6`, one warm band
+`#DD4307`→`#C31D04`. Useful as a reference for **type, price ovals, bilingual
+captions and photo treatment** — but *not* for how much of the page green should
+own; copying its proportions was tried and rejected (**§1.2b**).
+
 **Nothing about this research lives outside the repo anymore** — a fresh session
-needs only this file plus `docs/assets/original-site/` and `scripts/cdp.py`.
+needs only this file plus `docs/assets/original-site/`, `docs/Menu-*.png` and
+`scripts/cdp.py`.
 
 ### 1.5 Motion & interaction spec (measured live via CDP, 2026-08-06)
 
@@ -229,7 +316,7 @@ the site's motion budget goes entirely into M1–M4 and M6. Don't add fade-ins.
 
 | # | Gap | Severity |
 | --- | --- | --- |
-| G1 | Palette inverted: dark-green site vs cream/terracotta site | big |
+| G1 | Palette: dark-green site vs a light site. **Resolved in Phase A** — cream layout + brand green (§1.2a), not the original's terracotta | big |
 | G2 | Fonts: Fraunces/Montserrat/Bitter/Chewy vs **TT Nooks Bold (display) + Maname (everything else)** — see §1.1 | big |
 | G3 | Logo: interim redraw vs real vector (now harvested) | easy win |
 | G4 | Zero illustration language — original leans on folk-art SVGs everywhere | big |
@@ -248,23 +335,64 @@ the site's motion budget goes entirely into M1–M4 and M6. Don't add fade-ins.
 
 ## 2. Phases (one session ≈ one phase; check off as done)
 
-### Phase A — design tokens: fonts + palette flip
+### Phase A — design tokens: fonts + palette flip ✅ DONE 2026-08-06
 
 Two variables carry the type system, so the TT Nooks decision never blocks work:
 `--display` (statement headlines + marquee) and `--body-font` (everything else).
 
-- [ ] Fonts in: **Maname** 400 (`--body-font`) and **Playfair Display** 900 + 900 italic (`--display`, the TT Nooks stand-in), both with latin + latin-ext + **vietnamese** subsets. Keep Noto Serif SC for 中文. Drop Fraunces/Montserrat/Bitter/Chewy.
-- [ ] Delivery: `src/app.html` currently pulls fonts from the **Google Fonts CDN** via `<link>`. Cheapest correct move is to swap that one URL now and self-host later if we want zero third-party requests — don't spend Phase A on a font pipeline. (Self-hosting to `static/fonts/` stays a nice-to-have, not a blocker.)
-- [ ] Type scale from §1.1 measured values: 157.5 · 105 · 36 · 24 · 22.5 · 18 · 14 · 12.
-- [ ] `src/app.css` `:root` rework: `--bg: cream #F0EAD6`, `--ink: near-black`, `--terracotta: #D14124`, `--charcoal: #2D2926`, green demoted to `--green-accent: #407665`; keep old names aliased during migration so pages don't break mid-phase.
-- [ ] Re-map type utilities: `.display` → `--display` at **weight 900**, caps come from the copy not `text-transform`; `.script` → `--display` italic (marquee); body/nav/headings → Maname 400. `.eyebrow` and `.btn` are the only Expressway-ish roles — any clean grotesque is fine.
-- [ ] Buttons: terracotta pill (`#D14124` bg, cream text), `border-radius: 50px`, `transition: background-color .4s, border-color .4s` (§1.5 M5); outline variant on cream.
-- [ ] Sweep every page after the flip — text/section colors that assumed dark bg (hero overlay, footer, cards, prose pages) must still pass contrast on cream.
-- Verify: rebuild + preview (kill port 4173 first — see §4), capture all pages 1440×900 + full + 540px.
+- [x] Fonts in: **Maname** 400 (`--body-font`) and **Playfair Display** 900 + 900 italic (`--display`, the TT Nooks stand-in), both with latin + latin-ext + **vietnamese** subsets. Keep Noto Serif SC for 中文. Drop Fraunces/Montserrat/Bitter/Chewy. → All three new faces confirmed to carry a `vietnamese` subset; **Overpass** 600/700 took the `--label` slot (it and the original's Expressway Bold are both FHWA-highway-gothic descendants). Chewy left in this phase, not Phase B: `--logo-font` now points at `--display`.
+- [x] Delivery: `src/app.html` currently pulls fonts from the **Google Fonts CDN** via `<link>`. Cheapest correct move is to swap that one URL now and self-host later if we want zero third-party requests — don't spend Phase A on a font pipeline. (Self-hosting to `static/fonts/` stays a nice-to-have, not a blocker.)
+- [x] Type scale from §1.1 measured values: 157.5 · 105 · 36 · 24 · 22.5 · 18 · 14 · 12. → `--fs-hero/xl/lg/md/body/lead/nav/label/fine`; verified body resolves to 23.9px and `.display-xl` to 105.0px at 1440.
+- [x] `src/app.css` `:root` rework: cream page, near-black ink, charcoal drinks band. **Amended same day (§1.2a): the brand green carries the accent/primary role, not terracotta** — client direction. → Went further than aliasing (see §2.1): surfaces are `.on-cream` / `.on-terracotta` / `.on-charcoal` / `.on-green` / `.on-media` context classes that re-point a `--fg` ramp, so no rule hard-codes a text color. Every old green-era token is gone — the aliases turned out to be unnecessary because the sweep finished in-phase.
+- [x] Re-map type utilities: `.display` → `--display` at **weight 900**, caps come from the copy not `text-transform`; `.script` → `--display` italic (marquee); body/nav/headings → Maname 400. `.eyebrow` and `.btn` are the only Expressway-ish roles — any clean grotesque is fine. → Verified: `.display` computes to Playfair Display / 900 / `text-transform: none`; nav links to Maname 18px. Nav labels were uppercased **in the copy**.
+- [x] Buttons: brand-green pill (`--green` bg, cream text), `border-radius: 50px`, `transition: background-color .4s, border-color .4s` (§1.5 M5); outline variant on cream. → `.btn-cream` renamed `.btn-primary`; it resolves per surface (green fill on cream, cream fill on the dark bands) so one class is correct everywhere.
+- [x] Sweep every page after the flip — text/section colors that assumed dark bg (hero overlay, footer, cards, prose pages) must still pass contrast on cream.
+- [x] Verify: rebuild + preview (kill port 4173 first — see §4), capture all pages 1440×900 + full + 540px. → Automated WCAG audit over all 7 routes × 2 widths: **0 failures, no horizontal scroll**. Captures in `screenshots/phaseA/`.
+
+#### 2.1 What Phase A actually shipped (read before Phase B/C)
+
+**The color contract.** Never hard-code a text color again. Each section gets an
+`.on-*` class that paints `--surface` and re-points `--fg` / `--fg-muted` /
+`--fg-dim` / `--rule` / `--accent` / `--accent-ink` / `--btn-*`. Write
+`color: var(--fg)` and the same markup reads correctly on cream, terracotta and
+charcoal. `.on-media` flips the ramp without painting a background, for content
+over the hero video/photo.
+
+**Contrast facts this palette forces** (measured, not estimated). Consult this
+before picking any color:
+
+| Pair | Ratio | Consequence |
+| --- | --- | --- |
+| ink `#1A1613` on cream | 14.9:1 | body text on cream is unconstrained |
+| **`--green` `#1B6E52` on cream** | **5.13:1** | ✅ passes **both ways** — one token is the accent text on cream AND a fill carrying cream text. This is why green works where terracotta didn't. |
+| cream on `--green-surface` `#17543E` | 7.35:1 | the green blocks; room for a real ramp (`--fg-muted` 6.1:1, `--fg-dim` 5.2:1) |
+| `--sand` `#FAE6C0` on `--green-surface` | 7.0:1 | the warm label accent on green blocks |
+| ~~`--sand-2` `#F4D7A0`~~ | **4.21:1 on lighter greens** | ✗ looks identical to `--sand` but fails — use `--sand` (§1.2b) |
+| `--green-bright` `#47927A` on cream | **3.08:1** | ✗ decorative fills only — never text, never behind text |
+| cream on charcoal | 12.0:1 | plenty of headroom; alpha ramp works |
+| terracotta on cream *(secondary)* | **3.88:1** | display sizes and fills only — never small text |
+| rust `#A94C23` on cream *(secondary)* | 4.66:1 | the AA-safe small red, if a red accent is wanted |
+| cream on terracotta *(secondary)* | **3.88:1** | ✗ — hence `--cream-bright` and **no muted ramp** on `.on-terracotta` |
+| any white on orange `#E57923` | ≤2.9:1 | orange can never carry text — decorative only |
+
+Three consequences worth remembering:
+1. **`--green` and `--green-surface` are different on purpose.** Large fills get
+   the deeper one — partly because big blocks want more weight, but mainly
+   because only `#17543E` has the headroom for a muted ramp. Don't collapse them.
+2. **`--green-bright` is the client's vivid green and it cannot carry text.** It
+   is for illustration and decorative shapes; reaching for it on a surface will
+   fail the audit.
+3. The promo gradient was dropped for a flat fill — its orange end could never
+   have passed, and the original uses flat color everywhere anyway.
+
+**Hero video scrim** is 0.55, chosen by sampling the actual video at 7
+timestamps: it leaves 0.17% of the pixels behind the hero text below 4.5:1,
+where 0.46 left 2.7% and 0.30 left 8.0%. If Phase C drops the video (§5 Q3),
+this goes with it.
 
 ### Phase B — brand assets
 - [ ] Optimize + rename harvested SVGs into `static/assets/art/` with kebab names (`rooster.svg`, `pig.svg`, `buffalo.svg`, `herb-red.svg`, `herb-green.svg`, `noodles.svg`, `lime.svg`, `cup.svg`, `phin.svg`, `bean.svg`, `dish-pho.svg`, `dish-plate.svg`, `dish-rolls.svg`, `logo-horizontal.svg`, `logo-stacked.svg`). Strip Wix `data-*` attrs; run through svgo if available.
-- [ ] Replace `src/lib/site/Logo.svelte` + `static/favicon.svg` with the real vector lockups. The logo becomes pure SVG, so Chewy leaves the project entirely (it is no longer the script stand-in either — see §1.1).
+- [ ] Replace `src/lib/site/Logo.svelte` + `static/favicon.svg` with the real vector lockups. (Chewy already left in Phase A — the interim wordmark rides `--display` until this lands.)
 - [ ] ⚠️ **`static/assets/images/` already holds 31 web-ready photos**, and `content.js` MENU items reference them by filename (`img: 'spring-roll.jpg'` etc.). Do **not** bulk-import the harvest over the top — diff first, add only what's genuinely new or better (the 18 cut-out dish shots on cream and the pho-trio cut-outs are the real gain), and **keep existing filenames stable** or update every `img:` field with them.
 - [ ] Web renditions of whatever survives that diff → `static/assets/images/` (max ~1600px, ~80% quality, SEO-ish filenames).
 - [ ] Originals stay out of git — `docs/assets/original-site/photos/` is **already in `.gitignore`** (added 2026-08-06, before any `git init`, so the 162MB never lands in history). Leave that line in place.
@@ -273,15 +401,15 @@ Two variables carry the type system, so the TT Nooks decision never blocks work:
 - Verify: favicon + navbar logo render at both sizes; page weight sane.
 
 ### Phase C — homepage restructure (original section order)
-- [ ] Header: cream navbar, centered logo, nav labels OUR MENU · OUR COMPANY (§5 Q4 for BLOG/PRESS), terracotta ORDER ONLINE pill.
+- [ ] Header: cream navbar, centered logo, nav labels OUR MENU · OUR COMPANY (§5 Q4 for BLOG/PRESS), **green** ORDER ONLINE pill.
 - [ ] Section 1: cream intro — three columns (§1.3 item 2): rooster bleeding off the left edge, **centred photo slideshow** (markup + arrows now; auto-advance in C2), buffalo bleeding off the right edge; red heading + blurb top-right (keep as a real `h1` for SEO); pig lower-left. Let the animals overflow their column and clip at the viewport — that bleed is the whole effect.
-- [ ] Section 2: terracotta statement hero — "NATURAL INGREDIENTS, FRESH TASTE." in `--display` at **~157.5px** (not Maname — §1.1) + Maname 24px paragraph + #nonlaexpress link (→ Instagram). Decide hero-video fate (§5 Q3): default = drop from home, reuse on /company right pane.
-- [ ] Section 3: pho favorites — 3 cream cards w/ cut-out pho photos + names/descriptions (data from `content.js`).
+- [ ] Section 2: **green** statement hero (`.on-green` — the original's terracotta block in brand color) — "NATURAL INGREDIENTS, FRESH TASTE." in `--display` at **~157.5px** (not Maname — §1.1) + Maname 24px paragraph + #nonlaexpress link (→ Instagram). Decide hero-video fate (§5 Q3): default = drop from home, reuse on /company right pane.
+- [ ] Section 3: pho favorites — 3 cream cards w/ cut-out pho photos + names/descriptions (data from `content.js`), sitting ON the green statement band as the originals sit on terracotta.
 - [ ] Section 4: type marquee — giant "nón lá ✦ express" in script + inline animal SVGs; **two rows, opposite directions** (§1.5 M1). Retire the rAF photo marquee in favour of the CSS duplicated-track version.
 - [ ] Section 5: interior grid (6 photos, tight masonry).
 - [ ] Section 6: charcoal drinks section — display headline, phin/cup/bean SVGs scattered, 2 polaroids at **−8° / +9°**, EN + 中文 paragraph. Note the bilingual drinks copy is **not** in `content.js` yet — add `DRINKS_BLURB { en, zh }` from §3.
-- [ ] Section 7: terracotta footer w/ stacked logo, SEO paragraph, cream newsletter panel, link columns, address/phone/©, and the **arc circle** behind it (§1.5 M2 — build the circle div now, wire the scroll-scrub in C2). (Footer is shared — this restyles `Footer.svelte` site-wide.)
-- [ ] Keep, restyled as cream/terracotta bands: Lunch Special panel (real promo the original lacks) and a slim Find Us strip (address/hours/map link) — original buries this in footer; ours earns its keep. Cut: old mission/feature sections (absorbed above).
+- [ ] Section 7: **green** footer (`.on-green`) w/ stacked logo, SEO paragraph, cream newsletter panel, link columns, address/phone/©, and the **arc circle** behind it (§1.5 M2 — build the circle div now, wire the scroll-scrub in C2; the arc is `--green-surface`, not `#D14124`). (Footer is shared — this restyles `Footer.svelte` site-wide.)
+- [ ] Keep, restyled as cream/green bands: Lunch Special panel (real promo the original lacks) and a slim Find Us strip (address/hours/map link) — original buries this in footer; ours earns its keep. Cut: old mission/feature sections (absorbed above). **Keep cream the dominant surface** — §1.2b. (real promo the original lacks) and a slim Find Us strip (address/hours/map link) — original buries this in footer; ours earns its keep. Cut: old mission/feature sections (absorbed above).
 - Verify: full-page + 540px captures vs `screenshots/orig-home-full.png` side by side.
 
 ### Phase C2 — motion layer (needs Phase C sections to exist first)
@@ -291,7 +419,7 @@ Implement §1.5 in order of payoff. All of it goes inside
 correct with every animation removed.
 
 - [ ] **M1 marquee** — pure CSS, duplicated track, `linear infinite`; row 1 left/30.9s, row 2 right/36.5s, ~20px item gap. Delete the old rAF marquee code + its `$state` plumbing from `+page.svelte`.
-- [ ] **M2 footer arc** — `border-radius:50%` terracotta div, centred, `aspect-ratio:1`, width scrubbed ~120vw→255vw across the footer's view progress. Use `animation-timeline: view()`; where unsupported the circle just sits at full size (still looks right). Verify it never introduces horizontal scroll (`overflow-x` clipped on the section).
+- [ ] **M2 footer arc** — `border-radius:50%` `--green-surface` div, centred, `aspect-ratio:1`, width scrubbed ~120vw→255vw across the footer's view progress. Use `animation-timeline: view()`; where unsupported the circle just sits at full size (still looks right). Verify it never introduces horizontal scroll (`overflow-x` clipped on the section).
 - [ ] **M3 drinks parallax** — cup/phin drift ≈±105px, polaroids ≈±60px in opposite directions, bean cluster static. Same `view()` timeline approach; keep rates small and unequal.
 - [ ] **M4 intro parallax** — rooster/buffalo/pig drift ≈+18/+35/+25px over the first ~700px. Mobile (≤750px) idle loops: swing 5.4s / 6.7s, bounce 2.9s, breathe 14.3s / 14.7s / 5.0s.
 - [ ] **M6 intro slideshow** — 3 slides, auto-advance ≈4s, horizontal push transition, working Previous/Next arrows. Pause the auto-advance under reduced motion (arrows still work) and when the section is off-screen.
@@ -303,22 +431,22 @@ correct with every animation removed.
 - [ ] Cream page; header = lime SVG + script "ăn nào!" + "NónLá Express Menu" + intro; noodle squiggle right.
 - [ ] ⚠️ **Section mismatch — resolve before building (§5 Q6).** Our `content.js` MENU has five sections: Appetizer $9 · **Burger $12** · Noodle $17 · Main $17 · Signature Drink $6. The original web menu shows only four (Appetizers / Phở Noodle Soup / Main Dishes / Drinks) — **no burgers**. Either the Wix menu is out of date or burgers were dropped. Don't silently delete a real menu section; default is to keep Burger and give it the same treatment.
 - [ ] Sections w/ thin rules + script headings; 3-col cut-out photo grid (18 harvested dish photos map to `content.js` items), numbered 1–10 items, protein sublists.
-- [ ] Prices: original shows none on the web (§5 Q5). Default: keep our prices (useful) but restyle — small terracotta text, retire the price-oval on this page (it's a printed-menu signature, keep for LunchSpecial only).
+- [ ] Prices: original shows none on the web (§5 Q5). Default: keep our prices (useful) but restyle — small `--green` text (5.13:1, AA-safe; terracotta at 3.88:1 would not be), retire the price-oval on this page (it's a printed-menu signature, keep for LunchSpecial only).
 - [ ] Keep bilingual EN/中文/Viet names from `content.js` — that's our value-add; set 中文 in Noto Serif SC on cream.
 - [ ] Drinks band: charcoal strip w/ 3 branded cup photos.
 - Verify vs `screenshots/orig-menu-full.png`.
 
 ### Phase E — company page + remaining pages
-- [ ] /company: 50/50 split — left cream story column (label, script heading, «phở, the new era» pull-quote, story paragraphs from `content.js`, mural photo), right full-bleed media (hero video from Phase C, else `pho-near-me-…-dining-area.jpg`). Below-fold: illustrated-dish SVG row + values/terracotta band.
+- [ ] /company: 50/50 split — left cream story column (label, script heading, «phở, the new era» pull-quote, story paragraphs from `content.js`, mural photo), right full-bleed media (hero video from Phase C, else `pho-near-me-…-dining-area.jpg`). Below-fold: illustrated-dish SVG row + values band on `.on-green`.
 - [ ] /press, legal pages, accessibility: re-skin to cream tokens (mostly automatic after Phase A aliases removed), check prose contrast.
 - [ ] Nav labels + footer links aligned with §5 Q4 outcome (BLOG vs PRESS).
-- [ ] Remove dead CSS: old green-era vars, `.price-oval` if unused, hero-video styles if dropped.
+- [ ] Remove dead CSS: `.price-oval` if unused, hero-video styles if dropped, `.on-terracotta` if Phase B's folk art ends up being the only red on the site. (The old dark-green-era vars are already gone — Phase A removed them outright.)
 - Verify all 7 routes, both widths.
 
 ### Phase F — QA + launch prep
 - [ ] Cross-page consistency pass at 1440 + 540 (memory: headless Chrome clamps <~540px; judge narrower via CSS).
 - [ ] Reduced-motion: force it on and confirm every §1.5 effect is inert and the page still reads correctly (marquee static, arc at full size, no parallax drift).
-- [ ] Contrast audit on cream (terracotta-on-cream body text is borderline — keep body text near-black, terracotta for display sizes only).
+- [ ] Contrast audit on cream — **now automated**: `scripts/verify.py` walks every route at both widths, composites each element's color over its real background, and reports anything under 4.5:1 (3.0 for large text). Re-run it after every phase. Phase A left it at 0 failures; the numbers behind the palette are in §2.1. Note it cannot see through `.on-media` (it walks past the video to the page background) — those are checked by sampling the video directly.
 - [ ] Font subset sizes; Lighthouse-ish sanity (static, should be fast).
 - [ ] Update README.md + CLAUDE.md (new design system), refresh `docs/website-brief.md` §6 parked list (logo Q resolved; hours/newsletter/press/redirects still open).
 - [ ] Then resume the original next step: git init + push for Pages deploy (the 162MB photo exclusion is already in `.gitignore` — just confirm `git status` is clean of it before the first commit).
@@ -427,13 +555,21 @@ were measured, and how to check ours match.
 
 ## 5. Open questions for the client (batch before Phase C ships)
 
-1. **Palette direction:** OK to go cream-dominant + terracotta like the current Wix site (green becomes an accent, as on the printed menus)? Their earlier "brighter green" note was within our green-dominant layout.
+1. ~~**Palette direction**~~ — **ANSWERED 2026-08-06.** Cream-dominant layout: **yes**. Terracotta as the theme color: **no** — the client asked to keep the light background but restore the **brand green** as the accent/primary. Implemented; see §1.2a. Terracotta stays as a warm secondary for the folk art and the printed menu's numbered badges.
 2. **TT Nooks license — now the biggest one.** §1.1 proved this face carries the hero, the drinks headline, the marquee and the intro text: it *is* the identity, and **no free font matches it** (see `screenshots/fonttest.png`). Buy TT Nooks Bold (+ Regular for the menu/company script headings), or ship Playfair Display 900 as a knowingly-approximate stand-in? Ask whether the client already licensed it for the Wix build — if so we may be able to reuse the license.
 3. **Hero video:** keep anywhere (proposal: /company right pane) or drop? Dropping it removes 34MB from the repo.
 4. **BLOG vs PRESS in nav:** original has an active (Chinese-SEO) Wix blog; our static site has /press instead. Blog content strategy + the parked `/blog`, `/post/*` redirect map are one decision.
 5. **Menu prices on the website:** original shows none; we currently show prices. Keep or hide?
 6. **Burger section:** our menu data has it, the live site's menu doesn't (Phase D). Still on the menu, or discontinued?
-7. (Existing §6 items still open: hours confirmation, newsletter provider, press details.)
+7. **Maname's Vietnamese diacritics (new, Phase A).** On ơ/ư the tone mark sits
+   far too high — *phở*, *Cơm*, *Sườn*, *Nướng*, *Cuốn* all show a floating gap
+   (§1.1). No CSS fixes it. The original site has the identical flaw, so the
+   real question is *match the original, or do better than it?* Options: (a)
+   keep Maname — authentic, visibly wrong on most menu items; (b) keep Maname
+   for English and set Vietnamese names in a second face; (c) swap the body
+   serif for one with proper Vietnamese. Worth pairing with Q2, since both are
+   "how faithful vs how good" calls.
+8. (Existing §6 items still open: hours confirmation, newsletter provider, press details.)
 
 ## 6. Session log
 
@@ -480,3 +616,117 @@ were measured, and how to check ours match.
   Phase A top to bottom; §4 is the verify loop, §5 is what still needs the
   client. Only Phase A's font choice is provisional (Playfair Display standing
   in for TT Nooks behind `--display`, §5 Q2).
+- **2026-08-06 — PHASE A SHIPPED.** Fonts swapped (Maname · Playfair Display
+  900/900i · Overpass · Noto Serif SC, all with vietnamese subsets, one CDN
+  URL), palette flipped from dark-green to cream/terracotta, type scale built
+  from §1.1's measured px, and all 7 routes swept. Build clean; **0 WCAG
+  failures across 7 routes × 2 widths, no horizontal scroll.** Four things
+  future phases should know:
+  1. **The flip became a color *contract*, not an alias table** (§2.1). Rather
+     than aliasing the old dark-era names, sections now carry `.on-cream` /
+     `.on-terracotta` / `.on-charcoal` / `.on-green` / `.on-media` classes that
+     re-point a `--fg` ramp. No rule hard-codes a text color, so Phase C can
+     move a section between surfaces without touching its CSS. Every green-era
+     token is gone.
+  2. **The original's palette cannot carry small text on terracotta.** Cream on
+     `#D14124` measures 3.88:1 and *white* is only 4.67:1 — so there is no
+     muted/dim ramp on that surface at all, and `--cream-bright` (#FFFDF8)
+     exists specifically for text on it. Hierarchy on terracotta must come from
+     size and weight. Small accents on cream use rust `#A94C23` (4.66:1), never
+     terracotta (3.88:1). Full table in §2.1 — consult it before picking a color.
+  3. **Two Maname defects surfaced** (§1.1). The broken `fi` ligature is fixed
+     in CSS; the badly-stacked Vietnamese tone marks on ơ/ư cannot be, and are
+     now §5 Q8 — a real client decision, since the original site has the same
+     flaw and it hits most of the menu.
+  4. **The verify loop is now a script**, `scripts/verify.py` — a real WCAG
+     audit plus webfont and overflow checks over every route at both widths.
+     Run it after every phase; it is what caught all of the above.
+  Also dropped: the promo gradient (its orange end could never pass contrast,
+  and the original uses flat color everywhere) and Chewy (a phase earlier than
+  planned — the interim logo wordmark rides `--display` until Phase B).
+  **Next: Phase B — brand assets** (real logo vectors are already harvested at
+  `docs/assets/original-site/svg/`). §5 has 8 open client questions; Q1
+  (cream-dominant direction) and Q2 (TT Nooks license) are the ones that could
+  still move Phase A's output, so batch them before Phase C ships.
+- **2026-08-06 — PHASE A AMENDED: brand green replaces terracotta (§5 Q1
+  answered).** Client reviewed the shipped Phase A and asked to keep the cream
+  layout and everything else, but restore the **brand green** as the theme
+  colour in place of the original site's terracotta-orange. Done — new **§1.2a**
+  records the resulting palette. What this meant in practice:
+  - Because Phase A had built the color *contract* rather than hard-coded
+    colors, this was a token-level change: retune `:root` + one new `.on-green`
+    surface, swap six `.on-terracotta` class usages in markup, done. No
+    component logic and no layout touched. That is exactly the payoff the
+    contract was built for — worth remembering when Phase C is tempted to
+    hard-code something.
+  - **Green turns out to be the better-behaved brand color**, not just the
+    preferred one. `--green #1B6E52` measures 5.13:1 on cream, which passes AA
+    **in both directions** — one token serves as accent text on cream *and* as
+    a fill carrying cream text. Terracotta is 3.88:1 either way and could do
+    neither; it needed the `--cream-bright` near-white workaround and had no
+    muted ramp at all. The green bands get a real `--fg-muted`/`--fg-dim` back.
+  - **`--green` and `--green-surface` are split deliberately** (`#1B6E52` for
+    buttons/accents, `#17543E` for large blocks). The first audit run failed 18
+    checks because a single vivid green had too little headroom for a muted
+    ramp; the deeper surface fixes it at 7.35:1. Don't collapse them.
+  - The client's vivid `#47927A` is kept as `--green-bright` but is
+    **decorative-fill only** — 3.08:1 means it can never carry or sit behind
+    text.
+  - `<meta name="theme-color">` is brand green again — that tag was what the
+    client noticed first.
+  Re-verified: build clean, **0 WCAG failures across 7 routes × 2 widths**.
+  Phase C/C2/D/E wording updated (statement hero, footer, footer arc, menu
+  prices all now green). Terracotta survives as the warm secondary for Phase B's
+  folk art and the printed menu's numbered badges.
+- **2026-08-06 — GREEN-DOMINANT pass: the printed menu becomes the colour
+  source.** Client: *"use more green, like docs/Menu-1.png."* Sampled that file
+  pixel-for-pixel rather than eyeballing it — flat `#407666` field, `#F1EAD6`
+  type, one warm `#DD4307`→`#C31D04` strip — and rebuilt the palette around it
+  (**§1.2a**, contrast table in §2.1). The structural insight mattered more than
+  the hex values: the printed menu is **green-dominant with cream type and
+  spends its single warm band on the Lunch Special**. Our previous pass had that
+  exactly backwards. Now: 9 `.on-green` + 8 `.on-green-deep` + 5 `.on-red`
+  sections vs 3 cream, with cream as breathing room.
+  - **`#3B6E5F`, not the sampled `#407666`** — true cream on the sampled green
+    is 4.36:1, just under AA; 3% deeper is 4.87:1 and passes **both ways**,
+    which is what lets one token be a section field *and* accent text on cream.
+    Visually indistinguishable.
+  - **`--red` is the band's deep end `#C31D04`** (cream 4.99:1); its light end
+    `#DD4307` is 3.57:1 and could not have carried the copy.
+  - **`.on-green` and `.on-red` deliberately have no muted ramp** — full cream
+    throughout, hierarchy from size and weight, exactly as the printed menu
+    does it. `.on-green-deep` (7.16:1) exists for anything with fine print,
+    which is why the footer moved there.
+  - **`--cream-bright` is retired.** Every surface on the site now carries true
+    `#F0EAD6` text — the near-white workaround existed only for terracotta.
+  - Caught by the audit: `--sand-2` measures **4.21:1** on the green field and
+    fails; the warm label accent is `--sand` `#FAE6C0` (4.79:1). Easy to get
+    wrong by eye — the two look nearly identical.
+  - **/menu reproduced Menu-1's treatment**: dishes as rounded photos directly
+    on the green with cream captions beneath, no cards, thin cream hairlines,
+    cream outline price ovals.
+  Verified clean — and then **rejected by the client on sight** (see next entry).
+- **2026-08-06 — REVERTED to the green-ACCENT design (§1.2a is current).**
+  Client: *"doesn't look good, let's revert back to the previous green accent
+  colour design."* Rolled the green-dominant pass back in full: cream is the
+  dominant surface again, `--green #1B6E52` is the accent, `--green-surface
+  #17543E` carries the green blocks (footer, newsletter, feature panels, promo),
+  the drinks feature is charcoal again, and the menu page is back to cream cards
+  on cream. `--red`/`.on-red`/`.on-green-deep` removed; `.on-terracotta` and
+  `--cream-bright` restored. Surfaces now: 8 `.on-green`, 3 `.on-charcoal`,
+  3 `.on-media`, cream everywhere else.
+  - **Nothing had been committed**, so this was a hand-revert rather than a
+    `git revert` — worth knowing if the two directions ever need diffing again.
+    The green-dominant version exists only in this file's §1.2b and in
+    `screenshots/phaseA/menu1-*.png` / `home-*.png`.
+  - **One thing was deliberately NOT reverted:** the warm label accent stays
+    `--sand` `#FAE6C0`, not `--sand-2` `#F4D7A0`. That was a genuine AA fix the
+    audit caught during the green pass (4.21:1 vs 4.79:1), and it is correct in
+    either direction. Don't "restore" `--sand-2`.
+  - **The lesson, recorded in §1.2b so it is not re-learned:** print and screen
+    want different proportions of the same palette. A saturated field on a
+    single held page reads as confident; the same field scrolling under a
+    viewport reads as oppressive. Menu-1 stays the reference for type, price
+    ovals, bilingual captions and photo treatment — not for surface area.
+  Re-verified after the revert: build clean, **0 WCAG failures across 7 routes ×
+  2 widths**, no horizontal scroll.

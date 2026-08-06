@@ -1,7 +1,9 @@
 <script>
 	// Interim logo lockup — hat mark re-drawn as SVG from the menu images and
-	// cup photography (brief §7.8); wordmark set in Chewy/Montserrat until the
-	// client's vector files arrive (§6 #2). Inherits currentColor.
+	// cup photography (brief §7.8). Chewy left the project with Phase A, so the
+	// wordmark now rides --display; Phase B replaces this whole component with
+	// the real vector lockups harvested from the original site
+	// (docs/assets/original-site/svg/home-02, home-16). Inherits currentColor.
 	// variant 'h' = horizontal (navbar) · 'v' = stacked with subline (footer)
 	let { variant = 'h' } = $props();
 </script>
@@ -67,8 +69,10 @@
 	}
 	.wordmark {
 		font-family: var(--logo-font);
+		font-weight: 900;
 		font-size: 23px;
-		letter-spacing: 0.02em;
+		letter-spacing: 0.01em;
+		line-height: 1;
 	}
 	.express {
 		font-family: var(--label);

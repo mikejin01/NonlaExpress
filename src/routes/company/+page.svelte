@@ -18,7 +18,7 @@
 			<img src="{IMG}/lifestyle-bw.jpg" alt="" />
 			<div class="story-hero-overlay"></div>
 		</div>
-		<div class="container container--md text-center story-hero-content">
+		<div class="container container--md text-center story-hero-content on-media">
 			<span class="eyebrow">Our Story</span>
 			<h1 class="display display-xl">Phở, the new era</h1>
 		</div>
@@ -42,7 +42,7 @@
 	</section>
 
 	<!-- ============================== MISSION ============================== -->
-	<section class="section padding-md mission-band">
+	<section class="section padding-md mission-band on-green">
 		<div class="container container--md text-center">
 			<span class="eyebrow">Our Mission</span>
 			<h2 class="display display-md mission-line">“{MISSION}”</h2>
@@ -86,7 +86,7 @@
 				{ADDRESS.lines.join(' · ')}. {ADDRESS.transit}
 			</p>
 			<div class="visit-links">
-				<a class="btn btn-cream" href={ORDER_URL} target="_blank" rel="noopener">Order Online</a>
+				<a class="btn btn-primary" href={ORDER_URL} target="_blank" rel="noopener">Order Online</a>
 				<a class="btn btn-outline" href={ADDRESS.mapsUrl} target="_blank" rel="noopener">Get Directions</a>
 			</div>
 		</div>
@@ -110,10 +110,12 @@
 		object-fit: cover;
 		filter: grayscale(1);
 	}
+	/* Flat charcoal scrim. The old rule faded to the page background, which
+	   was a dark-site trick — on cream it would have washed out the type. */
 	.story-hero-overlay {
 		position: absolute;
 		inset: 0;
-		background: linear-gradient(to top, var(--bg) 0%, rgba(26, 50, 43, 0.35) 100%);
+		background: linear-gradient(to top, rgba(26, 22, 19, 0.62), rgba(26, 22, 19, 0.34));
 	}
 	.story-hero-content {
 		padding: 7rem 1.25rem 3rem;
@@ -131,10 +133,9 @@
 		}
 	}
 	.story-copy p {
-		color: var(--cream);
-		opacity: 0.92;
-		font-size: 16.5px;
-		line-height: 1.85;
+		color: var(--fg-muted);
+		font-size: var(--fs-lead);
+		line-height: 1.7;
 	}
 	.story-copy .btn {
 		margin-top: 0.8rem;
@@ -151,14 +152,8 @@
 		object-fit: cover;
 	}
 
-	.mission-band {
-		background: var(--green);
-	}
 	.mission-line {
-		text-transform: none;
-		font-weight: 600;
-		font-variation-settings: 'opsz' 60;
-		line-height: 1.35;
+		line-height: 1.3;
 		max-width: 32ch;
 		margin: 0 auto;
 	}
@@ -177,7 +172,8 @@
 		}
 	}
 	.value-card {
-		background: var(--green-soft);
+		background: var(--cream-lift);
+		border: 1px solid var(--rule);
 		border-radius: 18px;
 		padding: 1.8rem 1.6rem;
 	}
@@ -187,14 +183,13 @@
 		font-size: 14px;
 		letter-spacing: 0.12em;
 		text-transform: uppercase;
-		color: var(--accent-2);
+		color: var(--accent-ink);
 		margin: 0 0 0.6rem;
 	}
 	.value-body {
-		font-size: 14.5px;
-		line-height: 1.7;
-		color: var(--cream);
-		opacity: 0.9;
+		font-size: 1.0625rem;
+		line-height: 1.65;
+		color: var(--fg-muted);
 		margin: 0;
 	}
 
@@ -222,7 +217,7 @@
 	}
 
 	.visit-body {
-		color: var(--cream-70);
+		color: var(--fg-muted);
 		max-width: 56ch;
 		margin: 0 auto 1.8rem;
 	}

@@ -104,11 +104,11 @@
 	{/each}
 
 	<!-- ============================== ORDER CTA ============================== -->
-	<section class="section padding-md order-cta">
+	<section class="section padding-md order-cta on-green">
 		<div class="container container--md text-center">
 			<h2 class="display display-md">Hungry now?</h2>
 			<p class="order-note">Order ahead for pickup at Tangram, or find us on Grubhub and Seamless.</p>
-			<a class="btn btn-cream" href={ORDER_URL} target="_blank" rel="noopener">Order on Snackpass</a>
+			<a class="btn btn-primary" href={ORDER_URL} target="_blank" rel="noopener">Order on Snackpass</a>
 			<p class="menu-disclaimer">Menu items, prices, and availability are subject to change.</p>
 		</div>
 	</section>
@@ -117,16 +117,15 @@
 <style>
 	.menu-hero {
 		padding-top: calc(var(--u) * 9);
-		background: var(--bg-deep);
 	}
 	.menu-hero-sub {
-		color: var(--cream-70);
+		color: var(--fg-muted);
 		max-width: 52ch;
 		margin: 0.5rem auto 0;
 	}
 
 	.menu-section + .menu-section {
-		border-top: 1px solid var(--cream-25);
+		border-top: 1px solid var(--rule);
 	}
 	.section-head {
 		margin-bottom: 2.2rem;
@@ -142,18 +141,18 @@
 		font-size: 0.62em;
 	}
 	.section-caption {
-		font-size: 15px;
-		color: var(--cream-70);
+		font-size: 1.0625rem;
+		color: var(--fg-muted);
 		margin: 0.2rem 0 0;
 	}
 	.section-blurb {
-		color: var(--cream-70);
+		color: var(--fg-muted);
 		margin: 0.9rem 0 0;
 	}
 	.section-note {
-		font-size: 13.5px;
+		font-size: 0.9375rem;
 		font-style: italic;
-		color: var(--cream-55);
+		color: var(--fg-dim);
 		margin: 0.6rem 0 0;
 	}
 
@@ -167,7 +166,8 @@
 		grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 	}
 	.item {
-		background: var(--green);
+		background: var(--cream-lift);
+		border: 1px solid var(--rule);
 		border-radius: 18px;
 		overflow: hidden;
 		display: flex;
@@ -183,7 +183,7 @@
 	.item-media {
 		position: relative;
 		aspect-ratio: 4 / 3;
-		background: #efe6d2;
+		background: var(--cream-lift);
 	}
 	.item-media img {
 		width: 100%;
@@ -200,37 +200,35 @@
 	.item-body {
 		padding: 1.1rem 1.3rem 1.3rem;
 	}
+	/* Maname, not the button grotesque — the original sets its card titles in
+	   the workhorse serif (plan §1.1). Phase D takes them to 36px. */
 	.item-name {
-		font-family: var(--label);
-		font-weight: 700;
-		font-size: 15px;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
+		font-family: var(--body-font);
+		font-size: 1.25rem;
 		margin: 0 0 0.25rem;
-		line-height: 1.45;
+		line-height: 1.3;
 	}
 	.spicy {
 		margin-left: 0.4em;
 	}
 	.item-caption {
-		font-size: 13px;
-		color: var(--cream-70);
+		font-size: 0.875rem;
+		color: var(--fg-muted);
 		margin: 0 0 0.5rem;
 	}
 	.item-caption .zh {
 		margin-right: 0.35em;
 	}
 	.item-desc {
-		font-size: 14px;
-		line-height: 1.65;
-		color: var(--cream);
-		opacity: 0.9;
+		font-size: 1rem;
+		line-height: 1.6;
+		color: var(--fg-muted);
 		margin: 0;
 	}
 	.item-choice {
-		font-size: 12.5px;
+		font-size: 0.875rem;
 		font-style: italic;
-		color: var(--cream-70);
+		color: var(--fg-dim);
 		margin: 0.5rem 0 0;
 	}
 
@@ -241,8 +239,8 @@
 		align-items: center;
 		gap: 0.8rem 1.6rem;
 		margin-top: 1.6rem;
-		font-size: 13.5px;
-		color: var(--cream-70);
+		font-size: 0.9375rem;
+		color: var(--fg-muted);
 	}
 	.sauces-label {
 		font-family: var(--label);
@@ -250,7 +248,7 @@
 		font-size: 11.5px;
 		letter-spacing: 0.2em;
 		text-transform: uppercase;
-		color: var(--accent-2);
+		color: var(--accent-ink);
 	}
 	.sauce {
 		display: inline-flex;
@@ -281,7 +279,7 @@
 		flex-wrap: wrap;
 		gap: 0 0.7rem;
 		padding: 0.55rem 0;
-		border-bottom: 1px dashed var(--cream-25);
+		border-bottom: 1px dashed var(--rule);
 	}
 	.extras-name {
 		font-family: var(--label);
@@ -304,21 +302,18 @@
 	}
 	.extras-detail {
 		flex-basis: 100%;
-		font-size: 12.5px;
-		color: var(--cream-55);
+		font-size: 0.875rem;
+		color: var(--fg-dim);
 	}
 
 	/* ---------- order CTA ---------- */
-	.order-cta {
-		background: var(--bg-deep);
-	}
 	.order-note {
-		color: var(--cream-70);
+		color: var(--fg-muted);
 		margin-bottom: 1.6rem;
 	}
 	.menu-disclaimer {
 		margin-top: 2rem;
-		font-size: 12px;
-		color: var(--cream-55);
+		font-size: var(--fs-fine);
+		color: var(--fg-dim);
 	}
 </style>
