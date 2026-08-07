@@ -677,7 +677,7 @@ structure is unchanged; only the colours moved.
 - [x] Section 1: intro on the green ground — three columns (§1.3 item 2): rooster bleeding off the left edge, **centred photo slideshow** (markup + arrows now; auto-advance in C2), buffalo bleeding off the right edge; heading + blurb top-right (keep as a real `h1` for SEO); pig lower-left. Let the animals overflow their column and clip at the viewport — that bleed is the whole effect. ✅ **The recolor worry is resolved — do nothing.** Each animal is drawn as a cream body carrying its own terracotta line-work, so it reads on the green ground as-is; the red never touches the green. Use `<img src="{base}/assets/art/rooster.svg">` etc. (they are files, not `<Art>` — see §2.2).
 - [x] Section 2: statement hero on `.on-green-deep` — "NATURAL INGREDIENTS, FRESH TASTE." in `--display` at **~157.5px** (not Maname — §1.1) + Maname 24px paragraph + #nonlaexpress link (→ Instagram). Decide hero-video fate (§5 Q3): default = drop from home, reuse on /company right pane. → ⚠️ **Reversed the same day.** It was dropped per that default, then **restored by client direction** along with the sliding cards and the feature rows — the video hero is now section 1 and the statement hero is section 4. See **§2.4**; Q3 is a live design question again.
 - [x] Section 3: pho favorites — 3 `.on-cream` cards w/ cut-out pho photos + names/descriptions (data from `content.js`), sitting ON the deep-green statement band exactly as the originals sit on terracotta. → `PHO_FAVORITES` **resolves against `MENU`** instead of restating the descriptions, so a menu edit can't leave the homepage stale.
-- [x] Section 4: type marquee — giant "nón lá ✦ express" in script + animal SVGs; **two rows, opposite directions** (§1.5 M1). ~~Retire the rAF photo marquee in favour of the CSS duplicated-track version.~~ On the green ground the type is cream; the animals need no recolor (§2.2). → Tracks and type in place. ⚠️ **The "retire the rAF marquee" instruction is CANCELLED** — the photo marquee is a separate, client-kept section (§2.4). The two coexist: this type band is section 8 and gets CSS keyframes in C2; the photo carousel is section 2 and keeps its rAF loop and its controls.
+- [x] Section 4: type marquee — giant "nón lá ✦ express" in script + animal SVGs; **two rows, opposite directions** (§1.5 M1). ~~Retire the rAF photo marquee in favour of the CSS duplicated-track version.~~ On the green ground the type is cream; the animals need no recolor (§2.2). → Tracks and type in place. ⚠️ **The "retire the rAF marquee" instruction is CANCELLED** — the photo marquee is a separate, client-kept section (§2.4). The two coexist: this type band is section 6 (was 8 before the 2026-08-07 trim) and gets CSS keyframes in C2; the photo carousel is section 2 and keeps its rAF loop and its controls.
 - [x] Section 5: interior grid (6 photos, tight masonry).
 - [x] Section 6: charcoal drinks section — display headline, phin/cup/bean SVGs scattered, 2 polaroids at **−8° / +9°**, EN + 中文 paragraph. Note the bilingual drinks copy is **not** in `content.js` yet — add `DRINKS_BLURB { en, zh }` from §3. Charcoal against the green ground is a subtle step — give it a full-bleed edge so the change of surface reads. → Done; the headline needed a 10% type shave to keep the original's three-line break (§2.3).
 - [x] Section 7: `.on-green-deep` footer w/ stacked logo, SEO paragraph, cream newsletter panel, link columns, address/phone/©, and the **arc circle** behind it (§1.5 M2 — build the circle div now, wire the scroll-scrub in C2; the arc is `--green-deep` rising out of the ground, not `#D14124`. It needs to be visible against `--green-surface`: if the two read as one, use `--green` for the arc instead and keep the footer deep). (Footer is shared — this restyles `Footer.svelte` site-wide.) → Built a third way: keep the same green and add a **`--sand-3` hairline**, which is what actually makes the dome read. The newsletter moved out of the homepage into the footer, so it is now on every route. §2.3.
@@ -691,8 +691,10 @@ The order below is what shipped after the client's 2026-08-07 correction (see
 **§2.4**, which is the binding list) — it is *not* §1.3's, and every difference
 is deliberate:
 
-⚠️ **Surfaces below are as of §1.2d (the swap) — the ground is CREAM.** Section
-order is unchanged; only the colours moved.
+⚠️ **Surfaces are as of §1.2d (the swap) — the ground is CREAM — and the section
+list is as of the 2026-08-07 trim**, which removed the Lunch Special section and
+the Signature Drinks feature row from the homepage (client direction; see §2.4).
+The page is **9 sections**, down from 11.
 
 | # | Section | Surface | vs original |
 | --- | --- | --- | --- |
@@ -700,51 +702,70 @@ order is unchanged; only the colours moved.
 | 2 | **sliding dish cards** (rAF, prev/next/pause) | ground (cream) | **OURS** |
 | 3 | intro: rooster · slideshow · h1 + buffalo, pig lower-left | ground (cream) | same — and the animals now read as the original's red line-art (§1.2d) |
 | 4 | statement hero + 3 phở cards | `.on-green-deep` + `.on-cream` cards | their terracotta block |
-| 5 | Lunch Special | `--cream-lift` panel + rule | **OURS** |
-| 6 | **feature: phở** — panel + photo | `.on-green` | **OURS** |
-| 7 | **feature: drinks** — charcoal panel + photo, reversed | `.on-charcoal` | **OURS** |
-| 8 | type marquee, two rows | ground (cream) | same — black type, red animals, as the original |
-| 9 | interior grid, 3×2 | full-bleed | same |
-| 10 | Find Us | ground (cream) | **OURS** |
-| 11 | drinks collage | `.on-charcoal` | same |
+| 5 | **feature: phở** — panel + photo | `.on-green` + `--sand` media half | **OURS** |
+| 6 | type marquee, two rows | ground (cream) | same — black type, red animals, as the original |
+| 7 | interior grid, 3×2 | full-bleed | same |
+| 8 | Find Us | ground (cream) | **OURS** |
+| 9 | drinks collage | `.on-charcoal` | same |
 | → | footer: arc + newsletter + columns | `.on-green-deep` | same |
+
+**The feature row's media half needed its own surface, and a background alone
+would not have given it one.** The dish photos are JPGs with the studio's cream
+backdrop **baked in** (~`#F1EAD7`, a hair off `--cream` — §2.2), and the `<img>`
+is `object-fit: cover`, so it covers any background the container paints. What
+actually works is **`mix-blend-mode: multiply` over a `--sand` fill**:
+multiplying a near-white field over sand leaves the sand, while the bowl is dark
+enough to survive with only a mild warm tint. Where multiply is unsupported the
+image simply paints over the sand and the half falls back to its previous
+appearance — no broken state. **This technique is available to the whole
+harvested dish set**, since all 31 photos ship on that one flat backdrop; worth
+remembering for Phase D if any dish photo ever needs to sit on a colour.
 
 **The drinks collage must stay LAST, and Find Us must stay above it.** On the
 original the charcoal section sits directly on the footer, and that is what the
-arc rises out of. Anything inserted near the end belongs *above* section 11, not
-below it — a strip between them leaves the arc rising out of the page ground,
-which is a one-ladder-step colour change instead of charcoal → deep green.
+arc rises out of. Anything inserted near the end belongs *above* the collage
+(now section 9), not below it — a strip between them leaves the arc rising out
+of the page ground instead of out of charcoal.
 
-**Sections 7 and 11 are both charcoal and both about drinks, on purpose.**
-Section 7 is the *product* block (the $6 line, an order CTA); section 11 is the
-original's *mood* piece (headline, polaroids, bilingual copy). They look nothing
-alike and sit four sections apart. If they ever start to read as repetition, the
-fix is to move section 7 to `.on-green-lift` — **not** to delete it (§2.4).
+~~**Sections 7 and 11 are both charcoal and both about drinks, on purpose.**~~
+**Moot since 2026-08-07:** the Signature Drinks feature row was removed (§2.4),
+so charcoal now appears exactly once, at the drinks collage. Kept as a note
+because the reasoning matters if a second drinks block is ever proposed: a
+*product* block ($6, order CTA) and the original's *mood* piece are different
+jobs, and the fix for them reading as repetition was never deletion.
 
 #### 2.4 ⚠️ KEEP LIST — the sections that are OURS, and why they stay
 
 **Read this before restructuring the homepage again.** Phase C first shipped as
 a near-faithful copy of the original and the client's response (2026-08-07) was
-that it had thrown away things our build did better. These five sections were
-restored by explicit direction. **Do not remove them to "match the original"
-— matching the original is not the goal where our version is stronger.**
+that it had thrown away things our build did better; five sections were restored
+by explicit direction. **Later the same day the client removed two of the five**
+— the Lunch Special section and the Signature Drinks feature row. Both states
+are client direction, and the difference between them is the whole point of this
+section:
 
-| Section | What it is | Notes for future phases |
-| --- | --- | --- |
-| **Video hero** | Full-bleed `Nonla-Express-Hero` video, `.on-media`, tagline "phở, the new era", two CTAs, scroll arrow, and the curve divider into the page | The scrim is **0.55, measured** — see §2.1, don't retune by eye. The curve fills `var(--surface)` so it always matches the ground, and its hairline is **terracotta** since §1.2d, rhyming with the footer arc's ring. This also **re-opens §5 Q3**: the video is wired into the page again. |
-| **Sliding dish cards** | rAF photo marquee, 6 dishes ×2, prev / next / play-pause | ⚠️ **Not the same thing as §1.5 M1.** M1 is the original's giant *type* band (section 8) and gets pure-CSS tracks in C2. This one is ours, has real controls, and **C2 must not delete it.** |
-| **Lunch Special** | Cream promo panel, bilingual set steps, $25 price oval | A real promo the original never had; also the densest small text on the site, hence the ink-on-cream ramp. Since §1.2d it is `--cream-lift` + a `--rule` hairline — on a cream page a plain cream panel is not a panel. |
-| **Feature rows: phở + drinks** | Two 24px-radius panel+photo rows, the second reversed | Restored 2026-08-07. See the §2.3 note on why two charcoal drinks moments is fine. |
-| **Find Us** | Hours / address / transit / order strip | The original buries this in the footer. Must stay **above** the drinks collage (§2.3). |
+> ⚠️ **What this list protects is a REASON, not a roster.** Don't delete one of
+> our sections *because the original lacks it*. Do delete one when the client
+> asks. A future session finding a section here that isn't in the page should
+> check the session log before "restoring" it.
+
+| Section | Status | What it is | Notes for future phases |
+| --- | --- | --- | --- |
+| **Video hero** | ✅ in | Full-bleed `Nonla-Express-Hero` video, `.on-media`, tagline "phở, the new era", two CTAs, scroll arrow, and the curve divider into the page | The scrim is **0.55, measured** — see §2.1, don't retune by eye. The curve fills `var(--surface)` so it always matches the ground, and its hairline is **terracotta** since §1.2d, rhyming with the footer arc's ring. This also **re-opens §5 Q3**: the video is wired into the page again. |
+| **Sliding dish cards** | ✅ in | rAF photo marquee, 6 dishes ×2, prev / next / play-pause | ⚠️ **Not the same thing as §1.5 M1.** M1 is the original's giant *type* band (now section 6) and gets pure-CSS tracks in C2. This one is ours, has real controls, and **C2 must not delete it.** |
+| **Feature row: phở** | ✅ in | One 24px-radius panel+photo row — `.on-green` panel, `--sand` media half | The surviving feature row. `.feature--reverse` was removed with the drinks row; re-add its two `order` rules if a second row ever returns (one row alone shouldn't alternate). See §2.3 for the multiply trick that gives the media half a real surface. |
+| **Find Us** | ✅ in | Hours / address / transit / order strip | The original buries this in the footer. Must stay **above** the drinks collage (§2.3). |
+| **Lunch Special** | ❌ removed from home 2026-08-07 | Promo panel, bilingual set steps, $25 price oval | **The component still exists and still ships on `/menu`** — only the homepage section went. Don't delete `LunchSpecial.svelte`. |
+| **Feature row: drinks** | ❌ removed 2026-08-07 | Charcoal panel + photo, reversed, $6 + order CTA | Charcoal now appears exactly once on the page (the drinks collage). `drinks-trio.jpg` is still used by the carousel and the collage. |
 
 Everything else on the homepage is the original's structure and should keep
 tracking it.
 
 **The general rule this session established:** the brief is *the original's
 layout, typography and motion, carrying the brand's own colour* — it is **not**
-"reproduce the original". Where our scaffold has something the original lacks
-(a promo, a hours strip, a video hero, product-feature rows), it stays, and it
-gets the redesign's surfaces and type rather than being deleted.
+"reproduce the original". Where our scaffold has something the original lacks,
+it stays *unless the client says otherwise*, and it gets the redesign's surfaces
+and type rather than being deleted by default.
 
 **The arc (§1.5 M2) is built, and Phase C's colour worry was justified.**
 `--green-deep` did not read against the then-green ground on its own — one
@@ -809,7 +830,7 @@ Implement §1.5 in order of payoff. All of it goes inside
 `@media (prefers-reduced-motion: no-preference)`; the page must be complete and
 correct with every animation removed.
 
-- [ ] **M1 marquee** — pure CSS, duplicated track, `linear infinite`; row 1 left/30.9s, row 2 right/36.5s, ~20px item gap. This is the **type band (section 8)**; `.mq-row` / `.mq-track` exist and only need the keyframes. The tracks are rendered once with 4 repeats, so duplicate the track element before animating. ⚠️ **Do NOT touch the rAF photo carousel in section 2** — different section, client-kept, has its own controls (§2.4).
+- [ ] **M1 marquee** — pure CSS, duplicated track, `linear infinite`; row 1 left/30.9s, row 2 right/36.5s, ~20px item gap. This is the **type band (section 6 since the 2026-08-07 trim, formerly 8)**; `.mq-row` / `.mq-track` exist and only need the keyframes. The tracks are rendered once with 4 repeats, so duplicate the track element before animating. ⚠️ **Do NOT touch the rAF photo carousel in section 2** — different section, client-kept, has its own controls (§2.4).
 - [ ] **M2 footer arc** — the `.arc` div **already exists** in `Footer.svelte` at its full 255vw size (§2.3 has the geometry and the two rules that must not be removed). All C2 owes it is scrubbing `width` ~120vw→255vw across the footer's view progress via `animation-timeline: view()`; where unsupported it stays at full size, which is the current, correct-looking state. Re-check `hscroll=no` after — the footer's `overflow: hidden` is what holds that.
 - [ ] **M3 drinks parallax** — cup/phin drift ≈±105px, polaroids ≈±60px in opposite directions, bean cluster static. Same `view()` timeline approach; keep rates small and unequal.
 - [ ] **M4 intro parallax** — rooster/buffalo/pig drift ≈+18/+35/+25px over the first ~700px. Mobile (≤750px) idle loops: swing 5.4s / 6.7s, bounce 2.9s, breathe 14.3s / 14.7s / 5.0s.
@@ -1336,6 +1357,37 @@ were measured, and how to check ours match.
   deliberately unused but kept — it is the statement hero's option if the client
   wants more orange (§5 Q1). **Next: still Phase C2 — the motion layer**, which
   the swap did not touch.
+
+- **2026-08-07 — HOMEPAGE TRIM: the Lunch Special section and the Signature
+  Drinks row removed.** Client, looking at the phở feature row: *"remove the
+  Lunch Special box and Signature Drinks box, so just keep On the Menu · 河粉 —
+  but the right side should have a bg color so it doesn't blend into the
+  background."* Homepage is now **9 sections** (§2.3). Build clean, **0 contrast
+  failures across 7 routes × 2 widths, no horizontal scroll**; the row checked at
+  1440 and 540.
+  1. **The media half's problem was not a missing background — it was a baked-in
+     one.** The dish photos are JPGs carrying the studio's cream backdrop
+     (~`#F1EAD7`, a hair off `--cream`), and the `<img>` is `object-fit: cover`,
+     so *any* background the container painted was covered up. Setting a colour
+     would have looked like it did nothing. **`mix-blend-mode: multiply` over a
+     `--sand` fill** is what actually removes the backdrop, and it degrades to
+     the previous appearance where unsupported. Available to all 31 harvested
+     photos — worth remembering for Phase D.
+  2. **Diagnose before styling.** The obvious fix (add `background`) was already
+     in the CSS and had been for two phases; it read as correct and did nothing.
+     Reading the actual JPG and the `object-fit` value took a minute and changed
+     the whole approach.
+  3. **§2.4 was rewritten from a roster into a reason.** It said "these five
+     sections stay" and two of the five have now been removed *by the same
+     client who asked for them*. The list protects against deleting our work to
+     "match the original" — it was never a promise that any section is
+     permanent. It now records removed sections with their status so a future
+     session doesn't "restore" them.
+  4. **`LunchSpecial.svelte` was NOT deleted** — it still ships on `/menu`, which
+     is arguably where a menu offer belongs. Only the homepage section went.
+  Also swept with it: the now-dead `.feature--reverse` rules (with a note on how
+  to bring them back), the unused `LunchSpecial` import, and the section
+  numbering in both the markup and the CSS comments.
 
 ## 7. Deploy state — the live Pages site is NOT the current build
 

@@ -1,10 +1,12 @@
 <script>
 	/**
 	 * Homepage — the original nonlaexpress.com's spine (plan §1.3 / Phase C) with
-	 * FIVE of our own sections kept deliberately. Client direction 2026-08-07,
-	 * after Phase C first shipped as a near-faithful copy: the redesign should
-	 * adopt the original's structure WITHOUT throwing away what our build did
-	 * better. Plan §2.4 lists the five and says not to remove them again.
+	 * THREE of our own sections kept deliberately. Phase C first shipped as a
+	 * near-faithful copy and the client asked for five of our sections back; on
+	 * 2026-08-07 they then removed two of those five (the Lunch Special section
+	 * and the Signature Drinks feature row). Plan §2.4 tracks the current list —
+	 * the point of it is that our sections are not deleted to "match the
+	 * original", NOT that any particular section is permanent.
 	 *
 	 * SURFACES are as of plan §1.2d (the colour swap): the page ground is CREAM,
 	 * so a section with no .on-* class is cream and green is what you ask for.
@@ -13,13 +15,11 @@
 	 *   2  sliding dish cards      OURS   ·  rAF marquee w/ prev / next / pause
 	 *   3  intro: rooster · slideshow · h1 + buffalo, pig lower-left  (cream)
 	 *   4  statement hero + 3 phở cards   .on-green-deep + .on-cream cards
-	 *   5  lunch special           OURS   ·  cream-lift panel + rule
-	 *   6  feature: phở            OURS   ·  .on-green panel + photo
-	 *   7  feature: drinks         OURS   ·  charcoal panel + photo, reversed
-	 *   8  type marquee, two rows          (cream — black type, red animals)
-	 *   9  interior grid, 3×2
-	 *  10  find us                 OURS
-	 *  11  drinks collage                 .on-charcoal
+	 *   5  feature: phở            OURS   ·  .on-green panel + sand media half
+	 *   6  type marquee, two rows          (cream — black type, red animals)
+	 *   7  interior grid, 3×2
+	 *   8  find us                 OURS
+	 *   9  drinks collage                 .on-charcoal
 	 *   →  footer carries the newsletter + the arc (Footer.svelte)
 	 *
 	 * MOTION. The rAF card marquee and the scroll-arrow bob are the only moving
@@ -30,7 +30,6 @@
 	import { base } from '$app/paths';
 	import { onMount } from 'svelte';
 	import Art from '$lib/site/Art.svelte';
-	import LunchSpecial from '$lib/site/LunchSpecial.svelte';
 	import {
 		IMG,
 		VID,
@@ -53,7 +52,7 @@
 	} from '$lib/content.js';
 
 	/* ---------- auto media marquee (kept from the Editorial template) ----------
-	   Not the same thing as the type marquee in section 8: that one is the
+	   Not the same thing as the type marquee in section 6: that one is the
 	   original's giant "nón lá / express" band and gets pure-CSS tracks in C2.
 	   This is ours, it is a photo carousel with real controls, and it stays. */
 	const mediaCards = [
@@ -277,18 +276,14 @@
 			</div>
 		</section>
 
-		<!-- ============================== 5 · LUNCH SPECIAL ============================== -->
-		<section class="section padding-md">
-			<div class="container container--lg">
-				<LunchSpecial />
-			</div>
-		</section>
-
-		<!-- ============================== 6 · FEATURE: PHỞ ==============================
-		     OURS, kept on client direction (plan §2.4). The panel is GREEN since
-		     plan §1.2d: it was cream when the page was green, and a cream panel on
-		     a cream page is not a panel. Green here also gives the accent colour a
-		     block on the upper half of the page, balancing the deep-green footer. -->
+		<!-- ============================== 5 · FEATURE: PHỞ ==============================
+		     OURS. The single feature row: client direction 2026-08-07 removed the
+		     Lunch Special section and the Signature Drinks row that used to sit
+		     either side of it, leaving this one (plan §2.4).
+		     The panel is GREEN since plan §1.2d — a cream panel on a cream page is
+		     not a panel — and the media half is SAND for the same reason: the dish
+		     photo carries its own cream backdrop, so on a cream page the right half
+		     read as bare page. See .feature-media for how the backdrop is removed. -->
 		<section class="section padding-sm">
 			<div class="container container--lg">
 				<div class="feature">
@@ -309,30 +304,7 @@
 			</div>
 		</section>
 
-		<!-- ============================== 7 · FEATURE: DRINKS ==============================
-		     OURS, kept on client direction (plan §2.4). This is the PRODUCT block
-		     ($6, order online); the charcoal collage at section 11 is the original's
-		     mood piece. They are five sections apart on purpose. -->
-		<section class="section padding-sm">
-			<div class="container container--lg">
-				<div class="feature feature--reverse">
-					<div class="feature-panel on-charcoal">
-						<span class="feature-eyebrow">Signature Drinks · 招牌饮品</span>
-						<h2 class="display display-lg">Cà phê, limeade & more</h2>
-						<p class="feature-body">
-							Phin-brewed Vietnamese iced coffee, Thai green milk tea, salted limeade, and fresh
-							sugarcane juice — poured at the drink station, $6 each.
-						</p>
-						<a class="btn btn-outline feature-btn" href={ORDER_URL} target="_blank" rel="noopener">Order Online</a>
-					</div>
-					<div class="feature-media">
-						<img src="{IMG}/drinks-trio.jpg" alt="Sugarcane juice, Vietnamese iced coffee, and salted limeade" loading="lazy" />
-					</div>
-				</div>
-			</div>
-		</section>
-
-		<!-- ============================== 8 · TYPE MARQUEE ==============================
+		<!-- ============================== 6 · TYPE MARQUEE ==============================
 		     Two duplicated tracks; C2 animates them in opposite directions at 30.9s
 		     and 36.5s (§1.5 M1). Static they still read as the original's band. -->
 		<section class="section marquee-band" aria-hidden="true">
@@ -355,7 +327,7 @@
 		</section>
 		<h2 class="sr-only">Inside {BRAND}</h2>
 
-		<!-- ============================== 9 · INTERIOR GRID ============================== -->
+		<!-- ============================== 7 · INTERIOR GRID ============================== -->
 		<section class="section interiors">
 			<div class="interior-grid">
 				{#each interiors as p}
@@ -364,7 +336,7 @@
 			</div>
 		</section>
 
-		<!-- ============================== 10 · FIND US ============================== -->
+		<!-- ============================== 8 · FIND US ============================== -->
 		<section class="section padding-md" id="find-us">
 			<div class="container container--lg">
 				<div class="info-row">
@@ -400,7 +372,7 @@
 			</div>
 		</section>
 
-		<!-- ============================== 11 · DRINKS COLLAGE ==============================
+		<!-- ============================== 9 · DRINKS COLLAGE ==============================
 		     Charcoal against the green ground is a subtle step, so this one runs
 		     full-bleed with no rounding — the change of surface has to read on its
 		     own. Polaroids keep their static −8° / +9° even with motion off (§1.5 M3).
@@ -910,7 +882,7 @@
 		margin: 0;
 	}
 
-	/* ================= 6 & 7 · feature rows (panel + photo) ================= */
+	/* ================= 5 · feature row (panel + photo) ================= */
 	.feature {
 		display: grid;
 		grid-template-columns: 1fr;
@@ -923,13 +895,10 @@
 			grid-template-columns: 1fr 1fr;
 			min-height: 520px;
 		}
-		.feature--reverse .feature-panel {
-			order: 2;
-		}
-		.feature--reverse .feature-media {
-			order: 1;
-		}
 	}
+	/* `.feature--reverse` (panel right, media left) went with the Signature
+	   Drinks row on 2026-08-07. Re-add the two `order` rules if a second
+	   feature row ever comes back — one row alone should not alternate. */
 	.feature-panel {
 		display: flex;
 		flex-direction: column;
@@ -956,23 +925,37 @@
 	.feature-btn {
 		align-self: flex-start;
 	}
+	/* The media half needs a real surface of its own: the dish photo is a JPG
+	   with the studio's cream backdrop BAKED IN (~#F1EAD7, a hair off --cream),
+	   so on the cream page this half read as bare page and the row looked like
+	   one green panel floating next to nothing.
+	   Setting a background alone does nothing — the img is object-fit:cover and
+	   covers it. `mix-blend-mode: multiply` is what actually removes the
+	   backdrop: multiplying a near-white field over --sand leaves the sand, and
+	   the bowl, being much darker, survives with only a mild warm tint. Same
+	   trick the whole harvested dish set would take, since they all ship on that
+	   one flat backdrop (plan §2.2).
+	   Where multiply is unsupported the img simply paints over the sand and the
+	   half falls back to exactly its previous appearance — no broken state. */
 	.feature-media {
 		overflow: hidden;
 		min-height: 320px;
-		background: var(--cream-lift); /* the food photography's cream backdrop */
+		background: var(--sand); /* decorative fill only — sand is unreadable as
+		   text on cream (~1.1:1) but is exactly right behind a photo */
 	}
 	.feature-media img {
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
 		display: block;
+		mix-blend-mode: multiply;
 		transition: transform 1.2s ease;
 	}
 	.feature:hover .feature-media img {
 		transform: scale(1.04);
 	}
 
-	/* ================= 8 · type marquee ================= */
+	/* ================= 6 · type marquee ================= */
 	.marquee-band {
 		padding: clamp(1.5rem, 4vw, 3.5rem) 0;
 		overflow: hidden;
@@ -1006,7 +989,7 @@
 		flex: none;
 	}
 
-	/* ================= 9 · interiors ================= */
+	/* ================= 7 · interiors ================= */
 	.interiors {
 		padding: 0;
 	}
@@ -1027,7 +1010,7 @@
 		object-fit: cover;
 	}
 
-	/* ================= 10 · find us ================= */
+	/* ================= 8 · find us ================= */
 	.info-row {
 		display: grid;
 		grid-template-columns: 1fr;
@@ -1065,7 +1048,7 @@
 		}
 	}
 
-	/* ================= 11 · drinks collage ================= */
+	/* ================= 9 · drinks collage ================= */
 	.drinks {
 		padding: calc(var(--u) * 5) 0 calc(var(--u) * 6);
 	}

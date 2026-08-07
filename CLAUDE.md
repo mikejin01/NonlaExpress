@@ -16,24 +16,27 @@ and TERRACOTTA as a third brand colour** (§1.2d, "the swap" — see "Design
 system" below). **Phase B SHIPPED 2026-08-07** — brand assets: the real
 logo vectors replace the interim hand-drawn mark, 16 harvested SVGs are
 optimized into themed art, and the photo set turned out to need nothing (plan
-§2.2). **Phase C SHIPPED 2026-08-07** (amended the same day, see below) — the
-homepage now runs the original's section order **around five sections of our
-own**: video hero · sliding dish cards · intro (three columns, folk animals
-bleeding off both edges, photo slideshow) · statement hero + three phở cards ·
-Lunch Special · feature phở · feature drinks · type marquee · interior grid ·
+§2.2). **Phase C SHIPPED 2026-08-07** (amended twice the same day, see below) —
+the homepage runs the original's section order around three sections of our own,
+**9 sections** after the 2026-08-07 trim: video hero · sliding dish cards ·
+intro (three columns, folk animals bleeding off both edges, photo slideshow) ·
+statement hero + three phở cards · feature phở · type marquee · interior grid ·
 Find Us · charcoal drinks collage · footer with the newsletter panel and **the
 arc** (plan §2.3). **Next: Phase C2 — the motion layer.**
 
 ⚠️ **Read redesign-plan.md §2.4 before restructuring any page.** The first
 Phase C build reproduced the original too faithfully and deleted things our
-scaffold did better; the client asked for them back. **§2.4 is a keep list** —
-the video hero, the sliding dish carousel, the Lunch Special, the two feature
-rows and the Find Us strip stay, and get the redesign's surfaces and type
-rather than being removed. The brief is *the original's layout, typography and
-motion carrying the brand's own colour* — **not** "reproduce the original".
+scaffold did better; the client asked for them back — then, later the same day,
+asked for the Lunch Special section and the Signature Drinks row to go. **§2.4
+protects a REASON, not a roster:** don't delete one of our sections *because the
+original lacks it*; do delete one when the client asks. It lists removed
+sections with their status so nobody "restores" them. The brief is *the
+original's layout, typography and motion carrying the brand's own colour* —
+**not** "reproduce the original". (`LunchSpecial.svelte` still ships on /menu —
+don't delete the component.)
 
 Two live traps that follow from that: the **sliding dish carousel (section 2)
-is not the type marquee (section 8)** — an older line in the plan told C2 to
+is not the type marquee (section 6)** — an older line in the plan told C2 to
 "retire the rAF marquee", which is now cancelled, and deleting the wrong one
 would remove a client-kept section. And the **drinks collage must stay last**,
 because the footer arc rises out of its charcoal band.
