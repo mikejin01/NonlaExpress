@@ -54,11 +54,15 @@
 	/* ---------- auto media marquee (kept from the Editorial template) ----------
 	   Not the same thing as the type marquee in section 6: that one is the
 	   original's giant "nón lá / express" band and gets pure-CSS tracks in C2.
-	   This is ours, it is a photo carousel with real controls, and it stays. */
+	   This is ours, it is a photo carousel with real controls, and it stays.
+	   FIVE dish cards since 2026-08-07 — the drinks-trio photo was removed on
+	   client direction. The track renders the set twice and wraps at
+	   scrollWidth/2, so one copy must stay wider than the viewport or the wrap
+	   shows a gap: at 25vw + 20px per card that holds down to 4 cards. Don't
+	   drop below that without re-checking. */
 	const mediaCards = [
 		{ src: `${IMG}/pho-special.jpg`, alt: 'Phở Special — rare beef, brisket, tendon, and tripe' },
 		{ src: `${IMG}/spring-roll.jpg`, alt: 'Crispy spring rolls with nuoc cham' },
-		{ src: `${IMG}/drinks-trio.jpg`, alt: 'Signature drinks — iced coffee, limeade, sugarcane juice' },
 		{ src: `${IMG}/vermicelli.jpg`, alt: 'Rice vermicelli bowl with fresh herbs' },
 		{ src: `${IMG}/wings.jpg`, alt: 'Lemongrass chicken wings' },
 		{ src: `${IMG}/shaking-beef.jpg`, alt: 'Shaking beef rice' }
