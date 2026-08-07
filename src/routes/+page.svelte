@@ -1,6 +1,35 @@
 <script>
+	/**
+	 * Homepage — the original nonlaexpress.com's spine (plan §1.3 / Phase C) with
+	 * FIVE of our own sections kept deliberately. Client direction 2026-08-07,
+	 * after Phase C first shipped as a near-faithful copy: the redesign should
+	 * adopt the original's structure WITHOUT throwing away what our build did
+	 * better. Plan §2.4 lists the five and says not to remove them again.
+	 *
+	 * SURFACES are as of plan §1.2d (the colour swap): the page ground is CREAM,
+	 * so a section with no .on-* class is cream and green is what you ask for.
+	 *
+	 *   1  video hero              OURS   ·  .on-media + curve w/ terracotta ring
+	 *   2  sliding dish cards      OURS   ·  rAF marquee w/ prev / next / pause
+	 *   3  intro: rooster · slideshow · h1 + buffalo, pig lower-left  (cream)
+	 *   4  statement hero + 3 phở cards   .on-green-deep + .on-cream cards
+	 *   5  lunch special           OURS   ·  cream-lift panel + rule
+	 *   6  feature: phở            OURS   ·  .on-green panel + photo
+	 *   7  feature: drinks         OURS   ·  charcoal panel + photo, reversed
+	 *   8  type marquee, two rows          (cream — black type, red animals)
+	 *   9  interior grid, 3×2
+	 *  10  find us                 OURS
+	 *  11  drinks collage                 .on-charcoal
+	 *   →  footer carries the newsletter + the arc (Footer.svelte)
+	 *
+	 * MOTION. The rAF card marquee and the scroll-arrow bob are the only moving
+	 * parts, and both already bail out under prefers-reduced-motion. Everything
+	 * Phase C2 adds (§1.5 M1–M6) must likewise leave the page correct with all
+	 * animation removed.
+	 */
 	import { base } from '$app/paths';
 	import { onMount } from 'svelte';
+	import Art from '$lib/site/Art.svelte';
 	import LunchSpecial from '$lib/site/LunchSpecial.svelte';
 	import {
 		IMG,
@@ -9,7 +38,10 @@
 		KITCHEN,
 		TAGLINE,
 		AN_NAO,
-		MISSION,
+		INTRO_SEO,
+		STATEMENT,
+		PHO_FAVORITES,
+		DRINKS_BLURB,
 		ADDRESS,
 		PHONE,
 		HOURS,
@@ -17,11 +49,13 @@
 		ORDER_URL,
 		DELIVERY_NOTE,
 		SOCIAL,
-		SEO_BLURB,
-		NEWSLETTER_PITCH
+		SEO_BLURB
 	} from '$lib/content.js';
 
-	/* ---------- auto media marquee (from the Editorial template) ---------- */
+	/* ---------- auto media marquee (kept from the Editorial template) ----------
+	   Not the same thing as the type marquee in section 8: that one is the
+	   original's giant "nón lá / express" band and gets pure-CSS tracks in C2.
+	   This is ours, it is a photo carousel with real controls, and it stays. */
 	const mediaCards = [
 		{ src: `${IMG}/pho-special.jpg`, alt: 'Phở Special — rare beef, brisket, tendon, and tripe' },
 		{ src: `${IMG}/spring-roll.jpg`, alt: 'Crispy spring rolls with nuoc cham' },
@@ -57,14 +91,28 @@
 		setTimeout(() => trackEl && (trackEl.style.transition = 'none'), 460);
 	}
 
-	/* ---------- newsletter ---------- */
-	let email = $state('');
-	let subscribed = $state(false);
-	function subscribe(e) {
-		e.preventDefault();
-		// TODO: wire to the chosen newsletter provider before launch (brief §5).
-		if (email.trim()) subscribed = true;
-	}
+	/* ---------- M6 intro slideshow ---------- */
+	const slides = [
+		{ src: `${IMG}/interior-dining-tall.jpg`, alt: 'The dining room at Nón Lá Express, Tangram Food Hall' },
+		{ src: `${IMG}/merch-stickers.jpg`, alt: 'Nón Lá Express zodiac-animal brand stickers' },
+		{ src: `${IMG}/pho-bowl-tall.jpg`, alt: 'A bowl of phở with Thai basil and bean sprouts' }
+	];
+	let slide = $state(0);
+	const move = (d) => (slide = (slide + d + slides.length) % slides.length);
+
+	/* Four repeats is enough to overflow the widest viewport; C2's duplicated
+	   track doubles it again. */
+	const MQ = [0, 1, 2, 3];
+
+	/* Six interiors, tight 3×2 masonry — the original's section 6. */
+	const interiors = [
+		{ src: `${IMG}/interior-entrance.jpg`, alt: 'The entrance to the Nón Lá Express stall' },
+		{ src: `${IMG}/interior-tables-tall.jpg`, alt: 'Tables and red banquette seating' },
+		{ src: `${IMG}/interior-murals-wide.jpg`, alt: 'Zodiac-animal murals along the dining wall' },
+		{ src: `${IMG}/interior-kiosk-tall.jpg`, alt: 'The ordering kiosk' },
+		{ src: `${IMG}/interior-hat-wide.jpg`, alt: 'Nón lá pendant lamps over the counter' },
+		{ src: `${IMG}/interior-drink-station.jpg`, alt: 'The drink station' }
+	];
 
 	onMount(() => {
 		const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -83,7 +131,10 @@
 </svelte:head>
 
 <main>
-	<!-- ============================== HERO ============================== -->
+	<!-- ============================== 1 · VIDEO HERO ==============================
+	     OURS, kept on client direction (plan §2.4). The page's real h1 is the SEO
+	     line in the intro below — same as the original, where the statement type
+	     is not the heading. So this headline is a <p>, not a second h1. -->
 	<section class="section hero">
 		<div class="hero-bg">
 			<!-- HEVC .mov first for Safari; H.264 .mp4 for browsers without HEVC decode -->
@@ -93,15 +144,18 @@
 			</video>
 			<div class="hero-overlay"></div>
 		</div>
-		<!-- crisp arc divider into the page bg — a shallow nón-lá curve instead of a gradient fade -->
+		<!-- crisp arc divider into the page bg — a shallow nón-lá curve instead of a
+		     gradient fade. The fill reads --surface so it always matches whatever
+		     the page ground is (cream since plan §1.2d); the hairline is the same
+		     terracotta ring the footer arc carries, deliberately, so the page
+		     opens and closes on the same shape in the same brand red. -->
 		<div class="hero-curve" aria-hidden="true">
 			<svg viewBox="0 0 1440 88" preserveAspectRatio="none">
-				<path d="M0,88 L0,60 Q720,-24 1440,60 L1440,88 Z" fill="var(--cream)" />
-				<path d="M0,60 Q720,-24 1440,60" fill="none" stroke="var(--green)" stroke-width="2.5" />
+				<path d="M0,88 L0,60 Q720,-24 1440,60 L1440,88 Z" fill="var(--surface)" />
+				<path d="M0,60 Q720,-24 1440,60" fill="none" stroke="var(--terracotta)" stroke-width="2.5" />
 			</svg>
 		</div>
 		<div class="container container--md text-center hero-content on-media">
-			<h1 class="sr-only">{BRAND} — {KITCHEN}, Tangram Food Hall, Flushing, Queens</h1>
 			<span class="eyebrow">Tangram Food Hall · Flushing, Queens</span>
 			<p class="display display-xl hero-title">{TAGLINE}</p>
 			<p class="hero-sub">
@@ -121,7 +175,8 @@
 	</section>
 
 	<div id="page-body">
-		<!-- ============================== MEDIA MARQUEE ============================== -->
+		<!-- ============================== 2 · SLIDING DISH CARDS ==============================
+		     OURS, kept on client direction (plan §2.4). -->
 		<section class="section padding-sm">
 			<div class="container container--fluid">
 				<div class="marquee" role="region" aria-label="Dishes from the menu">
@@ -146,27 +201,94 @@
 			</div>
 		</section>
 
-		<!-- ============================== LUNCH SPECIAL ============================== -->
-		<section class="section padding-sm">
+		<!-- ============================== 3 · INTRO ==============================
+		     Three columns, not two (plan §1.3 item 2 — the tall-capture reading was
+		     wrong). The animals overflow their columns and clip at the viewport;
+		     that bleed is the effect. They need no recolor, and on the cream page
+		     they get better for free: each is drawn as a cream body carrying its own
+		     terracotta line-work (plan §2.2), so the body vanishes into the ground
+		     and they read as the original's pure red line-art. -->
+		<section class="section intro">
+			<div class="container container--lg intro-grid">
+				<div class="intro-art intro-art--left">
+					<img class="animal animal--rooster" src="{base}/assets/art/rooster.svg" alt="" />
+					<img class="animal animal--pig" src="{base}/assets/art/pig.svg" alt="" />
+				</div>
+
+				<div class="intro-stage">
+					<div class="slideshow" role="group" aria-roledescription="carousel" aria-label="Inside Nón Lá Express">
+						<div class="slide-frame">
+							{#each slides as s, i}
+								<img
+									class="slide"
+									class:active={i === slide}
+									src={s.src}
+									alt={s.alt}
+									aria-hidden={i === slide ? undefined : 'true'}
+									loading="lazy"
+								/>
+							{/each}
+						</div>
+						<button class="slide-arrow prev" aria-label="Previous slide" onclick={() => move(-1)}>
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 4 L7 12 L15 20" /></svg>
+						</button>
+						<button class="slide-arrow next" aria-label="Next slide" onclick={() => move(1)}>
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4 L17 12 L9 20" /></svg>
+						</button>
+					</div>
+				</div>
+
+				<div class="intro-art intro-art--right">
+					<div class="intro-copy">
+						<h1 class="display intro-h1">{INTRO_SEO.h1}</h1>
+						<p class="intro-blurb">{INTRO_SEO.blurb}</p>
+					</div>
+					<img class="animal animal--buffalo" src="{base}/assets/art/buffalo.svg" alt="" />
+				</div>
+			</div>
+		</section>
+
+		<!-- ============================== 4 · STATEMENT + PHO CARDS ==============================
+		     The original's terracotta block, in --green-deep. The cards are cream
+		     panels sitting ON the band exactly as the originals sit on terracotta —
+		     and the dish cut-outs' own backdrop is #F1EAD7, one step off our cream,
+		     so they drop in with no visible seam (plan §2.2). -->
+		<section class="section statement on-green-deep">
+			<div class="container container--md text-center">
+				<h2 class="display display-hero statement-title">{STATEMENT.headline}</h2>
+				<p class="statement-body">{STATEMENT.body}</p>
+				<a class="tag-link" href={SOCIAL.instagram.url} target="_blank" rel="noopener">{STATEMENT.tag}</a>
+				<p class="favorites-caption">{PHO_FAVORITES.caption}</p>
+			</div>
+			<div class="container container--lg">
+				<div class="fav-row">
+					{#each PHO_FAVORITES.cards as card}
+						<figure class="fav">
+							<div class="fav-card on-cream">
+								<img src="{IMG}/{card.item.img}" alt={card.item.en} loading="lazy" />
+							</div>
+							<figcaption>
+								<h3 class="fav-name">{card.label}</h3>
+								<p class="fav-desc">{card.item.desc}</p>
+							</figcaption>
+						</figure>
+					{/each}
+				</div>
+			</div>
+		</section>
+
+		<!-- ============================== 5 · LUNCH SPECIAL ============================== -->
+		<section class="section padding-md">
 			<div class="container container--lg">
 				<LunchSpecial />
 			</div>
 		</section>
 
-		<!-- ============================== MISSION ============================== -->
-		<section class="section padding-md">
-			<div class="container container--md text-center">
-				<span class="eyebrow">Our Mission</span>
-				<h2 class="display display-md mission-line">“{MISSION}”</h2>
-				<p class="mission-body">
-					Born from a group of friends who love phở — and set out to make enjoying it on the go
-					possible without sacrificing quality or flavor.
-				</p>
-				<a class="btn btn-outline" href="{base}/company/">Our Story</a>
-			</div>
-		</section>
-
-		<!-- ============================== FEATURE: PHỞ ============================== -->
+		<!-- ============================== 6 · FEATURE: PHỞ ==============================
+		     OURS, kept on client direction (plan §2.4). The panel is GREEN since
+		     plan §1.2d: it was cream when the page was green, and a cream panel on
+		     a cream page is not a panel. Green here also gives the accent colour a
+		     block on the upper half of the page, balancing the deep-green footer. -->
 		<section class="section padding-sm">
 			<div class="container container--lg">
 				<div class="feature">
@@ -187,7 +309,10 @@
 			</div>
 		</section>
 
-		<!-- ============================== FEATURE: DRINKS ============================== -->
+		<!-- ============================== 7 · FEATURE: DRINKS ==============================
+		     OURS, kept on client direction (plan §2.4). This is the PRODUCT block
+		     ($6, order online); the charcoal collage at section 11 is the original's
+		     mood piece. They are five sections apart on purpose. -->
 		<section class="section padding-sm">
 			<div class="container container--lg">
 				<div class="feature feature--reverse">
@@ -207,7 +332,39 @@
 			</div>
 		</section>
 
-		<!-- ============================== FIND US ============================== -->
+		<!-- ============================== 8 · TYPE MARQUEE ==============================
+		     Two duplicated tracks; C2 animates them in opposite directions at 30.9s
+		     and 36.5s (§1.5 M1). Static they still read as the original's band. -->
+		<section class="section marquee-band" aria-hidden="true">
+			<div class="mq-row">
+				<div class="mq-track">
+					{#each MQ as n (n)}
+						<span class="script mq-word">nón lá</span>
+						<img class="mq-animal" src="{base}/assets/art/buffalo.svg" alt="" />
+					{/each}
+				</div>
+			</div>
+			<div class="mq-row">
+				<div class="mq-track mq-track--right">
+					{#each MQ as n (n)}
+						<span class="script mq-word">express</span>
+						<img class="mq-animal" src="{base}/assets/art/rooster.svg" alt="" />
+					{/each}
+				</div>
+			</div>
+		</section>
+		<h2 class="sr-only">Inside {BRAND}</h2>
+
+		<!-- ============================== 9 · INTERIOR GRID ============================== -->
+		<section class="section interiors">
+			<div class="interior-grid">
+				{#each interiors as p}
+					<img src={p.src} alt={p.alt} loading="lazy" />
+				{/each}
+			</div>
+		</section>
+
+		<!-- ============================== 10 · FIND US ============================== -->
 		<section class="section padding-md" id="find-us">
 			<div class="container container--lg">
 				<div class="info-row">
@@ -243,40 +400,40 @@
 			</div>
 		</section>
 
-		<!-- ============================== NEWSLETTER ============================== -->
-		<section class="section on-green padding-md" id="newsletter">
-			<div class="container container--md text-center">
-				<span class="eyebrow">Stay in Touch</span>
-				<h2 class="display display-md">Join our mailing list</h2>
-				<p class="newsletter-pitch">{NEWSLETTER_PITCH}</p>
-				<div class="mail-form">
-					{#if subscribed}
-						<p class="subscribed-msg">Thank you — you're on the list.</p>
-					{:else}
-						<form onsubmit={subscribe}>
-							<input
-								type="email"
-								bind:value={email}
-								placeholder="Email address"
-								required
-								aria-label="Email address"
-							/>
-							<button class="btn btn-outline subscribe-btn">Subscribe</button>
-						</form>
-					{/if}
+		<!-- ============================== 11 · DRINKS COLLAGE ==============================
+		     Charcoal against the green ground is a subtle step, so this one runs
+		     full-bleed with no rounding — the change of surface has to read on its
+		     own. Polaroids keep their static −8° / +9° even with motion off (§1.5 M3).
+		     It also has to stay LAST: the footer arc rises out of it. -->
+		<section class="section drinks on-charcoal">
+			<div class="container container--lg">
+				<h2 class="display display-hero drinks-title">{DRINKS_BLURB.headline}</h2>
+
+				<div class="drinks-collage">
+					<Art class="d-art d-phin" name="phin" width="clamp(90px, 11vw, 168px)" />
+					<Art class="d-art d-cup" name="cup" width="clamp(96px, 12vw, 180px)" />
+					<Art class="d-art d-beans" name="beans" width="clamp(52px, 6vw, 92px)" />
+					<Art class="d-art d-bean" name="bean" width="clamp(20px, 2.4vw, 36px)" />
+
+					<figure class="polaroid polaroid--a">
+						<img src="{IMG}/drinks-trio.jpg" alt="Sugarcane juice, Vietnamese iced coffee and salted limeade" loading="lazy" />
+					</figure>
+					<figure class="polaroid polaroid--b">
+						<img src="{IMG}/lifestyle-bw.jpg" alt="Friends sharing bowls of phở" loading="lazy" />
+					</figure>
 				</div>
-				<p class="consent">
-					By signing up, I agree to Nón Lá Express's
-					<a href="{base}/terms-and-conditions/">Terms</a> and
-					<a href="{base}/privacy-policy/">Privacy Policy</a>.
-				</p>
+
+				<div class="drinks-copy text-center">
+					<p>{DRINKS_BLURB.en}</p>
+					<p class="zh">{DRINKS_BLURB.zh}</p>
+				</div>
 			</div>
 		</section>
 	</div>
 </main>
 
 <style>
-	/* ---------- hero ---------- */
+	/* ================= 1 · video hero ================= */
 	.hero {
 		display: flex;
 		flex-direction: column;
@@ -393,7 +550,7 @@
 		}
 	}
 
-	/* ---------- media marquee ---------- */
+	/* ================= 2 · sliding dish cards ================= */
 	.marquee {
 		margin: 0 auto;
 		padding: 50px 0;
@@ -516,20 +673,244 @@
 		background: none;
 	}
 
-	/* ---------- mission ---------- */
-	.mission-line {
-		line-height: 1.25;
-		max-width: 30ch;
-		margin: 0 auto 1rem;
-		color: var(--accent); /* terracotta is display-size only — this is 24px+ */
+	/* ================= 3 · intro ================= */
+	.intro {
+		padding: calc(var(--u) * 3) 0 calc(var(--u) * 4);
 	}
-	.mission-body {
+	.intro-grid {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(280px, 30rem) minmax(0, 1fr);
+		align-items: start;
+		gap: clamp(1rem, 3vw, 3rem);
+	}
+	.intro-art {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		min-width: 0;
+	}
+	/* The bleed: the art is wider than its column and is allowed to run off the
+	   page edge, which .section's overflow:hidden clips. */
+	.animal {
+		display: block;
+		width: clamp(190px, 26vw, 360px);
+		height: auto;
+	}
+	.animal--rooster {
+		margin-left: -8%;
+	}
+	.animal--pig {
+		width: clamp(160px, 22vw, 310px);
+		margin: clamp(1rem, 3vw, 3rem) 0 0 -14%;
+	}
+	.animal--buffalo {
+		width: clamp(200px, 28vw, 390px);
+		margin: clamp(1.5rem, 4vw, 4rem) -10% 0 auto;
+	}
+	.intro-copy {
+		max-width: 34ch;
+		margin-left: auto;
+	}
+	/* The original sets this h1 small and coloured — it is the SEO line, not a
+	   statement headline. Red there; --accent-ink (= --sand, 7.2:1) here, since
+	   terracotta is 1.89:1 on the ground. */
+	/* The original sets this line in RED display type (plan §1.3 item 2), which
+	   is exactly the "terracotta draws" role — so it takes --warm rather than
+	   --accent-ink. The clamp FLOOR is 20px on purpose, not taste: terracotta
+	   is 3.88:1 on cream, which clears WCAG large text (3:1) but not normal
+	   text (4.5:1), and "large" needs >=18.66px at weight 700+. --fs-lead alone
+	   resolves to 18.4px at 540px and would drop this below the line. */
+	.intro-h1 {
+		font-size: clamp(1.25rem, 1rem + 0.45vw, 1.406rem);
+		line-height: 1.15;
+		color: var(--warm);
+		margin-bottom: 0.75rem;
+	}
+	.intro-blurb {
+		font-size: 1.0625rem;
+		line-height: 1.6;
 		color: var(--fg-muted);
-		max-width: 52ch;
-		margin: 0 auto 1.8rem;
+		margin: 0;
 	}
 
-	/* ---------- feature rows (green panel + photo) ---------- */
+	.intro-stage {
+		display: flex;
+		justify-content: center;
+	}
+	/* White frame, arrows on the long edges — the original's M6 carousel. */
+	.slideshow {
+		position: relative;
+		width: 100%;
+		max-width: 30rem;
+		background: #fff;
+		padding: 12px;
+		box-shadow: 0 18px 50px rgba(9, 26, 21, 0.35);
+	}
+	.slide-frame {
+		position: relative;
+		aspect-ratio: 467 / 584;
+		overflow: hidden;
+		background: var(--cream);
+	}
+	.slide {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		opacity: 0;
+		visibility: hidden;
+	}
+	.slide.active {
+		opacity: 1;
+		visibility: visible;
+	}
+	.slide-arrow {
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%);
+		width: 44px;
+		height: 44px;
+		display: grid;
+		place-items: center;
+		border: none;
+		border-radius: 50%;
+		background: #fff;
+		color: var(--ink);
+		cursor: pointer;
+		box-shadow: 0 4px 16px rgba(9, 26, 21, 0.28);
+		transition: background-color 0.4s ease;
+	}
+	.slide-arrow:hover {
+		background: var(--cream);
+	}
+	.slide-arrow svg {
+		width: 20px;
+		height: 20px;
+	}
+	.slide-arrow.prev {
+		left: -22px;
+	}
+	.slide-arrow.next {
+		right: -22px;
+	}
+	/* The frame reaches the container gutter below ~620px, so arrows that
+	   straddle its edge fall off the viewport. Move them inside the photo. */
+	@media (max-width: 620px) {
+		.slide-arrow.prev {
+			left: 18px;
+		}
+		.slide-arrow.next {
+			right: 18px;
+		}
+	}
+
+	@media (max-width: 991.98px) {
+		.intro-grid {
+			grid-template-columns: 1fr 1fr;
+		}
+		.intro-stage {
+			grid-column: 1 / -1;
+			order: 2;
+		}
+		.intro-art--right {
+			grid-column: 1 / -1;
+			order: 1;
+		}
+		.intro-art--left {
+			grid-column: 1 / -1;
+			order: 3;
+			flex-direction: row;
+			align-items: flex-end;
+			justify-content: space-between;
+		}
+		.intro-copy {
+			max-width: none;
+			margin: 0;
+			text-align: center;
+		}
+		.animal--buffalo {
+			margin: 1.2rem auto 0;
+		}
+		.animal--rooster,
+		.animal--pig {
+			margin: 1.4rem 0 0;
+		}
+	}
+
+	/* ================= 4 · statement + pho cards ================= */
+	.statement {
+		padding: calc(var(--u) * 6) 0 calc(var(--u) * 5);
+	}
+	.statement-title {
+		margin: 0 auto 1.6rem;
+		max-width: 14ch;
+	}
+	.statement-body {
+		font-size: var(--fs-body);
+		line-height: 1.5;
+		max-width: 46ch;
+		margin: 0 auto 1.4rem;
+		color: var(--fg-muted);
+	}
+	/* the original's #nonlaexpress line under the statement paragraph */
+	.tag-link {
+		display: inline-block;
+		font-family: var(--label);
+		font-weight: 700;
+		font-size: var(--fs-label);
+		letter-spacing: 0.14em;
+		color: var(--accent-ink);
+		text-decoration: underline;
+		text-underline-offset: 5px;
+	}
+	.favorites-caption {
+		margin: clamp(2.5rem, 5vw, 4.5rem) auto 0;
+		max-width: 46ch;
+		font-size: var(--fs-lead);
+		line-height: 1.5;
+		color: var(--fg-muted);
+	}
+	.fav-row {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: clamp(1.5rem, 3vw, 2.5rem);
+		margin-top: clamp(1.8rem, 4vw, 3rem);
+	}
+	@media (min-width: 768px) {
+		.fav-row {
+			grid-template-columns: repeat(3, 1fr);
+		}
+	}
+	.fav {
+		margin: 0;
+	}
+	.fav-card {
+		border-radius: 20px;
+		overflow: hidden;
+	}
+	.fav-card img {
+		display: block;
+		width: 100%;
+		aspect-ratio: 4 / 3;
+		object-fit: cover;
+	}
+	.fav-name {
+		font-family: var(--display);
+		font-weight: 900;
+		font-size: var(--fs-lg);
+		line-height: 1.1;
+		margin: 1.2rem 0 0.5rem;
+		color: var(--fg);
+	}
+	.fav-desc {
+		font-size: 1rem;
+		line-height: 1.6;
+		color: var(--fg-muted);
+		margin: 0;
+	}
+
+	/* ================= 6 & 7 · feature rows (panel + photo) ================= */
 	.feature {
 		display: grid;
 		grid-template-columns: 1fr;
@@ -591,7 +972,62 @@
 		transform: scale(1.04);
 	}
 
-	/* ---------- find us ---------- */
+	/* ================= 8 · type marquee ================= */
+	.marquee-band {
+		padding: clamp(1.5rem, 4vw, 3.5rem) 0;
+		overflow: hidden;
+	}
+	.mq-row {
+		display: flex;
+		width: max-content;
+	}
+	.mq-track {
+		display: flex;
+		align-items: center;
+		gap: 20px;
+		padding-right: 20px;
+	}
+	/* Row 2 starts shifted so the two rows never line up vertically — the
+	   original's rows also run at different phases (and, in C2, different
+	   directions and durations). */
+	.mq-track--right {
+		margin-left: -14vw;
+	}
+	.mq-word {
+		font-size: clamp(3.25rem, 16.4vw, 14.75rem); /* 236px @1440 (§1.5 M1) */
+		line-height: 1;
+		color: var(--fg);
+		white-space: nowrap;
+	}
+	.mq-animal {
+		display: block;
+		height: clamp(2.4rem, 8vw, 7rem);
+		width: auto;
+		flex: none;
+	}
+
+	/* ================= 9 · interiors ================= */
+	.interiors {
+		padding: 0;
+	}
+	.interior-grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 6px;
+	}
+	@media (max-width: 767.98px) {
+		.interior-grid {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+	.interior-grid img {
+		display: block;
+		width: 100%;
+		aspect-ratio: 3 / 2;
+		object-fit: cover;
+	}
+
+	/* ================= 10 · find us ================= */
 	.info-row {
 		display: grid;
 		grid-template-columns: 1fr;
@@ -629,66 +1065,100 @@
 		}
 	}
 
-	/* ---------- newsletter ---------- */
-	/* Green, flush against the green footer — the original carries this as a
-	   cream panel INSIDE the footer; Phase C merges the two. */
-	.newsletter-pitch {
-		color: var(--fg-muted);
-		margin-bottom: 1.6rem;
+	/* ================= 11 · drinks collage ================= */
+	.drinks {
+		padding: calc(var(--u) * 5) 0 calc(var(--u) * 6);
 	}
-	.mail-form {
-		max-width: 34rem;
-		margin: 0 auto;
+	/* 90% of the hero size, and this is the one place the measured scale bends.
+	   The original sets this at 157.5px and breaks it COOL DRINKS / WARM
+	   MEMORIES / IN EVERY SIP. — but that is TT Nooks, which is condensed.
+	   Playfair 900 needs 1432px for "WARM MEMORIES" at 157.5px against a
+	   1368px container, so it spills to four lines. Shaving 10% restores the
+	   original's three-line rhythm, which reads as the more faithful choice.
+	   Revisit if the TT Nooks license lands (plan §5 Q2). */
+	.drinks-title {
+		text-align: center;
+		font-size: calc(var(--fs-hero) * 0.9);
+		margin: 0 auto clamp(1rem, 3vw, 2.5rem);
 	}
-	.mail-form form {
+	.drinks-collage {
+		position: relative;
 		display: flex;
-		align-items: stretch;
-		gap: 12px;
+		align-items: center;
+		justify-content: center;
+		gap: clamp(0.5rem, 2vw, 2rem);
+		padding: clamp(1.5rem, 5vw, 4rem) 0;
+		min-height: clamp(240px, 34vw, 460px);
 	}
-	/* Cream field on the terracotta band — the original's newsletter panel is
-	   cream on terracotta at radius 16px (plan §1.3 item 8). */
-	.mail-form input {
-		flex: 1;
-		width: 100%;
-		outline: none;
-		background: var(--cream);
-		border: 1.5px solid var(--cream);
-		border-radius: 50px;
-		font-size: 1.0625rem;
-		color: var(--ink);
-		font-family: var(--body-font);
-		padding: 12px 22px;
-		transition:
-			border-color 0.4s ease,
-			box-shadow 0.2s ease;
+	.drinks-collage :global(.d-art) {
+		position: absolute;
+		pointer-events: none;
 	}
-	.mail-form input:focus {
-		border-color: var(--sand-2);
-		box-shadow: 0 0 0 3px rgba(244, 215, 160, 0.45);
+	.drinks-collage :global(.d-phin) {
+		left: 2%;
+		top: 8%;
 	}
-	.mail-form input::placeholder {
-		color: rgba(26, 22, 19, 0.55);
+	.drinks-collage :global(.d-cup) {
+		right: 2%;
+		top: 4%;
 	}
-	.subscribe-btn {
-		flex: none;
+	.drinks-collage :global(.d-beans) {
+		left: 16%;
+		bottom: 6%;
 	}
-	.subscribed-msg {
-		font-size: var(--fs-lead);
-		padding: 0.75rem;
-		margin: 0;
+	.drinks-collage :global(.d-bean) {
+		right: 17%;
+		bottom: 12%;
 	}
-	.consent {
-		margin-top: 1.4rem;
-		font-size: var(--fs-fine);
-		color: var(--fg-dim);
-	}
-	.consent a {
-		color: var(--fg);
-	}
-	@media (max-width: 575.98px) {
-		.mail-form form {
-			flex-direction: column;
-			align-items: stretch;
+	@media (max-width: 767.98px) {
+		.drinks-collage :global(.d-beans),
+		.drinks-collage :global(.d-bean) {
+			display: none;
 		}
+		.drinks-collage :global(.d-phin) {
+			top: auto;
+			bottom: 0;
+			left: 0;
+		}
+		.drinks-collage :global(.d-cup) {
+			top: auto;
+			bottom: 0;
+			right: 0;
+		}
+	}
+	/* Taped-polaroid tilt. These rotations are part of the look with motion off;
+	   C2 only adds the opposite-direction drift (§1.5 M3). */
+	.polaroid {
+		position: relative;
+		z-index: 1;
+		margin: 0;
+		flex: 0 1 clamp(150px, 21vw, 300px);
+		background: #fff;
+		padding: 10px 10px 34px;
+		box-shadow: 0 16px 42px rgba(0, 0, 0, 0.42);
+	}
+	.polaroid img {
+		display: block;
+		width: 100%;
+		aspect-ratio: 1 / 1;
+		object-fit: cover;
+	}
+	.polaroid--a {
+		transform: rotate(-8deg);
+	}
+	.polaroid--b {
+		transform: rotate(9deg);
+	}
+	.drinks-copy {
+		max-width: 52ch;
+		margin: clamp(1.5rem, 4vw, 3rem) auto 0;
+	}
+	.drinks-copy p {
+		font-size: 1.0625rem;
+		line-height: 1.75;
+		color: var(--fg-muted);
+	}
+	.drinks-copy p:last-child {
+		margin-bottom: 0;
 	}
 </style>

@@ -51,7 +51,7 @@
 
 				<div class="items" class:items--text={section.id === 'burgers'}>
 					{#each section.items as item}
-						<article class="item" class:item--text={!item.img}>
+						<article class="item on-cream" class:item--text={!item.img}>
 							{#if item.img}
 								<div class="item-media">
 									<img src="{IMG}/{item.img}" alt={item.en} loading="lazy" />
@@ -104,7 +104,7 @@
 	{/each}
 
 	<!-- ============================== ORDER CTA ============================== -->
-	<section class="section padding-md order-cta on-green">
+	<section class="section padding-md order-cta on-green-deep">
 		<div class="container container--md text-center">
 			<h2 class="display display-md">Hungry now?</h2>
 			<p class="order-note">Order ahead for pickup at Tangram, or find us on Grubhub and Seamless.</p>
@@ -165,6 +165,9 @@
 	.items--text {
 		grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 	}
+	/* Cream card on the green page — carries .on-cream so its whole ramp flips
+	   to ink. The dish names, 中文 captions and descriptions are the smallest
+	   sustained text on the site; they belong on cream, not on the ground. */
 	.item {
 		background: var(--cream-lift);
 		border: 1px solid var(--rule);
@@ -260,7 +263,7 @@
 		height: 13px;
 		border-radius: 50%;
 		display: inline-block;
-		border: 1px solid rgba(0, 0, 0, 0.25);
+		border: 1px solid var(--rule);
 	}
 	.sauce-zh {
 		font-size: 12.5px;

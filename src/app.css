@@ -3,15 +3,28 @@
 
    Design system: the original nonlaexpress.com's LAYOUT and typography
    (measured — see docs/redesign-plan.md §1.1/§1.2), carrying the BRAND's own
-   green rather than the original site's terracotta (client direction
-   2026-08-06, plan §1.2a):
-     · LIGHT cream page (#F0EAD6) with GREEN statement blocks, buttons and
-       footer, and a charcoal (#2D2926) drinks band. Terracotta/red is demoted
-       to a warm secondary accent — the folk-art SVGs are drawn in it and the
-       printed menu's numbered badges use it.
-     · A green-DOMINANT variant (wide green fields, per docs/Menu-1.png) was
-       built and rejected on 2026-08-06 — see plan §1.2b. Green is the ACCENT
-       here; keep cream the dominant surface.
+   colours. As of 2026-08-07 (plan §1.2d) that is a THREE-colour system on a
+   CREAM page — the client's "swap the colours" direction:
+     · CREAM page (#F0EAD6) with near-black ink — the ground, exactly as the
+       original site has it. Header, intro, marquee, interior grid, Find Us,
+       /menu, /press and the legal pages all sit straight on it.
+     · GREEN is the ACCENT — a three-step ladder, not one token:
+       --green (#1B6E52) accent text + button fills · --green-surface
+       (#17543E) green panels · --green-deep (#143F32) the two big brand bands
+       (statement hero, footer). Split by contrast headroom: only the deeper
+       two have room for a muted text ramp. Plan §2.1 has the numbers.
+     · TERRACOTTA (#D14124) is the THIRD colour, promoted 2026-08-07 from a
+       buried secondary to a real brand accent — it is the logo's own red.
+       THE RULE IS "GREEN SPEAKS, TERRACOTTA DRAWS": green carries text and
+       interaction; terracotta carries graphics — the logo mark on cream, the
+       folk-art line-work, numbered badges, price ovals, the footer arc's ring,
+       the hero curve's hairline, and display-size warm headings. It measures
+       3.88:1 on cream, so it can NEVER be small text there; --rust (#A94C23,
+       4.66:1) is the AA-safe small warm text, exposed as --warm-ink.
+     · Charcoal (#2D2926) still carries the two drinks moments.
+     · Two directions were tried and rejected before this one — plan §1.2b (a
+       mid-tone flat green field, no panels) and §1.2c (a deep green ground
+       with cream panels). Read both before proposing "more green" again.
      · Display voice = TT Nooks Bold on the original; Playfair Display 900
        stands in behind --display until the license lands (plan §5 Q2), so
        swapping the real face is a one-line change here.
@@ -22,68 +35,119 @@
    COLOR CONTRACT — read before adding a section.
    Never hard-code a text color. Every surface is painted by one of the
    .on-* context classes below, which re-point --fg / --fg-muted / --fg-dim /
-   --rule / --accent / --btn-* for everything inside it. Write
-   `color: var(--fg)` and the same markup reads correctly on cream, on
-   green, on terracotta, and on charcoal.
+   --rule / --accent / --accent-ink / --warm / --warm-ink / --mark / --btn-*
+   for everything inside it. Write `color: var(--fg)` and the same markup reads
+   correctly on cream, on green, on terracotta, and on charcoal. The DEFAULT
+   ramp (:root) is the CREAM page, so a section with no .on-* class is cream —
+   green is the one you have to ask for. (That default inverted twice in two
+   days; it was green from 2026-08-07 morning until this swap.)
    ===================================================================== */
 
 :root {
 	/* ---------- literal palette (plan §1.2) ---------- */
-	--cream: #f0ead6; /* dominant page background */
-	--cream-lift: #f7f2e3; /* cards/panels raised off the page */
+	--cream: #f0ead6; /* THE PAGE GROUND (:root default) — and the panel/card
+	   surface on the dark bands, which is how the original uses it too */
+	--cream-lift: #f7f2e3; /* panels raised off the cream page. On a cream
+	   ground this is a whisper, so anything using it also wants a --rule
+	   hairline to read as a card. */
 	--cream-bright: #fffdf8; /* TEXT cream, for the one surface that needs it:
 	   #F0EAD6 on terracotta is only 3.88:1 and white is the ceiling at 4.67:1.
 	   Green needs no such workaround (see --green), so only .on-terracotta
 	   uses this now. */
 
-	/* GREEN — the brand color, and the site's ACCENT/primary.
-	   --green is the load-bearing one: at 5.13:1 against cream it passes AA in
-	   BOTH directions, so a single token works as accent text ON cream AND as
-	   a surface carrying cream text. Terracotta could never do that (3.88:1
-	   either way) — which is why the terracotta scheme needed a near-white
-	   workaround and lost its muted ramp entirely. */
-	--green: #1b6e52; /* accent text on cream + button fills. The vivid end of
-	   the ramp, where vividness actually reads. 5.13:1 both directions. */
-	--green-surface: #17543e; /* LARGE blocks: footer, statement bands, promo.
-	   Deeper than --green on purpose — big fills want more weight, and at
-	   7.35:1 with cream this is the only green with room for a real muted
-	   ramp (--fg-muted lands at 6.1:1, --fg-dim at 5.2:1). */
+	/* GREEN — the brand color, and the site's ACCENT. A three-step ladder,
+	   deliberately not one token: each step is picked for the contrast headroom
+	   its job needs (measured numbers in plan §2.1). Don't collapse them.
+
+	     --green         #1B6E52  THE ACCENT — accent text on cream, button
+	                              fills, badges, price ovals. 5.13:1 against
+	                              BOTH cream and ink, so one token is accent
+	                              text on the page AND a fill carrying cream
+	                              text. This is the token the swap turns on.
+	     --green-surface #17543E  green panels on the cream page (feature rows,
+	                              promos). Cream 7.35:1; muted 6.1:1, dim 5.2:1.
+	     --green-deep    #143F32  the two big brand bands — statement hero and
+	                              footer — plus button hover. Cream 9.76:1, the
+	                              widest ramp we have, so fine print goes here. */
+	--green: #1b6e52;
+	--green-surface: #17543e;
+	--green-deep: #143f32;
 	--green-bright: #47927a; /* the client's vivid green — DECORATIVE FILLS
-	   ONLY. 3.08:1 on cream, so it must never carry or back small text. */
-	--green-deep: #143f32; /* pill hover + deepest accents */
+	   ONLY. 3.08:1 on cream, so it must never carry or back text there. */
 
-	--charcoal: #2d2926; /* drinks band */
-	--ink: #1a1613; /* near-black body text on cream */
+	--charcoal: #2d2926; /* drinks bands */
+	--ink: #1a1613; /* near-black body text on cream — 14.9:1 */
 
-	/* Warm SECONDARY accent. Kept, not deleted: the harvested folk-art SVGs
-	   are drawn in it and the printed menu numbers its dishes in red. */
+	/* THE THIRD COLOR (2026-08-07, plan §1.2d). Terracotta is the logo's own
+	   red and the colour the folk-art vectors are drawn in; it was a buried
+	   secondary until the client asked for it back as a real brand accent.
+	   It has NO contrast headroom on cream (3.88:1), which is why the rule is
+	   "green speaks, terracotta draws" — it is exposed as --warm for graphics
+	   and display-size type, and --rust is exposed as --warm-ink for the rare
+	   piece of small warm text (4.66:1). Never reach past those two tokens. */
 	--terracotta: #d14124;
 	--terracotta-deep: #b3341a;
-	--rust: #a94c23; /* the AA-safe small-text red on cream (4.7:1) */
+	--rust: #a94c23; /* the AA-safe small-text red on cream (4.66:1) */
 	--maroon: #501813;
-	--orange: #e57923;
-	--sand: #fae6c0;
+	--orange: #e57923; /* ≤2.9:1 against any white — decorative only, ever */
+	--sand: #fae6c0; /* the warm accent on DARK surfaces only. Invisible on
+	   cream (~1.1:1) — that is the trap this swap introduces. */
 	--sand-2: #f4d7a0;
 	--sand-3: #fccca7;
 
-	/* ---------- contextual ramp — defaults are the cream page ---------- */
+	/* ---------- contextual ramp — defaults are the CREAM page ----------
+	   Same values as .on-cream below; kept in sync deliberately so an element
+	   outside any section still reads correctly. */
 	--surface: var(--cream);
-	--fg: var(--ink);
-	--fg-muted: rgba(26, 22, 19, 0.72); /* 6.5:1 on cream */
-	--fg-dim: rgba(26, 22, 19, 0.62); /* 4.7:1 on cream — the AA floor */
+	--fg: var(--ink); /* 14.9:1 */
+	--fg-muted: rgba(26, 22, 19, 0.72); /* 6.5:1 */
+	--fg-dim: rgba(26, 22, 19, 0.62); /* 4.7:1 — the AA floor, don't go lower */
 	--rule: rgba(26, 22, 19, 0.18);
 	--accent: var(--green); /* display-size type + fills */
-	--accent-ink: var(--green); /* small accent text — same token: 5.13:1 */
+	--accent-ink: var(--green); /* small accent text — same token, 5.13:1 */
+	--warm: var(--terracotta); /* the third colour: GRAPHICS and display-size
+	   type only on this surface (3.88:1 — large text and fills pass, small
+	   text does not) */
+	--warm-ink: var(--rust); /* the third colour as small text — 4.66:1 */
+	--mark: var(--terracotta); /* the logo lockup's colour: red on cream, the
+	   way the brand actually draws it (see the client's logo) */
 	--btn-bg: var(--green);
 	--btn-bg-hover: var(--green-deep);
 	--btn-fg: var(--cream);
+
+	/* ---------- folk art (Phase B) ----------
+	   The color contract extended to illustration, so the same reasoning that
+	   keeps text readable keeps the art readable. Two tokens, because the
+	   harvested vectors are two-tone paper-cuts:
+
+	     --art-fill    the body / large shape
+	     --art-detail  the line-work or inner shape drawn on top of it
+
+	   Monochrome pieces ignore both and take `currentColor` instead, so set
+	   `color:` on them (usually --fg or --accent-ink). Which pieces are which is
+	   in the MANIFEST in scripts/svgclean.py; only <Art> can use these, since an
+	   <img src="…svg"> cannot see the page's custom properties at all.
+
+	   ON THE CREAM PAGE the pair is terracotta-on-cream, which is the third
+	   colour doing its main job — and it is also free for the six <img> pieces
+	   (pig / rooster / buffalo / the three dishes): each is drawn as a cream
+	   body carrying terracotta line-work, so on cream the body disappears and
+	   they read as pure red line-art, exactly as they do on the original site.
+	   On every DARK surface the pair inverts to cream-on-terracotta, which is
+	   the same drawing read the other way round, so the inlined art and the
+	   <img> animals stay one set. It also sidesteps terracotta's 1.89:1 against
+	   green: the red never sits on green, only on the cream body it comes with. */
+	--art-fill: var(--terracotta);
+	--art-detail: var(--cream);
 
 	/* ---------- type ---------- */
 	--display: 'Playfair Display', 'Times New Roman', serif;
 	--body-font: 'Maname', Georgia, serif;
 	--label: 'Overpass', 'Helvetica Neue', Arial, sans-serif;
 	--zh-font: 'Noto Serif SC', 'Songti SC', serif;
-	--logo-font: var(--display); /* interim — Phase B swaps in the real vector */
+	/* --logo-font is gone: the logo is no longer type. Phase B replaced the
+	   re-drawn wordmark with the brand's own vector lockups, which are art —
+	   see src/lib/site/Logo.svelte and plan §2.2. */
 
 	/* Scale from the original's measured px at 1440 (plan §1.1):
 	   157.5 · 105 · 36 · 24 · 22.5 · 18 · 14 · 12 */
@@ -103,22 +167,31 @@
 
 /* ---------- surface contexts ---------- */
 /* Each paints its own background + flips the whole foreground ramp. */
+
+/* THE PAGE, and the :root default — so most sections need no class at all.
+   Kept as an explicit class too, for cards and panels that must re-assert
+   cream inside one of the green bands (the phở favourites, the newsletter). */
 .on-cream {
 	--surface: var(--cream);
-	--fg: var(--ink);
-	--fg-muted: rgba(26, 22, 19, 0.72);
-	--fg-dim: rgba(26, 22, 19, 0.62);
+	--fg: var(--ink); /* 14.9:1 */
+	--fg-muted: rgba(26, 22, 19, 0.72); /* 6.5:1 */
+	--fg-dim: rgba(26, 22, 19, 0.62); /* 4.7:1 */
 	--rule: rgba(26, 22, 19, 0.18);
 	--accent: var(--green);
-	--accent-ink: var(--green);
+	--accent-ink: var(--green); /* 5.13:1 — the accent that carries text */
+	--warm: var(--terracotta); /* graphics + display type only, 3.88:1 */
+	--warm-ink: var(--rust); /* small warm text, 4.66:1 */
+	--mark: var(--terracotta);
 	--btn-bg: var(--green);
 	--btn-bg-hover: var(--green-deep);
 	--btn-fg: var(--cream);
+	--art-fill: var(--terracotta);
+	--art-detail: var(--cream);
 }
 
-/* PRIMARY dark surface — statement blocks, footer, promo panels.
-   Cream sits on --green-surface at 7.35:1, so unlike terracotta this surface
-   keeps a genuine muted ramp AND needs no near-white workaround. */
+/* Green panel on the cream page — feature rows, promos, anything that should
+   read as a block of brand colour rather than as the page. Cream sits on it at
+   7.35:1, so unlike the lift below it keeps a genuine muted ramp. */
 .on-green {
 	--surface: var(--green-surface);
 	--fg: var(--cream);
@@ -126,16 +199,71 @@
 	--fg-dim: rgba(240, 234, 214, 0.78); /* 5.2:1 */
 	--rule: rgba(240, 234, 214, 0.3);
 	--accent: var(--cream);
-	--accent-ink: var(--sand); /* warm label accent. NOT --sand-2: that
-	   measures only 4.2:1 on green and fails; --sand is 4.8:1. */
+	--accent-ink: var(--sand); /* warm label accent, 7.2:1. NOT --sand-2:
+	   that measures only 4.2:1 on green and fails; --sand is the safe one. */
+	--warm: var(--sand); /* terracotta is 1.89:1 on green and can never appear
+	   here as type — the warm slot resolves to sand on every dark surface */
+	--warm-ink: var(--sand);
+	--mark: var(--cream);
 	--btn-bg: var(--cream);
 	--btn-bg-hover: #fffbf0;
 	--btn-fg: var(--green-deep);
+	--art-fill: var(--cream);
+	--art-detail: var(--terracotta);
 }
 
-/* Warm secondary block. Terracotta has no contrast headroom (see
-   --cream-bright): near-white is only 4.6:1, so there is no room for a
-   muted/dim step. Hierarchy here comes from size and weight, never opacity. */
+/* The deepest band — the statement hero and the footer, the two places the
+   brand colour owns the full width. Cream sits on it at 9.76:1, the most
+   headroom on the site, so fine print (footer legal, disclaimers) belongs
+   here rather than on any lighter green. */
+.on-green-deep {
+	--surface: var(--green-deep);
+	--fg: var(--cream);
+	--fg-muted: rgba(240, 234, 214, 0.88); /* 7.9:1 */
+	--fg-dim: rgba(240, 234, 214, 0.72); /* 5.9:1 */
+	--rule: rgba(240, 234, 214, 0.26);
+	--accent: var(--cream);
+	--accent-ink: var(--sand); /* 9.6:1 */
+	--warm: var(--sand);
+	--warm-ink: var(--sand);
+	--mark: var(--cream);
+	--btn-bg: var(--cream);
+	--btn-bg-hover: #fffbf0;
+	--btn-fg: var(--green-deep);
+	--art-fill: var(--cream);
+	--art-detail: var(--terracotta);
+}
+
+/* Raised green panel — the vivid step, for a block that must read as brand
+   green rather than as a dark band. 5.13:1 exactly, so there is NO muted ramp
+   here: every level is full cream and hierarchy comes from size and weight.
+   Don't put fine print on it. */
+.on-green-lift {
+	--surface: var(--green);
+	--fg: var(--cream);
+	--fg-muted: var(--cream);
+	--fg-dim: var(--cream);
+	--rule: rgba(240, 234, 214, 0.34);
+	--accent: var(--cream);
+	--accent-ink: var(--cream);
+	--warm: var(--cream);
+	--warm-ink: var(--cream);
+	--mark: var(--cream);
+	--btn-bg: var(--cream);
+	--btn-bg-hover: #fffbf0;
+	--btn-fg: var(--green-deep);
+	--art-fill: var(--cream);
+	--art-detail: var(--terracotta);
+}
+
+/* The third colour as a full BLOCK. Nothing uses this today — the swap keeps
+   terracotta in the "draws" role (see the file header) rather than giving it a
+   band — but it stays defined and AA-correct because the statement hero is the
+   one section that could take it if the client wants more orange (the original
+   site runs exactly that block in this colour). Terracotta has no contrast
+   headroom (see --cream-bright): near-white is only 4.67:1, so there is no room
+   for a muted/dim step. Hierarchy here comes from size and weight, never
+   opacity, and dense small text does not belong on it. */
 .on-terracotta {
 	--surface: var(--terracotta);
 	--fg: var(--cream-bright);
@@ -144,9 +272,14 @@
 	--rule: rgba(255, 253, 248, 0.34);
 	--accent: var(--cream-bright);
 	--accent-ink: var(--cream-bright);
+	--warm: var(--cream-bright);
+	--warm-ink: var(--cream-bright);
+	--mark: var(--cream-bright);
 	--btn-bg: var(--cream);
 	--btn-bg-hover: #fffbf0;
 	--btn-fg: var(--rust); /* terracotta-on-cream is 3.88:1 — rust is 4.66:1 */
+	--art-fill: var(--cream-bright);
+	--art-detail: var(--terracotta);
 }
 
 .on-charcoal {
@@ -157,9 +290,14 @@
 	--rule: rgba(240, 234, 214, 0.26);
 	--accent: var(--sand);
 	--accent-ink: var(--sand);
+	--warm: var(--sand);
+	--warm-ink: var(--sand);
+	--mark: var(--cream);
 	--btn-bg: var(--cream);
 	--btn-bg-hover: #fffbf0;
 	--btn-fg: var(--charcoal);
+	--art-fill: var(--cream);
+	--art-detail: var(--terracotta);
 }
 
 /* Content sitting ON media (hero video, photo hero) — flips the ramp to
@@ -172,16 +310,23 @@
 	--rule: rgba(240, 234, 214, 0.3);
 	--accent: var(--sand);
 	--accent-ink: var(--sand);
+	--warm: var(--sand);
+	--warm-ink: var(--sand);
+	--mark: var(--cream);
 	--btn-bg: var(--cream);
 	--btn-bg-hover: #fffbf0;
 	--btn-fg: var(--green-deep);
 	color: var(--fg);
+	--art-fill: var(--cream);
+	--art-detail: var(--terracotta);
 }
 
 .on-cream,
 .on-terracotta,
 .on-charcoal,
-.on-green {
+.on-green,
+.on-green-deep,
+.on-green-lift {
 	background-color: var(--surface);
 	color: var(--fg);
 }
@@ -312,7 +457,7 @@ h4 {
 	text-transform: uppercase;
 }
 
-/* ---------- buttons: terracotta pill (plan §1.5 M5) ---------- */
+/* ---------- buttons: the pill (plan §1.5 M5) ---------- */
 .btn {
 	display: inline-block;
 	font-family: var(--label);
@@ -335,8 +480,8 @@ h4 {
 		color 0.4s ease;
 }
 
-/* Primary fill. Resolves per surface: terracotta on cream, cream on the
-   terracotta/charcoal bands — so one class is correct everywhere. */
+/* Primary fill. Resolves per surface: cream on the green ground and the dark
+   bands, green on a cream panel — so one class is correct everywhere. */
 .btn-primary {
 	color: var(--btn-fg);
 	background-color: var(--btn-bg);
@@ -449,6 +594,16 @@ h4 {
 .prose {
 	max-width: 46rem;
 	margin: 0 auto;
+}
+/* Long-form legal text runs on a cream panel rather than the green ground.
+   Ink on cream is 14.9:1 against 6.1:1 for muted cream on green — the gap
+   doesn't matter for a paragraph of marketing copy and matters a lot for
+   several screens of policy. Pair with .on-cream so the ramp flips too. */
+.prose-panel {
+	background: var(--cream-lift);
+	border: 1px solid var(--rule);
+	border-radius: 24px;
+	padding: clamp(1.6rem, 4vw, 3.2rem);
 }
 .prose h2 {
 	font-family: var(--label);

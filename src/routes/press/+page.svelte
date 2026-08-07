@@ -19,7 +19,7 @@
 		<div class="container container--md">
 			<div class="press-grid">
 				{#each PRESS as p}
-					<article class="press-card">
+					<article class="press-card on-cream">
 						<span class="press-date">{p.date}</span>
 						<h2 class="press-title">{p.title}</h2>
 						<p class="press-note">{p.note}</p>

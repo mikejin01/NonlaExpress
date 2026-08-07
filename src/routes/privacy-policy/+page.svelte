@@ -8,7 +8,7 @@
 </svelte:head>
 
 <main class="section padding-md legal-page">
-	<div class="container container--md prose">
+	<div class="container container--md prose prose-panel on-cream">
 		<h1 class="display display-lg">Privacy Policy</h1>
 		<p><em>Effective date: August 6, 2026</em></p>
 

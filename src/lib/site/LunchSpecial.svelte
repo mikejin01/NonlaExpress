@@ -4,7 +4,7 @@
 	import { LUNCH_SPECIAL as LS } from '$lib/content.js';
 </script>
 
-<div class="promo on-green">
+<div class="promo on-cream">
 	<div class="promo-copy">
 		<span class="window-badge">{LS.window}</span>
 		<h2 class="display display-lg promo-title">{LS.title}</h2>
@@ -28,16 +28,21 @@
 </div>
 
 <style>
-	/* Flat brand green, not the old orange-red gradient. Two reasons: the
-	   original site uses flat color everywhere (no gradients), and the
-	   gradient's #E57923 end measures 2.9:1 against any white — small text
-	   on it could never pass AA. */
+	/* The promo is the densest small text on the site (11.5px badge, bilingual
+	   step list, italic notes), so it keeps the ink-on-cream ramp at 14.9:1.
+	   Now that cream is also the PAGE (plan §1.2d) the panel has to lift off it
+	   rather than contrast with it: --cream-lift plus a --rule hairline, the
+	   same treatment the press/company/menu cards already use. Flat, never a
+	   gradient: the original uses flat color everywhere, and the old gradient's
+	   #E57923 end measured 2.9:1 against any white. */
 	.promo {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
 		gap: 2rem;
 		flex-wrap: wrap;
+		background: var(--cream-lift);
+		border: 1px solid var(--rule);
 		border-radius: 24px;
 		padding: clamp(2rem, 4vw, 3.5rem) clamp(1.5rem, 5vw, 4rem);
 	}
@@ -48,8 +53,9 @@
 		font-size: 11.5px;
 		letter-spacing: 0.18em;
 		text-transform: uppercase;
-		color: var(--green); /* 5.13:1 on cream — passes at this size */
-		background: var(--cream);
+		/* inverted now that the panel itself is cream: green fill, cream label */
+		color: var(--cream);
+		background: var(--green); /* 5.13:1 — passes at this size */
 		border-radius: 980px;
 		padding: 5px 14px;
 		margin-bottom: 0.9rem;
@@ -107,6 +113,7 @@
 		margin: 0 auto;
 	}
 	.price-oval.big {
+		color: var(--accent-ink); /* --green on the cream panel, 5.13:1 */
 		font-size: clamp(2.6rem, 5vw, 3.6rem);
 		border-width: 3px;
 		padding: 0.28em 0.5em 0.34em;

@@ -26,7 +26,12 @@ import json, sys, time, pathlib
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from cdp import Chrome
 
-OUT_TAG = "phaseA"  # bump per phase
+OUT_TAG = "swap"  # bump per phase — this dir is overwritten unconditionally,
+# so leaving it stale silently relabels the previous phase's captures as this
+# one's. (Phase A's cream captures survive only in git at a4bc657; the ones
+# now in screenshots/phaseA/ are the 2026-08-07 green-ground re-skin.
+# "swap" = the 2026-08-07 cream-ground / green-accent / terracotta-third
+# re-skin, plan §1.2d — not a phase, a palette direction.)
 REPO = pathlib.Path(__file__).resolve().parent.parent
 OUT = REPO / "docs/assets/original-site/screenshots" / OUT_TAG
 OUT.mkdir(parents=True, exist_ok=True)
@@ -43,6 +48,16 @@ AUDIT = r"""
   const ratio = (a,b) => { const L1=lum(a), L2=lum(b); const [h,l]=L1>L2?[L1,L2]:[L2,L1];
     return (h+.05)/(l+.05); };
   const parse = s => { const m = s.match(/[\d.]+/g); return m ? m.map(Number) : null; };
+  // custom properties come back as authored, so --surface is usually a hex
+  const parseColor = s => {
+    s = (s || '').trim();
+    if (s.startsWith('#')) {
+      const h = s.slice(1);
+      const x = h.length === 3 ? [...h].map(d => d+d) : h.match(/../g);
+      return x && x.length >= 3 ? x.slice(0,3).map(v => parseInt(v, 16)) : null;
+    }
+    return parse(s);
+  };
   const over = (fg, bg) => { // composite fg (may have alpha) onto opaque bg
     const a = fg.length > 3 ? fg[3] : 1;
     return [0,1,2].map(i => fg[i]*a + bg[i]*(1-a));
@@ -54,6 +69,24 @@ AUDIT = r"""
       const cs = getComputedStyle(n);
       const c = parse(cs.backgroundColor);
       if (c && (c.length < 4 || c[3] > 0)) return { bg: c.slice(0,3), onMedia };
+      // A section may DECLARE its surface without PAINTING it. The site footer
+      // is the live case: it is deliberately `background: transparent` because
+      // its 255vw .arc sibling paints the ground, and a square slab would
+      // destroy the dome (plan §2.3). Walking past it reads the page behind
+      // the hole — which was harmless while that page was green and became 18
+      // bogus 1:1 failures per route the moment the ground went cream.
+      // The colour contract guarantees every .on-* class sets --surface, so
+      // trust that declaration over the ancestor walk. Verified against the
+      // real paint stack: .arc sits directly under .footer-body and cream on
+      // it measures 9.76:1, not 1:1.
+      // .on-media is excluded on purpose — it paints nothing because a VIDEO
+      // is behind it, which no declared token can stand in for, so those stay
+      // flagged separately for the manual frame-sampling check.
+      if (n.classList && !n.classList.contains('on-media') &&
+          [...n.classList].some(k => k.startsWith('on-'))) {
+        const s = parseColor(cs.getPropertyValue('--surface'));
+        if (s && s.length >= 3) return { bg: s.slice(0,3), onMedia };
+      }
       n = n.parentElement;
     }
     return { bg: [255,255,255], onMedia };

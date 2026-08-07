@@ -42,7 +42,7 @@
 	</section>
 
 	<!-- ============================== MISSION ============================== -->
-	<section class="section padding-md mission-band on-green">
+	<section class="section padding-md mission-band on-green-deep">
 		<div class="container container--md text-center">
 			<span class="eyebrow">Our Mission</span>
 			<h2 class="display display-md mission-line">“{MISSION}”</h2>
@@ -55,7 +55,7 @@
 			<h2 class="display display-lg text-center values-title">What we stand by</h2>
 			<div class="values">
 				{#each VALUES as v}
-					<div class="value-card">
+					<div class="value-card on-cream">
 						<h3 class="value-title">{v.title}</h3>
 						<p class="value-body">{v.body}</p>
 					</div>
@@ -110,8 +110,8 @@
 		object-fit: cover;
 		filter: grayscale(1);
 	}
-	/* Flat charcoal scrim. The old rule faded to the page background, which
-	   was a dark-site trick — on cream it would have washed out the type. */
+	/* Flat charcoal scrim, not a fade to the page color — the hero sits over a
+	   grayscale photo and the type needs a constant floor under it. */
 	.story-hero-overlay {
 		position: absolute;
 		inset: 0;

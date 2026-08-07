@@ -10,63 +10,135 @@ reading it). Original-site assets harvested to docs/assets/original-site/
 (photos are already gitignored), including the real logo vectors (brief §6 logo
 question RESOLVED).
 
-**Phase A SHIPPED 2026-08-06** — the site is now cream/terracotta, not dark
-green (see "Design system" below). **Next: Phase B — brand assets**; then git
-init + push for Pages deploy. Open client questions are redesign-plan.md §5 (8
-of them; Q1 palette direction and Q2 TT Nooks license are the load-bearing
-ones).
+**Phase A SHIPPED 2026-08-06**, then re-skinned three times on palette
+direction. As of **2026-08-07 the site is a CREAM page with GREEN as the accent
+and TERRACOTTA as a third brand colour** (§1.2d, "the swap" — see "Design
+system" below). **Phase B SHIPPED 2026-08-07** — brand assets: the real
+logo vectors replace the interim hand-drawn mark, 16 harvested SVGs are
+optimized into themed art, and the photo set turned out to need nothing (plan
+§2.2). **Phase C SHIPPED 2026-08-07** (amended the same day, see below) — the
+homepage now runs the original's section order **around five sections of our
+own**: video hero · sliding dish cards · intro (three columns, folk animals
+bleeding off both edges, photo slideshow) · statement hero + three phở cards ·
+Lunch Special · feature phở · feature drinks · type marquee · interior grid ·
+Find Us · charcoal drinks collage · footer with the newsletter panel and **the
+arc** (plan §2.3). **Next: Phase C2 — the motion layer.**
 
-Two tools, both stdlib-only, both in `scripts/`:
+⚠️ **Read redesign-plan.md §2.4 before restructuring any page.** The first
+Phase C build reproduced the original too faithfully and deleted things our
+scaffold did better; the client asked for them back. **§2.4 is a keep list** —
+the video hero, the sliding dish carousel, the Lunch Special, the two feature
+rows and the Find Us strip stay, and get the redesign's surfaces and type
+rather than being removed. The brief is *the original's layout, typography and
+motion carrying the brand's own colour* — **not** "reproduce the original".
+
+Two live traps that follow from that: the **sliding dish carousel (section 2)
+is not the type marquee (section 8)** — an older line in the plan told C2 to
+"retire the rAF marquee", which is now cancelled, and deleting the wrong one
+would remove a client-kept section. And the **drinks collage must stay last**,
+because the footer arc rises out of its charcoal band.
+
+Motion today is just the rAF carousel and the scroll-arrow bob, both
+reduced-motion-guarded; C2 (plan §1.5 M1–M6) extends that pattern and nothing
+it adds may be load-bearing.
+
+Open client questions are redesign-plan.md §5 (8 of them). **Q4** (BLOG vs
+PRESS in the nav) is the only one still blocking anything shipped. **Q2** (TT
+Nooks license) now has a measured cost: Playfair 900 is ~9% wider than the real
+face, which already forced the drinks headline off the measured type scale
+(§2.3). **Q3** (hero video) is a design question again — the video is back as
+section 1, so its **33MB of a 37MB deploy** is load-bearing; the open part is
+whether a lighter rendition is acceptable.
+
+⚠️ **The live GitHub Pages site is stale** — it serves the pre-Phase-A
+scaffold, because the Phase A commits never triggered an Actions run. Don't use
+it to judge the design; see redesign-plan.md §7.
+
+Three tools, all stdlib-only, all in `scripts/`:
 - `verify.py` — **run after every phase.** Real WCAG audit (composites each
   element over its actual background) + webfont + overflow checks across all 7
-  routes at 1440 and 540. Needs `pnpm build && pnpm preview` first.
+  routes at 1440 and 540. Needs `pnpm build && pnpm preview` first. **Bump
+  `OUT_TAG` each phase** or it relabels the previous phase's captures.
 - `cdp.py` — Chrome DevTools driver. Use it for anything scroll-driven: a plain
   full-page `--screenshot` renders those effects in their end state and shows
   nothing. The original's motion system is measured in redesign-plan.md §1.5.
+- `svgclean.py` — regenerates the brand art from the harvest. **Don't hand-edit
+  anything in `src/lib/art/` or `static/assets/art/`** — edit the MANIFEST and
+  re-run. `--sheet` renders every asset on all four surfaces for eyeballing.
 
-## Design system (post-Phase A)
-We take the original site's **layout, typography and motion**, but run the
-**brand's own green** through it — not the original's terracotta (client
-direction 2026-08-06; redesign-plan.md §1.2a).
+Brand art is split on purpose: `src/lib/art/` is inlined by `Art.svelte` because
+`currentColor` and `var(--art-*)` are inert inside an `<img>`; `static/assets/art/`
+is for pieces that need no theming and shouldn't bloat the HTML. Plan §2.2.
 
-**Cream is the dominant surface; green is the ACCENT.** A green-dominant
-variant (wide green fields, copying `docs/Menu-1.png`) was built and rejected by
-the client — see §1.2b before proposing more green. Menu-1 is a good reference
-for type, price ovals, bilingual captions and photo treatment, not for how much
-of the page green should own.
+## Design system (current: §1.2d "the swap", 2026-08-07)
+We take the original site's **layout, typography and motion** and run **three
+brand colours** through it: a **CREAM page**, **GREEN as the accent**, and the
+brand's own **TERRACOTTA as a third colour**.
 
-Cream `#F0EAD6` page · `--green #1B6E52` primary accent (buttons, accent text) ·
-`--green-surface #17543E` the green blocks (footer, newsletter, feature panels,
-promo) · `--charcoal #2D2926` drinks band · terracotta/rust a **warm secondary**
-(the folk-art SVGs are drawn in it; the printed menu numbers dishes in it). Type:
-Playfair Display 900 (`--display`, standing in for TT Nooks) · Maname
-(`--body-font`) · Overpass (`--label`) · Noto Serif SC (中文).
+**The rule that makes three colours work: GREEN SPEAKS, TERRACOTTA DRAWS.**
+Green carries everything that is text or interaction — accent text, links,
+eyebrows, buttons, and the two full-width brand bands (statement hero, footer).
+Terracotta carries everything that is a *graphic* — the logo mark on cream, the
+folk-art line-work, numbered badges, price ovals, the footer arc's ring, the
+hero curve's hairline, and display-size warm headings. This follows from one
+measurement: terracotta is **3.88:1 on cream**, enough for large text and fills
+and not enough for body copy.
+
+⚠️ Two palette directions were built and rejected before this one. §1.2b was a
+**mid-tone flat green field** with no panels; §1.2c was a **deep green ground**
+with cream panels. Read both before proposing "more green" or "less green" —
+and note that a session half-remembering §1.2c will get every default backwards.
+
+Greens, split by contrast headroom — don't collapse them:
+`--green #1B6E52` (**the accent** — accent text, button fills, badges · 5.13:1
+against *both* cream and ink) · `--green-surface #17543E` (green panels ·
+7.35:1) · `--green-deep #143F32` (the statement band + footer · 9.76:1, so fine
+print goes here). Plus `--cream #F0EAD6` (**the page**, the `:root` default),
+`--terracotta #D14124` / `--rust #A94C23` (the third colour), and
+`--charcoal #2D2926` (both drinks moments). Type: Playfair Display 900
+(`--display`, standing in for TT Nooks) · Maname (`--body-font`) · Overpass
+(`--label`) · Noto Serif SC (中文).
 
 **Never hard-code a text color.** Sections carry `.on-cream` / `.on-green` /
-`.on-charcoal` / `.on-terracotta` / `.on-media`, which paint `--surface` and
-re-point `--fg` / `--fg-muted` / `--fg-dim` / `--rule` / `--accent` /
-`--accent-ink` / `--btn-*`. Write `color: var(--fg)` and it reads correctly on
-every surface. This contract is why three palette changes in one day were
+`.on-green-deep` / `.on-green-lift` / `.on-charcoal` / `.on-terracotta` /
+`.on-media`, which paint `--surface` and re-point `--fg` / `--fg-muted` /
+`--fg-dim` / `--rule` / `--accent` / `--accent-ink` / `--warm` / `--warm-ink` /
+`--mark` / `--btn-*`. Write `color: var(--fg)` and it reads correctly on every
+surface. This contract is why **four** palette directions in two days were
 token-level edits that touched no layout — keep it that way.
 
 Constraints that are easy to violate — full table in redesign-plan.md §2.1:
-- `--green` on cream is **5.13:1 — passes both ways**, so the same token is
-  accent text on cream AND a fill carrying cream text.
-- `--green` and `--green-surface` are split on purpose: only the deeper one has
-  headroom for a muted ramp (7.35:1). Don't collapse them.
-- The warm label accent on dark surfaces is `--sand #FAE6C0`. **Not `--sand-2`**
-  — it looks nearly identical but measures 4.21:1 on green and fails.
-- `--green-bright #47927A` (the client's vivid green) is **3.08:1** →
-  decorative fills only, never text and never behind text.
-- Terracotta is **3.88:1 both ways** → display sizes/fills only; `.on-terracotta`
-  has no muted ramp and uses `--cream-bright`. Small red accents use `--rust`.
+- **The `:root` default is cream.** A section with no `.on-*` class is cream;
+  **green is the one you have to ask for.** This inverted twice in two days and
+  is the most likely thing to trip up a new section.
+- **A `.on-cream` panel on the cream page is not a panel** — it needs
+  `--cream-lift` plus a `--rule` hairline (what press/company/menu cards and the
+  Lunch Special promo do). `.on-cream` itself is still correct on the green
+  bands, where it *is* the contrast.
+- **`--sand #FAE6C0` is invisible on cream (~1.1:1).** It is the warm accent for
+  DARK surfaces only; on cream use `--accent-ink` (green) or `--warm-ink`
+  (rust). Also never `--sand-2` on green — looks identical, measures 4.21:1.
+- **The third colour has two tokens, use them:** `--warm` for graphics and
+  display type, `--warm-ink` (rust, 4.66:1) for small text. Terracotta as text
+  needs **≥18.66px at weight 700+** to clear WCAG large text — the intro heading
+  carries a 20px clamp floor for exactly this reason.
+- `--green-bright #47927A` (the client's vivid green) is 3.08:1 on cream →
+  decorative fills only, never text or behind text.
+- `.on-terracotta` is **defined but deliberately unused** — it is the statement
+  hero's option if the client wants more orange. Don't sweep it as dead CSS.
 
 ## Client
 Nón Lá Express — fast-casual Vietnamese Kitchen, stall FH17 inside Tangram food
 hall, 133-33 39th Ave, Flushing NY. Existing Wix site nonlaexpress.com (replace;
 keep URLs for 301s). Styling reference: docs/Menu-1.png / Menu-2.png.
 
-## Build target (Phase 6)
+## Build target (Phase 6) — HISTORICAL
+⚠️ Everything below describes the original scaffold and is **superseded by
+"Design system" above** (fonts, palette and tokens all changed). Kept because
+the stack, the imagery inventory and the hero-video note are still accurate —
+and because the live Pages site is still serving exactly this. Don't take the
+color/font values here as current.
+
 Sora-Sushi-Web-Design-Template (SvelteKit, static, GitHub Pages), **Editorial**
 style re-skinned to brand green / cream #F2EBD9 / orange-red accent; fonts
 Fraunces Black · Montserrat Bold · Bitter · Noto Serif SC. Imagery in

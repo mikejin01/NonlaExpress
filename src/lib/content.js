@@ -54,6 +54,31 @@ export const SEO_BLURB =
 
 export const NEWSLETTER_PITCH = 'Sign up for exclusive promos, new menu drops, store openings, and more.';
 
+/* ============================== HOMEPAGE (Phase C) ==============================
+   Verbatim from the original nonlaexpress.com (plan §3). That site disappears at
+   DNS cutover, so the plan is the only remaining source — don't paraphrase these
+   without checking it. */
+
+// Intro section: the h1 is deliberately small on the original — it is an SEO
+// line, not a statement headline. The statement voice is STATEMENT below.
+export const INTRO_SEO = {
+	h1: 'Authentic Vietnamese Restaurant in Flushing, Queens',
+	blurb:
+		'Nón Lá Express serves fresh pho, Vietnamese noodle soups, rice dishes, and signature drinks in Flushing, Queens.'
+};
+
+export const STATEMENT = {
+	headline: 'NATURAL INGREDIENTS, FRESH TASTE.',
+	body: 'At Nón Lá Express, we bring fresh Vietnamese flavors to Flushing with warm bowls of pho, flavorful noodle dishes, rice dishes, and refreshing drinks. Our Vietnamese restaurant in Queens focuses on fresh ingredients, bold flavor, and convenient service.',
+	tag: '#nonlaexpress'
+};
+
+export const DRINKS_BLURB = {
+	headline: 'COOL DRINKS WARM MEMORIES IN EVERY SIP.',
+	en: 'Our drinks are crafted to cool you down and bring back warm, familiar moments. From bold Vietnamese coffee to sweet sugarcane juice and refreshing salted limeade, every sip is made to brighten your day and pair perfectly with our authentic Vietnamese food.',
+	zh: '我们的饮品为清凉而生，也为温暖回忆而来。从浓郁的越南咖啡，到清甜的甘蔗汁与清爽的咸柠水，每一口都让你感受轻松惬意，也与我们的地道越南美食完美搭配。'
+};
+
 /* ============================== MENU ============================== */
 
 export const LUNCH_SPECIAL = {
@@ -217,6 +242,21 @@ export const MENU = [
 		]
 	}
 ];
+
+/* The three cards under the statement hero. The original repeats a description
+   for each; ours RESOLVES against MENU instead of duplicating it (plan §3), so
+   a menu edit can never leave the homepage stale. `label` is the original's own
+   card title, which is not always the menu name — "PHỞ & SPICE" for Spicy Pho. */
+const NOODLES = MENU.find((s) => s.id === 'noodle').items;
+export const PHO_FAVORITES = {
+	caption:
+		'Explore popular pho favorites at Nón Lá Express, including rib eye pho, chicken pho, spicy pho, and Vietnamese noodle soup in Flushing, Queens.',
+	cards: [
+		{ label: 'RIB EYE PHỞ', item: NOODLES.find((i) => i.num === 2) },
+		{ label: 'CHICKEN PHỞ', item: NOODLES.find((i) => i.num === 1) },
+		{ label: 'PHỞ & SPICE', item: NOODLES.find((i) => i.num === 5) }
+	]
+};
 
 /* ============================== PRESS ============================== */
 // Outlets/links pending from client (brief §6 #17) — dates from the old site's press page.

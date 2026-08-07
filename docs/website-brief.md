@@ -140,7 +140,16 @@ Palette logic: green + cream two-tone does almost everything; orange-red is a *h
 | Logo wordmark "Nón Lá" | Hand-lettered brush — one-off lettering | n/a | use as image/SVG only, never font-substituted; "VIETNAMESE KITCHEN" subline ≈ Oswald if ever needed |
 
 ### Logo
-Nón lá (conical hat) line-art mark + hand-lettered wordmark; used cream-on-green, cream-on-orange, and on drink cups. **No vector found**: the Wix site's only logo file is a 48×48 favicon (saved as `docs/assets/logo-original.png`). **This is the one hard outstanding asset request** — until it arrives, re-draw the hat mark + wordmark as SVG from the menu images (cleanest reference: wordmark crop on the orange hero, Menu-1).
+Nón lá (conical hat) line-art mark + hand-lettered wordmark; used cream-on-green, cream-on-orange, and on drink cups.
+
+✅ **RESOLVED 2026-08-07 (redesign Phase B) — the real vectors were on the Wix site all along**, not as a downloadable file but as *inline SVG in the page markup*, which is why the media-library sweep that found only a 48×48 favicon missed them. Both lockups are now in the repo:
+
+| Lockup | File | Source |
+| --- | --- | --- |
+| Horizontal — mark + "NónLá EXPRESS" | `src/lib/art/logo-horizontal.svg` | home-06 |
+| Stacked — + "VIETNAMESE KITCHEN" + rules | `src/lib/art/logo-stacked.svg` | home-16 |
+
+Both are monochrome and carry `currentColor`, so they take the surface's `--fg` with no per-placement recoloring; `src/lib/site/Logo.svelte` renders them (`variant="h"` / `"v"`). `static/favicon.svg` is the hat cluster lifted from the horizontal lockup on a `--green-deep` tile. The interim hand-drawn hat is gone. No client asset request remains.
 
 ### Imagery & layout signatures
 - Professional food photography, top-down and ¾ shots on warm wood — strong enough to carry the hero. **High-res originals: obtained ✓** — 9 shoot originals (3000–5472px) pulled from the Wix media library into `docs/assets/`, plus 22 web-res (800px) menu-item shots.
@@ -167,9 +176,9 @@ Nón lá (conical hat) line-art mark + hand-lettered wordmark; used cream-on-gre
 
 Intake was closed by Mike on 2026-08-06 — these are **parked, non-blocking**. Confirm opportunistically (ideally before launch); the build proceeds on §7's assumptions meanwhile.
 
-**Source requests (only #2 is a hard need):**
+**Source requests — both hard needs are now closed; nothing here blocks launch:**
 1. ~~High-res food photography~~ — **resolved**: originals pulled from Wix media library into `docs/assets/`.
-2. **Logo vector files (.svg/.ai/.eps)** — nothing better than a 48px favicon exists online; ask the client or their menu designer. Fallback: re-draw from menu images.
+2. ~~**Logo vector files (.svg/.ai/.eps)**~~ — **RESOLVED 2026-08-07**, no client request needed. The real lockups were inline SVG in the Wix page markup (the media-library sweep only ever saw the 48px favicon). Harvested, optimized, and shipping — see §4 "Logo".
 3. Original menu files (Dropbox `Nonla_New_Menu_A/B.jpg`) — nice-to-have for exact color/font confirmation.
 4. Other marketing materials (flyers, Tangram signage, business cards).
 5. Wix account / domain access: who controls nonlaexpress.com DNS & registrar? **Needed at launch time for DNS cutover + 301s, not for the build.**
@@ -203,7 +212,7 @@ Mike's direction: all business info is provided; the two menu images are the sty
 5. **Language:** English site chrome; menu items carry the bilingual EN + 中文 + Viet captions exactly like the printed menu. Chinese blog posts preserved via redirects or a "blog archive" decision at launch.
 6. **CTA:** primary = Order Online → Snackpass link; secondary = directions to Tangram (FH17).
 7. **Imagery:** hero + menu photos from `docs/assets/` (9 high-res originals + 800px item shots). Never ship template demo media.
-8. **Logo:** re-draw hat mark + wordmark as SVG from menu-image crops until a client vector arrives (§6 #2).
+8. ~~**Logo:** re-draw hat mark + wordmark as SVG from menu-image crops until a client vector arrives.~~ **Superseded 2026-08-07** — the brand's own vector lockups are in the repo (§4 "Logo"); the re-drawn interim mark has been removed.
 9. **Pages & redirects:** structure per §5; map old Wix URLs (incl. the 12 `/post/…` blog URLs) to new equivalents at DNS cutover.
 
 **Next session starts here:** scaffold per Phase 6 of the intake guide — clone the template, keep Editorial, apply tokens above, build pages from §§1–5.

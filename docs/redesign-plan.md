@@ -102,7 +102,14 @@ variable):
 statement blocks; green appears only as an accent. Our scaffold was a DARK
 green-page site.
 
-### 1.2a Our palette — cream layout, BRAND green as ACCENT ✅ CURRENT
+### 1.2a Cream layout, BRAND green as ACCENT ⚠️ SUPERSEDED — but see §1.2d
+
+⚠️ **Read this one.** It was current for a day, was replaced by the green ground
+(§1.2c), and then **the client's 2026-08-07 "swap colors" direction brought this
+arrangement back** — cream page, green accent — with terracotta added as a third
+colour on top. **§1.2d is the current palette**; this section is where the
+reasoning for *why green rather than terracotta* was first written down, and all
+of it still holds.
 
 ⚠️ **§5 Q1 is answered, and the answer is a deliberate split from the original.**
 After seeing Phase A ship in the original's terracotta, the client asked to keep
@@ -135,13 +142,21 @@ carries cream text. Terracotta measures 3.88:1 either way and can do neither —
 it forced a near-white text hack and lost its muted ramp entirely. Green keeps a
 real `--fg-muted` / `--fg-dim` ramp. Full numbers in §2.1.
 
-### 1.2b ❌ REJECTED: the green-DOMINANT variant (built and reverted 2026-08-06)
+### 1.2b ❌ REJECTED: the printed-menu green-field variant (built and reverted 2026-08-06)
 
 **Do not rebuild this.** On "use more green, like `docs/Menu-1.png`" the whole
-site was flipped to the printed menu's proportions — wide flat green fields
-carrying the content, cream demoted to breathing room between them, and one warm
-red band for the Lunch Special. It was built, it passed the audit, and the
-client rejected it on sight. Green is an **accent on cream**, not the ground.
+site was flipped to the printed menu's proportions — wide flat **mid-tone**
+`#3B6E5F` fields carrying the content directly, cream demoted to breathing room
+between them, and one warm red band for the Lunch Special. It was built, it
+passed the audit, and it was rejected on sight.
+
+⚠️ **This is not the same thing as §1.2c**, and the difference is the whole
+lesson. What failed here was a *mid-tone field with content sitting straight on
+it and no panels* — a flat wall of saturated green. §1.2c is a **deep** ground
+(`#17543E`, a third darker) that behaves like a backdrop, with **cream panels**
+carrying every block of dense text. Same family, opposite effect: one competes
+with the content, the other sits behind it. Before proposing "more green" or
+"less green" again, check which of the two is meant.
 
 The research behind it is still good and is kept here so it never has to be
 redone. Sampled pixel-for-pixel from `docs/Menu-1.png`:
@@ -168,6 +183,144 @@ object where a saturated field reads as confident; a scrolling site turns the
 same field into an oppressive wall. The printed menu remains the right reference
 for *type, price ovals, bilingual captions and photo treatment* — but not for
 how much of the page the green should own.
+
+### 1.2c DEEP GREEN ground, cream panels ⚠️ SUPERSEDED 2026-08-07 by §1.2d
+
+⚠️ **Current for less than a day; the client then asked to swap the ground and
+the accent (see §1.2d, which is the current palette).** Keep reading this
+section anyway — the **three-step green ladder it introduced survives intact**,
+and so does every contrast number in it. What changed is only which of the two
+colours is the page and which is the accent, plus the promotion of terracotta
+to a third brand colour. Nothing here about *why the greens are split* is stale.
+
+**Direction:** keep every structural, typographic and motion decision from the
+redesign, but put the brand green back where the pre-redesign scaffold had it —
+**as the page ground** — instead of on a cream page. Prompted by comparing the
+live GitHub Pages build (still serving the pre-Phase-A dark-green scaffold, see
+§7) against local: the green ground was preferred.
+
+The rule that makes this work, and the thing §1.2b got wrong: **go deeper, and
+give dense text a cream panel.**
+
+| Token | Hex | Role | Cream on it |
+| --- | --- | --- | --- |
+| `--green-deep` | `#143F32` | bands that must separate from the page: header, newsletter, footer, CTA strips. Fine print lives here. | **9.76:1** |
+| `--green-surface` | `#17543E` | **THE PAGE GROUND** — the `:root` default, so a section with no class is green | **7.35:1** |
+| `--green` | `#1B6E52` | accents, button fills on cream panels, `.on-green-lift` raised panels | **5.13:1** |
+| `--green-bright` | `#47927A` | decorative fills only — 2.38:1 on the ground | ✗ |
+| `--cream` / `--cream-lift` | `#F0EAD6` / `#F7F2E3` | the type color on green **and** the panel surface | ink 14.9 / 16.1:1 |
+| `--charcoal` | `#2D2926` | drinks band, unchanged | 12.0:1 |
+| `--terracotta` / `--rust` | `#D14124` / `#A94C23` | warm secondary — **cannot be text on green** (1.89:1) | ✗ |
+| `--sand` | `#FAE6C0` | the warm label accent on every green surface | 7.2 / 9.6:1 |
+
+**Three greens, not one.** They are split by the contrast headroom each job
+needs, and collapsing them is what broke the first green attempt (§6, first
+green-accent entry): only `--green-deep` and `--green-surface` have room for a
+muted/dim ramp, so `.on-green-lift` runs full cream at every level and takes no
+fine print.
+
+**Cream is now the panel material.** Anything carrying dense small text gets
+`.on-cream`: menu item cards, the Lunch Special promo, company value cards,
+press cards, the pho feature panel, and legal prose (`.prose-panel`). That is
+what keeps a dark site readable and is exactly what §1.2b lacked. Cream also
+still carries the accent role *inside* those panels — `--green` at 5.13:1 is the
+accent text on them, which is why that token survives unchanged.
+
+**What did NOT change:** the type system, the type scale, all of §1.5's motion
+spec, the `.on-*` color contract, `--sand` over `--sand-2`, and every Phase
+B–F task. This was a token-and-surface-class change; no layout was touched.
+
+### 1.2d THE SWAP — cream ground, GREEN accent, TERRACOTTA third ✅ CURRENT (2026-08-07)
+
+**Client direction, verbatim:** *"swap colors… we will have the light beige
+colour as theme or background colour and use green colour as accent colour.
+Actually we should add a third colour which is their accent branding orange
+colour in their original site and logo."*
+
+So two changes, not one: the ground and the accent trade places (back to the
+§1.2a arrangement), **and terracotta is promoted** from a buried secondary that
+only ever showed up inside the folk art to a real, named third brand colour.
+
+| Token | Hex | Role | Notes |
+| --- | --- | --- | --- |
+| `--cream` | `#F0EAD6` | **THE PAGE GROUND** — the `:root` default | ink on it is 14.9:1 |
+| `--cream-lift` | `#F7F2E3` | panels raised off the page | a whisper on cream — **always pair with a `--rule` hairline** or the panel does not read |
+| `--green` | `#1B6E52` | **THE ACCENT** — accent text, button fills, badges, price ovals | 5.13:1 **both ways** |
+| `--green-surface` | `#17543E` | green panels on the cream page (the phở feature row) | cream 7.35:1, real muted ramp |
+| `--green-deep` | `#143F32` | the two full-width brand bands: **statement hero** and **footer** | cream 9.76:1 — fine print goes here |
+| `--terracotta` | `#D14124` | **THE THIRD COLOUR** | 3.88:1 on cream → **graphics and display type only** |
+| `--rust` | `#A94C23` | the third colour as small text | 4.66:1, exposed as `--warm-ink` |
+| `--charcoal` | `#2D2926` | the two drinks moments, unchanged | 12.0:1 |
+
+**The rule that makes three colours work: GREEN SPEAKS, TERRACOTTA DRAWS.**
+Green carries everything that is text or interaction — links, eyebrows, buttons,
+accent copy, the two dark bands. Terracotta carries everything that is a
+*graphic*: the logo mark on cream, the folk-art line-work, the numbered badges,
+the price ovals, the footer arc's ring, the hero curve's hairline, and
+display-size warm headings. Stated that way, terracotta is never asked for the
+contrast headroom it does not have, and the split is easy to apply to a new
+component without re-reading the contrast table.
+
+**Three new tokens carry it,** so no component hard-codes a red:
+
+| Token | On cream | On any dark surface | For |
+| --- | --- | --- | --- |
+| `--warm` | `--terracotta` | `--sand` | the third colour at **display size** or as a fill |
+| `--warm-ink` | `--rust` (4.66:1) | `--sand` | the third colour as **small text** |
+| `--mark` | `--terracotta` | `--cream` | the **logo lockup**, set once in `Logo.svelte` |
+
+`--mark` is why the navbar now reads as the client's actual logo — red on cream,
+exactly the artwork they sent — while the footer lockup stays cream on green,
+with neither call site hard-coding anything.
+
+**Three things the swap improved for free,** all of them consequences of the
+artwork rather than of new CSS:
+
+1. **The folk animals became the original's red line-art.** Each is drawn as a
+   cream body carrying terracotta line-work (§2.2). On the green ground the
+   body read as a cream paper-cut; on cream the body *disappears into the page*
+   and only the red line-work remains — which is precisely what the original
+   site shows. The type marquee gained the same thing: black type, red animals.
+2. **The dish cut-outs lost their seam.** Their backdrop is `#F1EAD7`, one step
+   off `--cream` (§2.2), so on the cream page they composite invisibly and no
+   longer need a panel to hide the rectangle.
+3. **The footer arc reads as a shape for the first time.** On green it was one
+   ladder step from the ground and needed the `--sand-3` hairline just to exist
+   (§2.3). On cream the dome separates on its own, so the ring is now a pure
+   brand line — and it is **terracotta**, echoing the original's red arc and
+   rhyming with the hero curve's hairline, so the page opens and closes on the
+   same shape in the same red.
+
+**What did NOT change:** the type system, the type scale, all of §1.5's motion
+spec, the `.on-*` colour contract, the three-step green ladder, `--sand` over
+`--sand-2`, and every Phase C2–F task. This was — for the fourth time — a
+token-and-surface-class change. Full scope: `app.css` tokens + surface classes,
+five one-line markup/CSS changes (navbar surface, logo colour, arc ring, hero
+curve, the phở panel), one promo panel given a lift treatment, and
+`theme-color`. **No layout and no component logic.**
+
+**Traps this specific direction introduces** — all of them are the §1.2c traps
+running the other way, so a session that half-remembers the green ground will
+get each of these backwards:
+
+- **The `:root` default is CREAM again.** A section with no `.on-*` class is
+  cream; **green is the one you have to ask for.** This has now inverted twice
+  in two days and is the single most likely thing to trip up a new section.
+- **`--sand` is invisible on cream (~1.1:1).** It was `--accent-ink` on the
+  default surface until this swap. Anything reaching for `var(--sand)` as text
+  outside a dark band is now unreadable — use `--accent-ink` or `--warm-ink`.
+- **A `.on-cream` panel on the cream page is not a panel.** Cards that paint
+  their own `--cream-lift` + `--rule` (press, company values, menu dishes, the
+  homepage fav-card) were already fine; the Lunch Special promo was not and had
+  to be given the same treatment. Check this before adding a card.
+- **Terracotta as text needs ≥18.66px at weight 700+** to clear WCAG large text
+  at 3:1. The intro's red heading has a **20px clamp floor for exactly this
+  reason** — `--fs-lead` alone resolves to 18.4px at 540px and would drop it
+  under the wire. Anything smaller must use `--warm-ink`.
+- **No section uses `.on-terracotta`.** It stays defined and AA-correct on
+  purpose: the statement hero is the one block that could take it if the client
+  wants more orange (the original runs exactly that block in this colour). Don't
+  delete it in Phase E's dead-CSS sweep without asking.
 
 ### 1.3 Page structure (original)
 
@@ -202,10 +355,15 @@ posts (法拉盛/Flushing pho keywords) + a couple EN. Feeds the footer band.
 
 ### 1.4 Harvested assets (in `docs/assets/original-site/`)
 
-- `svg/` — 34 inline SVGs pulled from the pages. Highlights:
+- `svg/` — 34 inline SVGs pulled from the pages. **All of these are now processed
+  by `scripts/svgclean.py` into `src/lib/art/` + `static/assets/art/` (Phase B);
+  the notes below describe the raw harvest.** Highlights:
   - **Real logo vectors**: `home-02`/`home-06`/`menu-18`/`company-23` (horizontal lockup), `home-16`/`menu-22` (stacked lockup + "VIETNAMESE KITCHEN"). → replaces our interim re-drawn logo AND resolves the parked "logo vector" question in the brief (§6).
   - Folk animals (red paper-cut, nón lá hats): `home-07` pig, `home-08` rooster, `home-09` buffalo/horse.
-  - Herb leaves: `home-03`/`menu-19` (red), `home-04`/`menu-20` (green); noodle squiggle `home-05`; lime+lemon `menu-21`.
+  - ⚠️ **Corrected Phase B:** `home-03`/`menu-19`/`company-24` is a **SHRIMP**, not
+    the "red herb leaf" this list called it for two sessions — see
+    `screenshots/svg-sheet.png`. `home-04`/`menu-20`/`company-25` is the herb
+    (cilantro sprig). Noodle squiggle `home-05`; lime+lemon `menu-21`.
   - Drinks art: cup `home-11`/`home-32`, phin `home-13`/`home-34`, bean `home-14`, bean cluster `home-12`/`home-33`.
   - Illustrated dishes (company page): `company-29` pho bowl, `company-30` plate, `company-31` spring rolls.
   - Misc UI (ignore): play button, music notes, arrows, hamburger/close glyphs.
@@ -316,20 +474,20 @@ the site's motion budget goes entirely into M1–M4 and M6. Don't add fade-ins.
 
 | # | Gap | Severity |
 | --- | --- | --- |
-| G1 | Palette: dark-green site vs a light site. **Resolved in Phase A** — cream layout + brand green (§1.2a), not the original's terracotta | big |
+| G1 | ~~Palette: dark-green site vs a light site~~ — **closed, re-opened and closed three times.** Phase A went cream-dominant (§1.2a); 2026-08-07 put green back as the ground (§1.2c); the client then swapped them again and added terracotta as a third colour (**§1.2d**, current). Net result: a light cream page like the original, in the brand's own green, with the original's red back as a real accent. | resolved |
 | G2 | Fonts: Fraunces/Montserrat/Bitter/Chewy vs **TT Nooks Bold (display) + Maname (everything else)** — see §1.1 | big |
-| G3 | Logo: interim redraw vs real vector (now harvested) | easy win |
-| G4 | Zero illustration language — original leans on folk-art SVGs everywhere | big |
-| G5 | Home structure: video hero + template sections vs intro/statement/cards/marquee/interiors/drinks | big |
+| G3 | ~~Logo: interim redraw vs real vector~~ — **CLOSED Phase B.** Both real lockups ship, `currentColor`-themed; favicon redrawn from the real mark. | resolved |
+| G4 | Zero illustration language — original leans on folk-art SVGs everywhere. Phase B shipped the assets; **Phase C placed the homepage set** (3 animals in the intro, 2 in the marquee, phin/cup/beans in the drinks collage). **Phase D/E still has to place the menu + company pieces** (lime, noodles, shrimp, herb, the three dish illustrations). | home done, D/E open |
+| G5 | ~~Home structure: video hero + template sections~~ — **CLOSED Phase C**, but *not* by wholesale replacement: the original's section order ships **around** five of our own sections, video hero included (**§2.4** — the keep list). | resolved |
 | G6 | Menu: dark w/ price ovals + text lists vs cream w/ cut-out dish photos, script headers, no prices | big |
 | G7 | Company: single column vs 50/50 split with story + media | medium |
-| G8 | Nav labels: MENU·ABOUT·PRESS·FIND US vs OUR MENU·OUR COMPANY·BLOG | small |
-| G9 | Newsletter: plain section vs cream panel on terracotta footer | small |
-| G10 | Marquee: our photo-card marquee vs giant type marquee w/ animals | medium |
-| G11 | No footer arc — the scroll-grown terracotta circle (M2) is the site's signature move | big |
-| G12 | No scroll parallax anywhere (M3/M4); our motion is one rAF photo marquee | medium |
-| G13 | Drinks collage: no tilted polaroids (−8°/+9°) or scattered illustration art | medium |
-| G14 | No intro slideshow (M6) — our intro is a full-bleed video hero instead | medium |
+| G8 | Nav labels: MENU·ABOUT·PRESS·FIND US vs OUR MENU·OUR COMPANY·BLOG | small — **blocked on §5 Q4**, everything else about the header shipped in Phase C |
+| G9 | ~~Newsletter: plain section vs cream panel on terracotta footer~~ — **CLOSED Phase C**, and it is now in the footer on every route. | resolved |
+| G10 | ~~Marquee: our photo-card marquee vs giant type marquee w/ animals~~ — **CLOSED Phase C, and it was never an either/or.** The type band ships (static; C2 animates) **and** the photo carousel stays as its own section (§2.4). | resolved |
+| G11 | ~~No footer arc~~ — **CLOSED Phase C**: the circle ships at full size with a `--sand-3` hairline; C2 adds only the scroll-scrub. | resolved |
+| G12 | No scroll parallax anywhere (M3/M4). The site's only motion is the rAF card carousel and the scroll-arrow bob, both reduced-motion-guarded. | medium — all of C2 |
+| G13 | ~~Drinks collage: no tilted polaroids or scattered illustration art~~ — **CLOSED Phase C**; the −8°/+9° tilts are static CSS, so they survive reduced motion. | resolved |
+| G14 | ~~No intro slideshow (M6)~~ — **CLOSED Phase C** for markup + arrows; auto-advance and the push transition are C2. | assets done, motion open |
 
 ---
 
@@ -353,64 +511,297 @@ Two variables carry the type system, so the TT Nooks decision never blocks work:
 
 **The color contract.** Never hard-code a text color again. Each section gets an
 `.on-*` class that paints `--surface` and re-points `--fg` / `--fg-muted` /
-`--fg-dim` / `--rule` / `--accent` / `--accent-ink` / `--btn-*`. Write
-`color: var(--fg)` and the same markup reads correctly on cream, terracotta and
-charcoal. `.on-media` flips the ramp without painting a background, for content
-over the hero video/photo.
+`--fg-dim` / `--rule` / `--accent` / `--accent-ink` / `--warm` / `--warm-ink` /
+`--mark` / `--btn-*`. Write `color: var(--fg)` and the same markup reads
+correctly on every surface. `.on-media` flips the ramp without painting a
+background, for content over the hero video/photo.
+
+The full set, after §1.2d: **`.on-cream`** (the page — also the `:root` default,
+so most sections need no class), **`.on-green`** (green panels),
+**`.on-green-deep`** (the statement band + the footer), `.on-green-lift`,
+`.on-charcoal`, `.on-terracotta` (defined, currently unused — see §1.2d),
+`.on-media`. Since the default is cream, **green is the one you have to ask
+for** — that inverted with §1.2c and inverted back with §1.2d, which makes it
+the single most likely thing to trip up a new section.
+
+This contract is why four palette directions in two days (terracotta → green
+accent → green ground → the swap) were each token-and-class edits that touched
+no layout and no component logic. Keep it that way.
 
 **Contrast facts this palette forces** (measured, not estimated). Consult this
-before picking any color:
+before picking any color. Rows marked ⬛ are the green set added 2026-08-07 with
+§1.2c; rows marked 🔶 are the third-colour set added with §1.2d. Note that the
+⬛ rows still apply — the greens did not change, only how much page they own:
 
 | Pair | Ratio | Consequence |
 | --- | --- | --- |
-| ink `#1A1613` on cream | 14.9:1 | body text on cream is unconstrained |
-| **`--green` `#1B6E52` on cream** | **5.13:1** | ✅ passes **both ways** — one token is the accent text on cream AND a fill carrying cream text. This is why green works where terracotta didn't. |
-| cream on `--green-surface` `#17543E` | 7.35:1 | the green blocks; room for a real ramp (`--fg-muted` 6.1:1, `--fg-dim` 5.2:1) |
-| `--sand` `#FAE6C0` on `--green-surface` | 7.0:1 | the warm label accent on green blocks |
+| ⬛ cream on `--green-deep` `#143F32` | **9.76:1** | the two full-width brand bands — statement hero, footer (+ newsletter panel's host). The most headroom on the site, so 12px legal copy belongs here (`--fg-muted` 7.9:1, `--fg-dim` 5.9:1) |
+| ⬛ cream on `--green-surface` `#17543E` | **7.35:1** | green **panels** on the cream page; room for a real ramp (`--fg-muted` 6.1:1, `--fg-dim` 5.2:1) |
+| ⬛ `--sand` `#FAE6C0` on ground / deep | 7.2 / 9.6:1 | the warm label accent on every green surface |
+| ⬛ cream on `--green` `#1B6E52` | 5.13:1 | `.on-green-lift` raised panels — passes, but with **no ramp left**: full cream at every level, no fine print |
+| ⬛ terracotta / orange on the green ground | **1.89 / 2.99:1** | ✗ the warm secondary can never be text on green — folk-art fills only. On cream it still works (below). |
+| ⬛ `--green-bright` on the green ground | **2.38:1** | ✗ decorative only here too |
+| 🔶 ink `#1A1613` on cream | **14.9:1** | **THE PAGE GROUND** since §1.2d; `--fg-muted` 6.5:1, `--fg-dim` 4.7:1 — the dim step is *at* the AA floor, so don't go lower |
+| 🔶 terracotta `#D14124` on cream | **3.88:1** | **the third colour.** Clears large text (3:1) at **≥18.66px / weight 700+**, fails normal text. Graphics, fills and display type only — this single number is the whole "green speaks, terracotta draws" rule |
+| 🔶 rust `#A94C23` on cream | **4.66:1** | `--warm-ink` — the third colour when it must be small text |
+| 🔶 `--sand` `#FAE6C0` on cream | **~1.1:1** | ✗ **invisible.** It was `--accent-ink` on the default surface before the swap; on the cream page it is a warm accent for DARK surfaces only |
+| ink `#1A1613` on `--cream-lift` | 16.1:1 | raised panels. On the cream page the lift itself is nearly invisible — pair with a `--rule` hairline |
+| **`--green` `#1B6E52` on cream** | **5.13:1** | ✅ passes **both ways** — one token is the accent text on a cream panel AND a fill carrying cream text. This is why green works where terracotta didn't. |
 | ~~`--sand-2` `#F4D7A0`~~ | **4.21:1 on lighter greens** | ✗ looks identical to `--sand` but fails — use `--sand` (§1.2b) |
 | `--green-bright` `#47927A` on cream | **3.08:1** | ✗ decorative fills only — never text, never behind text |
 | cream on charcoal | 12.0:1 | plenty of headroom; alpha ramp works |
-| terracotta on cream *(secondary)* | **3.88:1** | display sizes and fills only — never small text |
-| rust `#A94C23` on cream *(secondary)* | 4.66:1 | the AA-safe small red, if a red accent is wanted |
-| cream on terracotta *(secondary)* | **3.88:1** | ✗ — hence `--cream-bright` and **no muted ramp** on `.on-terracotta` |
+| cream on terracotta | **3.88:1** | ✗ — hence `--cream-bright` (4.67:1) and **no muted ramp** on `.on-terracotta` |
 | any white on orange `#E57923` | ≤2.9:1 | orange can never carry text — decorative only |
 
+(Terracotta-on-cream and rust-on-cream are the two 🔶 rows above; they were
+listed here as a demoted "secondary" before §1.2d made them the third colour.)
+
 Three consequences worth remembering:
-1. **`--green` and `--green-surface` are different on purpose.** Large fills get
-   the deeper one — partly because big blocks want more weight, but mainly
-   because only `#17543E` has the headroom for a muted ramp. Don't collapse them.
+1. **The three greens are different on purpose.** Bigger/darker areas get the
+   deeper token — partly because big blocks want more weight, but mainly because
+   only `#17543E` and `#143F32` have the headroom for a muted ramp. Don't
+   collapse them.
 2. **`--green-bright` is the client's vivid green and it cannot carry text.** It
    is for illustration and decorative shapes; reaching for it on a surface will
    fail the audit.
 3. The promo gradient was dropped for a flat fill — its orange end could never
    have passed, and the original uses flat color everywhere anyway.
+4. **The third colour's whole design follows from one number.** Terracotta is
+   3.88:1 on cream: enough for large text and fills, not enough for body copy.
+   Everything in §1.2d — `--warm` vs `--warm-ink`, "green speaks / terracotta
+   draws", the 20px clamp floor on the intro heading — is that one measurement
+   turned into rules you can apply without re-measuring.
+
+**`verify.py` had a blind spot that only cream exposed** (fixed 2026-08-07 with
+the swap). Its `bgOf()` walks *ancestors* for the first opaque background, but
+the site footer is deliberately `background: transparent` — its 255vw `.arc`
+sibling paints the ground (§2.3), and a square slab would destroy the dome. So
+the walk ran straight past the footer to the page behind it. That was harmless
+while the page was green (it happened to measure ~7:1 anyway) and became **18
+bogus 1:1 failures per route** the instant the ground went cream. The fix
+leans on the colour contract itself: if an element carries an `.on-*` class but
+paints no background, trust its declared `--surface`. `.on-media` is excluded on
+purpose — a *video* is behind it, which no token can stand in for, so those stay
+flagged for the manual frame-sampling check. Verified against the real paint
+stack (`elementsFromPoint` puts `.arc` directly under `.footer-body`; cream on it
+is **9.76:1**, not 1:1). **Generalisable: a checker that walks the DOM cannot see
+a sibling that paints — when a shape is the surface, tell the checker.**
 
 **Hero video scrim** is 0.55, chosen by sampling the actual video at 7
 timestamps: it leaves 0.17% of the pixels behind the hero text below 4.5:1,
 where 0.46 left 2.7% and 0.30 left 8.0%. If Phase C drops the video (§5 Q3),
 this goes with it.
 
-### Phase B — brand assets
-- [ ] Optimize + rename harvested SVGs into `static/assets/art/` with kebab names (`rooster.svg`, `pig.svg`, `buffalo.svg`, `herb-red.svg`, `herb-green.svg`, `noodles.svg`, `lime.svg`, `cup.svg`, `phin.svg`, `bean.svg`, `dish-pho.svg`, `dish-plate.svg`, `dish-rolls.svg`, `logo-horizontal.svg`, `logo-stacked.svg`). Strip Wix `data-*` attrs; run through svgo if available.
-- [ ] Replace `src/lib/site/Logo.svelte` + `static/favicon.svg` with the real vector lockups. (Chewy already left in Phase A — the interim wordmark rides `--display` until this lands.)
-- [ ] ⚠️ **`static/assets/images/` already holds 31 web-ready photos**, and `content.js` MENU items reference them by filename (`img: 'spring-roll.jpg'` etc.). Do **not** bulk-import the harvest over the top — diff first, add only what's genuinely new or better (the 18 cut-out dish shots on cream and the pho-trio cut-outs are the real gain), and **keep existing filenames stable** or update every `img:` field with them.
-- [ ] Web renditions of whatever survives that diff → `static/assets/images/` (max ~1600px, ~80% quality, SEO-ish filenames).
-- [ ] Originals stay out of git — `docs/assets/original-site/photos/` is **already in `.gitignore`** (added 2026-08-06, before any `git init`, so the 162MB never lands in history). Leave that line in place.
-- [ ] Decide the hero video's fate (§5 Q3): `static/assets/videos/` holds a 16MB `.mov` + 18MB `.mp4`. If the video is dropped everywhere, delete both — otherwise they ship 34MB of dead weight to Pages.
-- [ ] Update `docs/website-brief.md` §6: logo-vector question RESOLVED (harvested from Wix site).
-- Verify: favicon + navbar logo render at both sizes; page weight sane.
+### Phase B — brand assets ✅ DONE 2026-08-07
 
-### Phase C — homepage restructure (original section order)
-- [ ] Header: cream navbar, centered logo, nav labels OUR MENU · OUR COMPANY (§5 Q4 for BLOG/PRESS), **green** ORDER ONLINE pill.
-- [ ] Section 1: cream intro — three columns (§1.3 item 2): rooster bleeding off the left edge, **centred photo slideshow** (markup + arrows now; auto-advance in C2), buffalo bleeding off the right edge; red heading + blurb top-right (keep as a real `h1` for SEO); pig lower-left. Let the animals overflow their column and clip at the viewport — that bleed is the whole effect.
-- [ ] Section 2: **green** statement hero (`.on-green` — the original's terracotta block in brand color) — "NATURAL INGREDIENTS, FRESH TASTE." in `--display` at **~157.5px** (not Maname — §1.1) + Maname 24px paragraph + #nonlaexpress link (→ Instagram). Decide hero-video fate (§5 Q3): default = drop from home, reuse on /company right pane.
-- [ ] Section 3: pho favorites — 3 cream cards w/ cut-out pho photos + names/descriptions (data from `content.js`), sitting ON the green statement band as the originals sit on terracotta.
-- [ ] Section 4: type marquee — giant "nón lá ✦ express" in script + inline animal SVGs; **two rows, opposite directions** (§1.5 M1). Retire the rAF photo marquee in favour of the CSS duplicated-track version.
-- [ ] Section 5: interior grid (6 photos, tight masonry).
-- [ ] Section 6: charcoal drinks section — display headline, phin/cup/bean SVGs scattered, 2 polaroids at **−8° / +9°**, EN + 中文 paragraph. Note the bilingual drinks copy is **not** in `content.js` yet — add `DRINKS_BLURB { en, zh }` from §3.
-- [ ] Section 7: **green** footer (`.on-green`) w/ stacked logo, SEO paragraph, cream newsletter panel, link columns, address/phone/©, and the **arc circle** behind it (§1.5 M2 — build the circle div now, wire the scroll-scrub in C2; the arc is `--green-surface`, not `#D14124`). (Footer is shared — this restyles `Footer.svelte` site-wide.)
-- [ ] Keep, restyled as cream/green bands: Lunch Special panel (real promo the original lacks) and a slim Find Us strip (address/hours/map link) — original buries this in footer; ours earns its keep. Cut: old mission/feature sections (absorbed above). **Keep cream the dominant surface** — §1.2b. (real promo the original lacks) and a slim Find Us strip (address/hours/map link) — original buries this in footer; ours earns its keep. Cut: old mission/feature sections (absorbed above).
-- Verify: full-page + 540px captures vs `screenshots/orig-home-full.png` side by side.
+- [x] Optimize + rename harvested SVGs with kebab names. → **`scripts/svgclean.py`**, stdlib-only (svgo isn't installed and isn't needed). 16 assets, 288KB → 263KB. Names as planned except **`shrimp.svg`** (the file the plan called `herb-red` is a shrimp) and **`beans.svg`** for the cluster. See §2.2 for what the script does beyond minifying — the Wix color resolution is the part that matters.
+- [x] Replace `src/lib/site/Logo.svelte` + `static/favicon.svg` with the real vector lockups. → Logo.svelte is now a thin wrapper over `<Art>`; the hand-drawn hat and all its CSS are gone, as is `--logo-font`'s reason to exist. Favicon is the hat cluster (paths 12-14 of the horizontal lockup) on a `--green-deep` tile.
+- [x] ⚠️ Diff the harvest against the 31 existing photos rather than bulk-importing. → Done by perceptual hash, and **the answer inverts the plan's assumption: there is nothing to import.** All 31 existing files already *are* these photographs (dHash distance ≤4 on every one), including the 18 cut-out dish shots and the pho cut-outs this bullet expected to gain. The harvest's 32nd file is a byte-identical rename of another. **No filenames changed, no `content.js` edits needed.** Numbers in §2.2.
+- [x] Web renditions (max ~1600px, ~80% quality). → Already satisfied, with two exceptions that broke the rule: `interior-hat-wide.jpg` and `interior-murals-wide.jpg` were 2560px/~660KB each. Resampled to 1600px q82 — **4.3MB → 3.6MB**, filenames unchanged.
+- [x] Originals stay out of git — `.gitignore` line left in place, verified still effective.
+- [ ] ⚠️ **Hero video: NOT decided — this is client question §5 Q3 and it is now the single biggest thing in the deploy.** Measured, not estimated: `build/` is **38MB, of which 33MB (87%) is the two hero videos**. They are tracked in git and still wired into the homepage hero (`+page.svelte:89-92`), so deleting them would break the page and pre-empt Q3. Left in place deliberately. Phase C re-decides the hero anyway; note `/company` already has its own 7.6MB kitchen video harvested, so the hero pair may be redundant rather than merely oversized.
+- [x] Update `docs/website-brief.md` §6: logo-vector question RESOLVED. → Updated in three places (§4 Logo, §6 #2, §7 assumption 8). The brief said "no vector found" because the media-library sweep only saw the 48px favicon — **the real lockups were inline SVG in the page markup all along.**
+- [x] Verify: favicon + navbar logo render at both sizes; page weight sane. → `verify.py` (now `OUT_TAG="phaseB"`): **0 contrast failures across 7 routes × 2 widths, no horizontal scroll.** Logo confirmed rendering cream-on-green in navbar and footer at 1440 and 540.
+
+#### 2.2 What Phase B actually shipped (read before Phase C/D)
+
+**`scripts/svgclean.py` is not a minifier**, and the two things it does instead
+are both load-bearing:
+
+1. **It resolves Wix's color overrides.** The harvested files' inline `fill=`
+   attributes are *not* what the live site showed. Wix ships a scoped
+   stylesheet (`#comp-… svg [data-color="1"] {fill:#D14124}`) whose selector
+   needs a page ancestor that a harvested file doesn't have — so the raw file
+   renders its **source-art** colors. That is why `svg-sheet.png` shows a teal
+   drink cup that was terracotta on the real site, and why the herb reads
+   `#00b48c` rather than the `#53B28F` it actually displayed. The script folds
+   those rules in *before* remapping to our tokens.
+2. **Its path rounding is command-aware, and has a self-check.** An elliptical
+   arc's two flags are single characters that are legally written with no
+   separator (`a5 5 0 015 5`); a plain number regex reads `015` as one number,
+   eats both flags and shifts every later argument. This silently turned the
+   three `/company` dish illustrations into solid brown blobs. `path_signature()`
+   now fingerprints each path's command/argument structure before and after
+   rounding and aborts on any change — **if you touch the rounding, that guard
+   is what tells you it broke.**
+
+**Where the art lives, and why it's split.** The plan said
+`static/assets/art/`; it ended up in two places for a reason:
+
+| | Contents | Why |
+| --- | --- | --- |
+| `src/lib/art/` (10) | logo ×2, shrimp, herb, noodles, bean, beans, cup, phin, lime | Carry `currentColor` / `var(--art-*)`, which are **inert inside `<img src>`**. Inlined by `Art.svelte` so illustration obeys the color contract. 41KB total. |
+| `static/assets/art/` (6) | pig, rooster, buffalo, dish-pho, dish-plate, dish-rolls | Need no theming; 20-63KB each. Served as files so ~230KB stays out of the HTML. |
+
+**The folk-art recolor question (Phase C §1) is ANSWERED, and the artwork
+answered it.** Each animal's path 0 is a single large **cream silhouette of the
+whole body**, with 45-49 terracotta detail paths on top. On the original's cream
+page that base is invisible, so it reads as red line-art; on a green ground the
+same file reads as a **cream paper-cut with red line-work**. Either way
+terracotta is never asked to sit on green (its 1.89:1 problem) — it only ever
+sits on the cream body it ships with. **No recoloring, no cream panel needed.**
+Verified on all four surfaces in `screenshots/art-sheet.html`. ✅ **Since the
+§1.2d swap our page is cream too, so the animals now read as the original's pure
+red line-art** — the same files, no change, one of three things the swap
+improved for free (§1.2d).
+
+**New tokens: `--art-fill` (body) and `--art-detail` (line-work),** set by every
+`.on-*` class. Dark surfaces get cream-on-terracotta — deliberately the same
+pairing the animals are drawn in, so the inlined art and the `<img>` animals
+read as one set. `.on-cream` inverts them. Monochrome pieces ignore both and
+take `currentColor`, so set `color:` on them (usually `--fg` or `--accent-ink`).
+
+**Two facts Phase C/D will want:**
+
+- **The dish cut-outs' background is `#F1EAD7`** — one step off our `--cream`
+  `#F0EAD6`, i.e. visually identical. ✅ **Since the §1.2d swap the page itself
+  is cream, so they composite invisibly anywhere and need neither a panel nor a
+  mask** — exactly as the original does it. (Under §1.2c's green ground they
+  showed a cream rectangle and had to be panelled; that constraint is gone.)
+- **The existing photo set is already the right one.** 18 cut-out dishes on
+  cream, 7 pho-bowl cut-outs, 7 interiors, drinks, stickers, a b/w lifestyle
+  shot. Re-encoding from the harvest was measured and rejected: same pixel
+  dimensions, PSNR 32-40dB, and the difference is invisible at display size
+  while costing ~1-2MB. A contact sheet of all 31 is worth regenerating from
+  the snippet in the session log if you need to pick images.
+
+### Phase C — homepage restructure (original section order) ✅ DONE 2026-08-07
+
+⚠️ **This checklist records what Phase C shipped and the surface names in it are
+from §1.2c (the green ground). It is HISTORY — the shipped surfaces changed with
+the §1.2d swap and the current mapping is the table in §2.3.** Read it for
+*what* each section is and why; read §2.3 for what colour it is now. The
+structure is unchanged; only the colours moved.
+
+- [x] Header: `.on-green-deep` navbar, centered logo, nav labels OUR MENU · OUR COMPANY (§5 Q4 for BLOG/PRESS), **cream** ORDER ONLINE pill (`--btn-bg` resolves to cream on green — don't hard-code it). → Three-zone CSS grid (`1fr auto 1fr`) so the mark is centred **on the page**, not merely between its neighbours; the hamburger moved into the left zone to make that work. Labels unchanged pending Q4.
+- [x] Section 1: intro on the green ground — three columns (§1.3 item 2): rooster bleeding off the left edge, **centred photo slideshow** (markup + arrows now; auto-advance in C2), buffalo bleeding off the right edge; heading + blurb top-right (keep as a real `h1` for SEO); pig lower-left. Let the animals overflow their column and clip at the viewport — that bleed is the whole effect. ✅ **The recolor worry is resolved — do nothing.** Each animal is drawn as a cream body carrying its own terracotta line-work, so it reads on the green ground as-is; the red never touches the green. Use `<img src="{base}/assets/art/rooster.svg">` etc. (they are files, not `<Art>` — see §2.2).
+- [x] Section 2: statement hero on `.on-green-deep` — "NATURAL INGREDIENTS, FRESH TASTE." in `--display` at **~157.5px** (not Maname — §1.1) + Maname 24px paragraph + #nonlaexpress link (→ Instagram). Decide hero-video fate (§5 Q3): default = drop from home, reuse on /company right pane. → ⚠️ **Reversed the same day.** It was dropped per that default, then **restored by client direction** along with the sliding cards and the feature rows — the video hero is now section 1 and the statement hero is section 4. See **§2.4**; Q3 is a live design question again.
+- [x] Section 3: pho favorites — 3 `.on-cream` cards w/ cut-out pho photos + names/descriptions (data from `content.js`), sitting ON the deep-green statement band exactly as the originals sit on terracotta. → `PHO_FAVORITES` **resolves against `MENU`** instead of restating the descriptions, so a menu edit can't leave the homepage stale.
+- [x] Section 4: type marquee — giant "nón lá ✦ express" in script + animal SVGs; **two rows, opposite directions** (§1.5 M1). ~~Retire the rAF photo marquee in favour of the CSS duplicated-track version.~~ On the green ground the type is cream; the animals need no recolor (§2.2). → Tracks and type in place. ⚠️ **The "retire the rAF marquee" instruction is CANCELLED** — the photo marquee is a separate, client-kept section (§2.4). The two coexist: this type band is section 8 and gets CSS keyframes in C2; the photo carousel is section 2 and keeps its rAF loop and its controls.
+- [x] Section 5: interior grid (6 photos, tight masonry).
+- [x] Section 6: charcoal drinks section — display headline, phin/cup/bean SVGs scattered, 2 polaroids at **−8° / +9°**, EN + 中文 paragraph. Note the bilingual drinks copy is **not** in `content.js` yet — add `DRINKS_BLURB { en, zh }` from §3. Charcoal against the green ground is a subtle step — give it a full-bleed edge so the change of surface reads. → Done; the headline needed a 10% type shave to keep the original's three-line break (§2.3).
+- [x] Section 7: `.on-green-deep` footer w/ stacked logo, SEO paragraph, cream newsletter panel, link columns, address/phone/©, and the **arc circle** behind it (§1.5 M2 — build the circle div now, wire the scroll-scrub in C2; the arc is `--green-deep` rising out of the ground, not `#D14124`. It needs to be visible against `--green-surface`: if the two read as one, use `--green` for the arc instead and keep the footer deep). (Footer is shared — this restyles `Footer.svelte` site-wide.) → Built a third way: keep the same green and add a **`--sand-3` hairline**, which is what actually makes the dome read. The newsletter moved out of the homepage into the footer, so it is now on every route. §2.3.
+- [x] Keep, restyled: Lunch Special panel (a real promo the original lacks — currently `.on-cream`, and it should stay a panel: it holds the densest small text on the site) and a slim Find Us strip (address/hours/map link) — the original buries this in the footer; ours earns its keep. Cut: old mission/feature sections (absorbed above). **Green is the ground, cream is for panels** — §1.2c, and see §1.2b for the version that got this wrong. → Find Us sits **before** the drinks band, so charcoal still lands directly on the footer as it does on the original — that is what the arc rises out of.
+- [x] Verify: full-page + 540px captures vs `screenshots/orig-home-full.png` side by side. → `verify.py` at `OUT_TAG="phaseC"`: **0 contrast failures across 7 routes × 2 widths, no horizontal scroll**; every layout claim above re-checked at a real viewport with `cdp.py` (§4).
+
+#### 2.3 What Phase C actually shipped (read before C2/D/E)
+
+**The homepage takes the original's spine and keeps four of our own sections.**
+The order below is what shipped after the client's 2026-08-07 correction (see
+**§2.4**, which is the binding list) — it is *not* §1.3's, and every difference
+is deliberate:
+
+⚠️ **Surfaces below are as of §1.2d (the swap) — the ground is CREAM.** Section
+order is unchanged; only the colours moved.
+
+| # | Section | Surface | vs original |
+| --- | --- | --- | --- |
+| 1 | **video hero** + curve w/ terracotta ring | `.on-media` | **OURS** |
+| 2 | **sliding dish cards** (rAF, prev/next/pause) | ground (cream) | **OURS** |
+| 3 | intro: rooster · slideshow · h1 + buffalo, pig lower-left | ground (cream) | same — and the animals now read as the original's red line-art (§1.2d) |
+| 4 | statement hero + 3 phở cards | `.on-green-deep` + `.on-cream` cards | their terracotta block |
+| 5 | Lunch Special | `--cream-lift` panel + rule | **OURS** |
+| 6 | **feature: phở** — panel + photo | `.on-green` | **OURS** |
+| 7 | **feature: drinks** — charcoal panel + photo, reversed | `.on-charcoal` | **OURS** |
+| 8 | type marquee, two rows | ground (cream) | same — black type, red animals, as the original |
+| 9 | interior grid, 3×2 | full-bleed | same |
+| 10 | Find Us | ground (cream) | **OURS** |
+| 11 | drinks collage | `.on-charcoal` | same |
+| → | footer: arc + newsletter + columns | `.on-green-deep` | same |
+
+**The drinks collage must stay LAST, and Find Us must stay above it.** On the
+original the charcoal section sits directly on the footer, and that is what the
+arc rises out of. Anything inserted near the end belongs *above* section 11, not
+below it — a strip between them leaves the arc rising out of the page ground,
+which is a one-ladder-step colour change instead of charcoal → deep green.
+
+**Sections 7 and 11 are both charcoal and both about drinks, on purpose.**
+Section 7 is the *product* block (the $6 line, an order CTA); section 11 is the
+original's *mood* piece (headline, polaroids, bilingual copy). They look nothing
+alike and sit four sections apart. If they ever start to read as repetition, the
+fix is to move section 7 to `.on-green-lift` — **not** to delete it (§2.4).
+
+#### 2.4 ⚠️ KEEP LIST — the sections that are OURS, and why they stay
+
+**Read this before restructuring the homepage again.** Phase C first shipped as
+a near-faithful copy of the original and the client's response (2026-08-07) was
+that it had thrown away things our build did better. These five sections were
+restored by explicit direction. **Do not remove them to "match the original"
+— matching the original is not the goal where our version is stronger.**
+
+| Section | What it is | Notes for future phases |
+| --- | --- | --- |
+| **Video hero** | Full-bleed `Nonla-Express-Hero` video, `.on-media`, tagline "phở, the new era", two CTAs, scroll arrow, and the curve divider into the page | The scrim is **0.55, measured** — see §2.1, don't retune by eye. The curve fills `var(--surface)` so it always matches the ground, and its hairline is **terracotta** since §1.2d, rhyming with the footer arc's ring. This also **re-opens §5 Q3**: the video is wired into the page again. |
+| **Sliding dish cards** | rAF photo marquee, 6 dishes ×2, prev / next / play-pause | ⚠️ **Not the same thing as §1.5 M1.** M1 is the original's giant *type* band (section 8) and gets pure-CSS tracks in C2. This one is ours, has real controls, and **C2 must not delete it.** |
+| **Lunch Special** | Cream promo panel, bilingual set steps, $25 price oval | A real promo the original never had; also the densest small text on the site, hence the ink-on-cream ramp. Since §1.2d it is `--cream-lift` + a `--rule` hairline — on a cream page a plain cream panel is not a panel. |
+| **Feature rows: phở + drinks** | Two 24px-radius panel+photo rows, the second reversed | Restored 2026-08-07. See the §2.3 note on why two charcoal drinks moments is fine. |
+| **Find Us** | Hours / address / transit / order strip | The original buries this in the footer. Must stay **above** the drinks collage (§2.3). |
+
+Everything else on the homepage is the original's structure and should keep
+tracking it.
+
+**The general rule this session established:** the brief is *the original's
+layout, typography and motion, carrying the brand's own colour* — it is **not**
+"reproduce the original". Where our scaffold has something the original lacks
+(a promo, a hours strip, a video hero, product-feature rows), it stays, and it
+gets the redesign's surfaces and type rather than being deleted.
+
+**The arc (§1.5 M2) is built, and Phase C's colour worry was justified.**
+`--green-deep` did not read against the then-green ground on its own — one
+ladder step is not a shape — so the circle got a **2px hairline**, the same
+device the hero curve uses. ⚠️ **Since §1.2d that hairline is `--terracotta`,
+not `--sand-3`, and its job changed:** on the cream page the dome separates on
+its own, so the ring is no longer load-bearing for legibility and is instead the
+third colour's biggest moment, echoing the original's red arc. The seam now
+reads charcoal → cream wedges → green dome + red ring, which is three distinct
+values where it used to be two. Mechanics worth knowing before touching it:
+
+- The footer paints **no background of its own** — `background: transparent`
+  deliberately overrides `.on-green-deep`, and the 255vw circle *is* the
+  footer's surface, its top cap becoming the curved edge. `overflow: hidden` on
+  the footer is what stops a 255vw box from becoming horizontal scroll. Neither
+  is optional.
+- `--arc-rise: 10.2vw` is geometry, not taste: for a circle 2.55 viewports wide
+  the cap drops ≈0.102·w from centre to edge, which is exactly the clear space
+  the content needs above it. The footer's `padding-top` reads the same var.
+- ⚠️ **The wedges either side of the dome show the PAGE GROUND, not the section
+  above** — they are cream since §1.2d. That reads well wherever the preceding
+  band is the ground or charcoal (home, /company, /press, all three legal
+  pages): charcoal → cream wedges → green dome is a clean three-value seam. But
+  **/menu still ends on a `--green-deep` strip**, so there the same green meets
+  itself across a band of cream wedges. Harmless, and Phase D fixes it for free
+  by giving /menu the charcoal drinks strip the original has.
+- C2 scrubs `width` 120vw→255vw and nothing else. At rest the circle is at full
+  size, which is also the no-`view()`-support fallback.
+
+**The newsletter is site-wide now.** It moved from a homepage section into
+`Footer.svelte` as the original's cream panel (radius 16px, heading in **Maname
+at `--fs-xl`/105px — the workhorse serif, not the display face**, per §1.1).
+So: the `#newsletter` anchor exists on every route, the footer's own
+"Newsletter" link was dropped as self-referential, and the subscribe `$state`
+lives in the footer.
+
+**One measured deviation from the type scale, and it is the stand-in font's
+fault.** The drinks headline is `calc(var(--fs-hero) * 0.9)`, not `--fs-hero`.
+Playfair 900 needs **1432px** to set "WARM MEMORIES" at 157.5px against a
+1368px container, so the original's three-line break spills to four; TT Nooks is
+condensed and fits. Shaving 10% restores the original's rhythm, which is the
+more faithful reading of the design than the literal pixel size. **Revisit if
+§5 Q2 lands.** The statement hero needs no shave — it breaks correctly at the
+full 157.5px.
+
+**The hero video is back in the page** (client direction, §2.4), so §5 Q3 is a
+live design question again rather than a repo cleanup: 33MB of a 37MB deploy,
+now genuinely load-bearing on the homepage. The `.on-media` scrim, the arc
+divider and the reduced-motion `pause()` all came back with it unchanged.
+
+**Motion is minimal but no longer zero.** Two moving parts ship in Phase C: the
+rAF card marquee and the scroll-arrow bob. **Both already bail out under
+`prefers-reduced-motion: reduce`** — the marquee never starts its rAF loop and
+the video is paused; the bob has an explicit `animation: none`. Everything C2
+adds must extend that pattern, and the page must stay correct with all of it
+removed. Still deliberately **no scroll-entrance fades** — the original has zero
+(§1.5 M5) and neither do we.
 
 ### Phase C2 — motion layer (needs Phase C sections to exist first)
 
@@ -418,35 +809,36 @@ Implement §1.5 in order of payoff. All of it goes inside
 `@media (prefers-reduced-motion: no-preference)`; the page must be complete and
 correct with every animation removed.
 
-- [ ] **M1 marquee** — pure CSS, duplicated track, `linear infinite`; row 1 left/30.9s, row 2 right/36.5s, ~20px item gap. Delete the old rAF marquee code + its `$state` plumbing from `+page.svelte`.
-- [ ] **M2 footer arc** — `border-radius:50%` `--green-surface` div, centred, `aspect-ratio:1`, width scrubbed ~120vw→255vw across the footer's view progress. Use `animation-timeline: view()`; where unsupported the circle just sits at full size (still looks right). Verify it never introduces horizontal scroll (`overflow-x` clipped on the section).
+- [ ] **M1 marquee** — pure CSS, duplicated track, `linear infinite`; row 1 left/30.9s, row 2 right/36.5s, ~20px item gap. This is the **type band (section 8)**; `.mq-row` / `.mq-track` exist and only need the keyframes. The tracks are rendered once with 4 repeats, so duplicate the track element before animating. ⚠️ **Do NOT touch the rAF photo carousel in section 2** — different section, client-kept, has its own controls (§2.4).
+- [ ] **M2 footer arc** — the `.arc` div **already exists** in `Footer.svelte` at its full 255vw size (§2.3 has the geometry and the two rules that must not be removed). All C2 owes it is scrubbing `width` ~120vw→255vw across the footer's view progress via `animation-timeline: view()`; where unsupported it stays at full size, which is the current, correct-looking state. Re-check `hscroll=no` after — the footer's `overflow: hidden` is what holds that.
 - [ ] **M3 drinks parallax** — cup/phin drift ≈±105px, polaroids ≈±60px in opposite directions, bean cluster static. Same `view()` timeline approach; keep rates small and unequal.
 - [ ] **M4 intro parallax** — rooster/buffalo/pig drift ≈+18/+35/+25px over the first ~700px. Mobile (≤750px) idle loops: swing 5.4s / 6.7s, bounce 2.9s, breathe 14.3s / 14.7s / 5.0s.
-- [ ] **M6 intro slideshow** — 3 slides, auto-advance ≈4s, horizontal push transition, working Previous/Next arrows. Pause the auto-advance under reduced motion (arrows still work) and when the section is off-screen.
+- [ ] **M6 intro slideshow** — 3 slides, auto-advance ≈4s, horizontal push transition, working Previous/Next arrows. Pause the auto-advance under reduced motion (arrows still work) and when the section is off-screen. **The markup, the 3 slides and the arrows already work** (Phase C); slides currently cut rather than push. Only the timer and the transition are left.
 - [ ] **M5** — ORDER ONLINE pill transition `.4s` on background/border. Deliberately add **no** scroll-entrance fades (the original has none).
 - [ ] Prefer CSS scroll-driven animations over scroll listeners; if a JS fallback is needed, rAF-throttle it and bail out under reduced-motion.
 - Verify: capture at several scroll offsets (the arc is invisible in a full-page render — see §4), and once with reduced-motion forced.
 
 ### Phase D — menu page re-skin
-- [ ] Cream page; header = lime SVG + script "ăn nào!" + "NónLá Express Menu" + intro; noodle squiggle right.
+- [ ] ⚠️ **Re-read for §1.2d:** the page is now CREAM, like the original's menu, and the dish cards are `--cream-lift` + `--rule` on it (they already paint that themselves, so they read correctly today). The original shows cut-out dish photos **directly on cream with no cards at all** — with the swap that is finally available to us, so decide deliberately whether to keep the cards or drop to the original's card-less treatment. Header = lime SVG + script "ăn nào!" + "NónLá Express Menu" + intro; noodle squiggle right.
+- [ ] **Third-colour opportunities on this page** (§1.2d, "terracotta draws"): the numbered 1–10 badges are already terracotta; the section rules and the "ăn nào!" script heading are the original's red moments. Prices/accent text stay `--accent-ink` (green) — terracotta cannot be small text on cream.
 - [ ] ⚠️ **Section mismatch — resolve before building (§5 Q6).** Our `content.js` MENU has five sections: Appetizer $9 · **Burger $12** · Noodle $17 · Main $17 · Signature Drink $6. The original web menu shows only four (Appetizers / Phở Noodle Soup / Main Dishes / Drinks) — **no burgers**. Either the Wix menu is out of date or burgers were dropped. Don't silently delete a real menu section; default is to keep Burger and give it the same treatment.
 - [ ] Sections w/ thin rules + script headings; 3-col cut-out photo grid (18 harvested dish photos map to `content.js` items), numbered 1–10 items, protein sublists.
-- [ ] Prices: original shows none on the web (§5 Q5). Default: keep our prices (useful) but restyle — small `--green` text (5.13:1, AA-safe; terracotta at 3.88:1 would not be), retire the price-oval on this page (it's a printed-menu signature, keep for LunchSpecial only).
-- [ ] Keep bilingual EN/中文/Viet names from `content.js` — that's our value-add; set 中文 in Noto Serif SC on cream.
-- [ ] Drinks band: charcoal strip w/ 3 branded cup photos.
+- [ ] Prices: original shows none on the web (§5 Q5). Default: keep our prices (useful) but restyle — small `--accent-ink` text, which resolves to `--green` on cream (5.13:1) and `--sand` on any green band (7.2:1); never hard-code either. Retire the price-oval on this page (it's a printed-menu signature, keep for LunchSpecial only).
+- [ ] Keep bilingual EN/中文/Viet names from `content.js` — that's our value-add; set 中文 in Noto Serif SC. It sits on the cream cards, where it has the most headroom.
+- [ ] Drinks band: charcoal strip w/ 3 branded cup photos — give it a full-bleed edge (charcoal-on-green is a subtle step).
 - Verify vs `screenshots/orig-menu-full.png`.
 
 ### Phase E — company page + remaining pages
-- [ ] /company: 50/50 split — left cream story column (label, script heading, «phở, the new era» pull-quote, story paragraphs from `content.js`, mural photo), right full-bleed media (hero video from Phase C, else `pho-near-me-…-dining-area.jpg`). Below-fold: illustrated-dish SVG row + values band on `.on-green`.
-- [ ] /press, legal pages, accessibility: re-skin to cream tokens (mostly automatic after Phase A aliases removed), check prose contrast.
+- [ ] /company: 50/50 split — left story column (label, script heading, «phở, the new era» pull-quote, story paragraphs from `content.js`, mural photo), right full-bleed media (hero video from Phase C, else `pho-near-me-…-dining-area.jpg`). Below-fold: illustrated-dish SVG row + values band on `.on-green-deep` (values cards are already `.on-cream` + `--cream-lift`). The red script pull-quote is a `--warm` candidate (§1.2d) — check the rendered size clears 18.66px at weight 700+.
+- [ ] /press, legal pages, accessibility: already on the cream ground with `--cream-lift` cards / `.prose-panel`; check prose contrast and that nothing re-introduces a hard-coded color.
 - [ ] Nav labels + footer links aligned with §5 Q4 outcome (BLOG vs PRESS).
-- [ ] Remove dead CSS: `.price-oval` if unused, hero-video styles if dropped, `.on-terracotta` if Phase B's folk art ends up being the only red on the site. (The old dark-green-era vars are already gone — Phase A removed them outright.)
+- [ ] Remove dead CSS: `.price-oval` if unused, hero-video styles if dropped, `.on-green-lift` if nothing ends up using it. ⚠️ **Do NOT sweep `.on-terracotta`** — it is deliberately unused and kept AA-correct as the statement hero's option if the client wants more of the third colour (§1.2d). (The old dark-green-era vars are already gone — Phase A removed them outright.)
 - Verify all 7 routes, both widths.
 
 ### Phase F — QA + launch prep
 - [ ] Cross-page consistency pass at 1440 + 540 (memory: headless Chrome clamps <~540px; judge narrower via CSS).
 - [ ] Reduced-motion: force it on and confirm every §1.5 effect is inert and the page still reads correctly (marquee static, arc at full size, no parallax drift).
-- [ ] Contrast audit on cream — **now automated**: `scripts/verify.py` walks every route at both widths, composites each element's color over its real background, and reports anything under 4.5:1 (3.0 for large text). Re-run it after every phase. Phase A left it at 0 failures; the numbers behind the palette are in §2.1. Note it cannot see through `.on-media` (it walks past the video to the page background) — those are checked by sampling the video directly.
+- [ ] Contrast audit — **automated**: `scripts/verify.py` walks every route at both widths, composites each element's color over its real background, and reports anything under 4.5:1 (3.0 for large text). Re-run it after every phase. Phase A left it at 0 failures; the numbers behind the palette are in §2.1. Note it cannot see through `.on-media` (it walks past the video to the page background) — those are checked by sampling the video directly.
 - [ ] Font subset sizes; Lighthouse-ish sanity (static, should be fast).
 - [ ] Update README.md + CLAUDE.md (new design system), refresh `docs/website-brief.md` §6 parked list (logo Q resolved; hours/newsletter/press/redirects still open).
 - [ ] Then resume the original next step: git init + push for Pages deploy (the 162MB photo exclusion is already in `.gitignore` — just confirm `git status` is clean of it before the first commit).
@@ -555,9 +947,18 @@ were measured, and how to check ours match.
 
 ## 5. Open questions for the client (batch before Phase C ships)
 
-1. ~~**Palette direction**~~ — **ANSWERED 2026-08-06.** Cream-dominant layout: **yes**. Terracotta as the theme color: **no** — the client asked to keep the light background but restore the **brand green** as the accent/primary. Implemented; see §1.2a. Terracotta stays as a warm secondary for the folk art and the printed menu's numbered badges.
+1. ~~**Palette direction**~~ — **ANSWERED four times; §1.2d is current.** 2026-08-06: terracotta as the theme color, **no** — use the **brand green** (§1.2a). 2026-08-06: green-dominant like the printed menu, **no** (§1.2b, rejected on sight). 2026-08-07 morning: green as the **page ground**, cream as the panel material (§1.2c). 2026-08-07: **swap them** — cream is the ground, green is the accent, and **terracotta is promoted to a real third brand colour** (§1.2d). ✅ The folk-art half is settled and got better with the swap — the SVGs need no recolor at all, and on cream their cream bodies vanish so they read as the original's red line-art (§2.2, §1.2d).
+   - **The one sub-question left open, deliberately:** how much surface the third colour owns. Today it *draws* (logo, folk art, badges, the two arc hairlines, the intro heading) but owns no band. The original gives terracotta the **statement hero and the footer**; `.on-terracotta` is defined and AA-correct, so handing it the statement hero is a one-class change if the client wants more orange. Worth showing them both.
 2. **TT Nooks license — now the biggest one.** §1.1 proved this face carries the hero, the drinks headline, the marquee and the intro text: it *is* the identity, and **no free font matches it** (see `screenshots/fonttest.png`). Buy TT Nooks Bold (+ Regular for the menu/company script headings), or ship Playfair Display 900 as a knowingly-approximate stand-in? Ask whether the client already licensed it for the Wix build — if so we may be able to reuse the license.
-3. **Hero video:** keep anywhere (proposal: /company right pane) or drop? Dropping it removes 34MB from the repo.
+3. **Hero video — STILL A DESIGN QUESTION, and the answer moved twice on
+   2026-08-07.** Phase C first took its own default and dropped it from the
+   homepage; the client then asked for the video hero back, and it is now
+   **section 1 of the homepage** and on the §2.4 keep list. So it is load-bearing
+   again, at **33MB of a 37MB deploy**. The remaining question is only about
+   weight, not about whether to use it: is a shorter / smaller-bitrate rendition
+   acceptable? (The `.mov` + `.mp4` pair exists for Safari HEVC vs everything
+   else, so both are needed.) Separately, Phase E's /company pane can use the
+   harvested kitchen video (7.6MB, 720×1062) rather than this one.
 4. **BLOG vs PRESS in nav:** original has an active (Chinese-SEO) Wix blog; our static site has /press instead. Blog content strategy + the parked `/blog`, `/post/*` redirect map are one decision.
 5. **Menu prices on the website:** original shows none; we currently show prices. Keep or hide?
 6. **Burger section:** our menu data has it, the live site's menu doesn't (Phase D). Still on the menu, or discontinued?
@@ -730,3 +1131,229 @@ were measured, and how to check ours match.
     ovals, bilingual captions and photo treatment — not for surface area.
   Re-verified after the revert: build clean, **0 WCAG failures across 7 routes ×
   2 widths**, no horizontal scroll.
+- **2026-08-07 — GREEN GROUND (§1.2c). Cream is now the panel, not the page.**
+  Triggered by "why is the website on GitHub this design but our local
+  different?" — the answer was a **stale deploy** (see §7), and the comparison
+  settled the direction: the pre-redesign scaffold's green page was preferred
+  over Phase A's cream page. So the ground went green while everything else
+  from the redesign stayed.
+  - **Not a repeat of §1.2b.** That one failed as a *mid-tone flat field with
+    content sitting straight on it*. This is a **deep** ground with **cream
+    panels** under every dense text block. The distinction is written into
+    §1.2b so the two are never conflated again.
+  - **The green became a three-step ladder** — `--green-deep #143F32` (header,
+    newsletter, footer, CTA) / `--green-surface #17543E` (page) / `--green
+    #1B6E52` (accents, `.on-green-lift`). Split by contrast headroom, not by
+    taste: only the first two have room for a muted ramp, so `.on-green-lift`
+    is full cream with no fine print. Numbers in §2.1.
+  - **The `:root` default flipped from cream to green**, which is the one thing
+    that can bite a new section: a section with no `.on-*` class is now green,
+    and **cream is what you have to ask for**. Everything holding small text got
+    an explicit `.on-cream`: menu dish cards, Lunch Special, company value
+    cards, press cards, the pho feature panel, and legal prose (new
+    `.prose-panel`).
+  - **Terracotta lost its last text role.** It is 1.89:1 on the green ground —
+    the harvested folk art is drawn in that red, so Phase B now has to recolor
+    the SVGs (`--sand`/`--cream`) or set them on cream panels. Flagged in Phase
+    C sections 1 and 4, and in §5 Q1.
+  - Scope: `src/app.css` tokens + surface classes, ~10 class swaps in markup,
+    the hero curve's fill/stroke, `theme-color`. **No layout and no component
+    logic changed** — the third time the color contract has paid for itself.
+  - Re-verified: build clean, **0 contrast failures across 7 routes × 2 widths**,
+    no horizontal scroll. (`verify.py` prints FAIL for `notoSC` on every route
+    and `playfair900i` on home — both are the known false positives its own
+    docstring describes: the CJK probe can't detect a width-identical swap, and
+    an unused italic is correctly never fetched.)
+  - ⚠️ `verify.py` writes into `screenshots/phaseA/` unconditionally, so its
+    captures are now the **green-ground** state, not Phase A's cream. The cream
+    originals are still in git at `a4bc657` (`git show a4bc657:docs/assets/…`).
+    Rename the output dir per phase if that record ever matters.
+
+- **2026-08-07 — PHASE B SHIPPED: brand assets.** 16 harvested SVGs optimized
+  into themed art, the real logo lockups in place of the hand-drawn interim
+  mark, and the photo question settled by measurement. Build clean, **0 contrast
+  failures across 7 routes × 2 widths**, no horizontal scroll. Full detail in
+  **§2.2**; the five things worth carrying forward:
+  1. **The harvested SVGs' inline colors are lies.** Wix overrides them with a
+     scoped stylesheet whose selector needs a page ancestor the harvested file
+     doesn't have, so a raw file renders its *source-art* colors, not what the
+     site showed. `svgclean.py` resolves those rules first. Anyone re-harvesting
+     anything from `source-html.tar.gz` needs to know this.
+  2. **Arc flags broke the dish illustrations, silently.** Rounding path data
+     with a plain number regex ate the `0`/`1` flags in `a` commands and turned
+     three illustrations into brown blobs that still *looked* like valid SVG.
+     Now there is a structural fingerprint check that aborts the build of any
+     asset whose path structure changes. The general lesson: **an SVG that
+     parses is not an SVG that renders** — the A/B render against the originals
+     is what caught it, not the optimizer's own output size.
+  3. **The folk-art recolor problem didn't exist.** Phase C had a task to
+     recolor the animals off terracotta because of its 1.89:1 on green. Reading
+     the actual geometry showed path 0 of each is a big cream silhouette and the
+     red only ever sits on *that* — so they work unmodified on every surface.
+     Worth generalizing: check what the artwork *is* before designing around
+     what a color table says.
+  4. **The photo import was already done.** The plan expected to gain the 18
+     cut-out dish shots; a perceptual-hash diff showed all 31 existing files
+     already *are* the harvested photos (distance ≤4 on every one), and the
+     32nd harvest file is a byte-identical rename. Nothing imported, no
+     filenames touched, no `content.js` churn. The only real win available was
+     two interiors that broke the plan's own 1600px rule (4.3MB → 3.6MB).
+  5. **The hero video is deliberately still there** and is now the elephant:
+     **33MB of a 38MB deploy**. It is §5 Q3, it is still wired into the
+     homepage, and `/company` already has its own harvested kitchen video — so
+     the pair may be redundant, not just heavy. Not deleting a tracked,
+     in-use, client-supplied asset on our own authority; **batch this with Q2
+     before Phase C ships.**
+  Also: `verify.py` now writes to `screenshots/phaseB/` — the `OUT_TAG` bump the
+  previous session flagged, so Phase A's captures stop being relabelled. And a
+  reusable contact-sheet mode (`svgclean.py --sheet`) renders every asset on all
+  four surfaces at once; that is how the recolor was judged rather than guessed.
+  **Next: Phase C — homepage restructure.** §5 still has 8 open client
+  questions; Q2 (TT Nooks) and Q3 (hero video) are the two that should be
+  answered before Phase C ships.
+
+- **2026-08-07 — PHASE C SHIPPED: homepage restructure.** The homepage is now
+  the original's section order on the green ground — intro (three columns,
+  animals bleeding off both edges, photo slideshow), statement hero + three phở
+  cards on `--green-deep`, Lunch Special, type marquee, interior grid, Find Us,
+  charcoal drinks collage, and a footer carrying the newsletter panel and the
+  arc. Build clean, **0 contrast failures across 7 routes × 2 widths, no
+  horizontal scroll** (`verify.py`, `OUT_TAG="phaseC"`). Full detail in **§2.3**;
+  the six things worth carrying forward:
+  1. **The arc's colour problem was real, and the plan's own fallback was the
+     wrong fix.** `--green-deep` on `--green-surface` is one ladder step and
+     reads as nothing; swapping in `--green` would have broken the "the circle
+     IS the footer" reading. A **2px `--sand-3` hairline** solves it and echoes
+     the hero curve. Generalisable: when two surfaces are deliberately close,
+     define the shape with a line, not by pulling them apart.
+  2. **A signature effect can need the section above it.** The arc only reads as
+     *rising* because charcoal sits directly on the footer, so our Find Us strip
+     went **above** the drinks band rather than below. Section order turned out
+     to be a motion decision, not just an editorial one.
+  3. **Playfair costs one line of the type scale.** "WARM MEMORIES" needs 1432px
+     at the measured 157.5px against a 1368px container, so the drinks headline
+     broke to four lines where the original breaks to three. Shaved to 90%.
+     The measured scale is right; the *substitute* is 9% wide. Worth re-checking
+     every 157.5px headline if TT Nooks ever lands (§5 Q2).
+  4. **The homepage's animals needed exactly the zero work Phase B predicted.**
+     Rooster, buffalo and pig went in as plain `<img>` at their harvested colours
+     and read correctly on the green ground first try.
+  5. **Q3 answered itself.** Dropping the hero video per Phase C's default left
+     33MB tracked and referenced by nothing, so the question stopped being
+     "does the design need it" and became "does the repo keep it".
+  6. **/menu's closing band now fights the arc** — its wedges read inverted
+     because that page ends on `--green-deep` rather than the ground. Phase D
+     fixes it for free by giving /menu the charcoal drinks strip (§2.3).
+  Also: the newsletter moved into `Footer.svelte`, so it (and `#newsletter`) is
+  on every route; `PHO_FAVORITES` resolves against `MENU` instead of restating
+  it; and the navbar is a three-zone grid so the logo is centred on the page.
+  **Next: Phase C2 — the motion layer.** §5 still has 8 open client questions;
+  **Q2 (TT Nooks) now has a measurable cost attached** (item 3 above) and Q4
+  (BLOG vs PRESS) is the only thing still blocking the header.
+- **2026-08-07 — PHASE C AMENDED: five sections are OURS and stay (new §2.4).**
+  Client on the first Phase C build: *"you made the design almost entirely a
+  100% copy from original site. We should keep some good design we have."*
+  Specifically the **video hero**, the **sliding dish cards** under it, and the
+  **feature rows** (phở + drinks). All three restored; the three-column intro
+  stays underneath the hero rather than being replaced by it (client's choice
+  of three offered options). The homepage is now 11 sections — §2.3 has the
+  order, **§2.4 is the binding keep list**.
+  - **The real correction is to the brief, not to the layout.** The goal was
+    always "the original's layout, typography and motion carrying the brand's
+    own colour" — Phase C drifted into "reproduce the original", which is a
+    different and worse goal, because it silently deletes anything the original
+    happens not to have. §2.4 now states the rule and lists what it protects.
+  - **Two instructions elsewhere in this plan were actively dangerous** and are
+    now cancelled in place: Phase C §4 said "retire the rAF photo marquee" and
+    C2's M1 repeated it. They were written when the type band was assumed to
+    *replace* the carousel. It doesn't — they are different sections (2 and 8)
+    and both ship. Generalisable: a task phrased as "replace X with Y" should
+    say what happens if the client wants both.
+  - **The page reads better for it.** Video hero → dish carousel → folk-art
+    intro gives an opening the original doesn't have, and the hero's sand
+    hairline curve now rhymes with the footer arc, so the page opens and closes
+    on the same shape. That was accidental and is worth keeping.
+  - **Two drinks moments now coexist** — the charcoal feature row (product, $6,
+    order CTA) at section 7 and the charcoal collage (mood) at section 11. Four
+    sections apart and visually unalike. If it ever reads as repetition the fix
+    is `.on-green-lift` on the row, not deletion (§2.3).
+  - **`.on-media` and the 0.55 scrim are live again**, as is the hero video's
+    reduced-motion `pause()`. Motion is no longer zero: the rAF carousel and the
+    scroll-arrow bob both ship, both guarded.
+  - One h1 on the page, confirmed: the hero's statement type is a `<p>` and the
+    intro's SEO line is the h1 — which is exactly what the original does too.
+  Re-verified after the restore: build clean, **0 contrast failures across 7
+  routes × 2 widths, no horizontal scroll**, and the footer arc still rises out
+  of the charcoal band.
+
+- **2026-08-07 — THE SWAP (§1.2d): cream ground, green accent, terracotta
+  third.** Client: *"swap colors… light beige as theme/background, green as
+  accent… and add a third colour, their branding orange from the original site
+  and logo."* Done as a token-and-surface-class change again — **no layout, no
+  component logic**. Build clean, **0 contrast failures across 7 routes × 2
+  widths, no horizontal scroll** (`verify.py`, `OUT_TAG="swap"`), every claim
+  below re-checked at a real 1440×900 viewport with `cdp.py`. Full palette in
+  **§1.2d**; six things worth carrying forward:
+  1. **A third colour needs a *rule*, not a slot.** Terracotta measures 3.88:1
+     on cream — enough for large text and fills, not for body copy — so it got
+     the rule **"green speaks, terracotta draws"**: green takes everything that
+     is text or interaction, terracotta takes everything that is a graphic
+     (logo, folk art, badges, ovals, the two arc hairlines, display headings).
+     One sentence, derived from one measurement, that a future session can apply
+     without re-reading the contrast table.
+  2. **Three tokens, not thirty placements.** `--warm` (display/fill),
+     `--warm-ink` (small text → rust), `--mark` (the logo). `--mark` set once in
+     `Logo.svelte` is why the navbar now matches the client's actual artwork —
+     red on cream — while the footer lockup stays cream on green.
+  3. **The artwork got better for free, again.** The animals are drawn as cream
+     bodies with terracotta line-work; on cream the body disappears and they
+     read as the original's pure red line-art. Same for the marquee (black type,
+     red animals) and the dish cut-outs, whose `#F1EAD7` backdrop composites
+     invisibly into `--cream`. This is the second time reading what the artwork
+     *is* beat designing around what the colour table says (cf. §2.2 item 3).
+  4. **The footer arc's hairline changed job, not just colour.** On green it
+     existed so a one-ladder-step dome would read at all; on cream the dome
+     separates by itself, so the ring is now purely a brand line — terracotta,
+     echoing the original's red arc and rhyming with the hero curve. The seam
+     is charcoal → cream wedges → green dome + red ring: three values where it
+     used to be two.
+  5. **`verify.py` had a blind spot that only cream exposed.** Its ancestor walk
+     ran past the deliberately-transparent footer (the `.arc` sibling paints it)
+     and reported **18 bogus 1:1 failures per route** the moment the ground went
+     cream — it had been silently measuring the wrong box all along and only
+     passing by luck. Fixed by trusting a declared `--surface` when an `.on-*`
+     element paints nothing, with `.on-media` excluded because a video is behind
+     it. Confirmed against the real paint stack first (9.76:1, not 1:1) rather
+     than assumed. **A DOM-walking checker cannot see a sibling that paints.**
+  6. **A cream panel on a cream page is not a panel.** Most cards already
+     painted their own `--cream-lift` + `--rule`, so they survived untouched;
+     the Lunch Special did not and needed the same treatment. Worth checking
+     first whenever the ground moves.
+  Also: `theme-color` is cream (the tag the client notices first), the phở
+  feature row went `.on-green` so the accent owns a block in the upper half of
+  the page, and the intro's red heading carries a **20px clamp floor** so
+  terracotta stays inside WCAG large text at 540px. `.on-terracotta` is
+  deliberately unused but kept — it is the statement hero's option if the client
+  wants more orange (§5 Q1). **Next: still Phase C2 — the motion layer**, which
+  the swap did not touch.
+
+## 7. Deploy state — the live Pages site is NOT the current build
+
+Found 2026-08-07 while answering "why does GitHub look different from local?".
+It is worth keeping until the first successful deploy of a post-Phase-A commit,
+because it makes the live site misleading as a reference.
+
+- `https://mikejin01.github.io/NonlaExpress/` serves commit **68ad303**, the
+  **pre-Phase-A scaffold** — dark green `#2b584a`, Fraunces/Montserrat/Bitter/
+  Chewy. Confirmed by fetching its CSS bundle, not by eye.
+- The repo has had exactly **one** Actions run ever (`31127033830`, for 68ad303).
+  `330c73d` (Phase A) and `a4bc657` were pushed and are on `origin/main`, but
+  **never triggered a workflow run**, so they have never been built or deployed.
+  The deploy of that one old run only landed on 2026-08-07T13:30 — the run sat
+  from 2026-08-06T19:39 until then, which points at the `github-pages`
+  environment / Pages enablement rather than at the workflow file.
+- Practical consequence: **do not use the live site to judge our design.**
+  Judge from `pnpm preview` + `scripts/cdp.py`. Re-check `gh run list` after the
+  next push; if it is still empty, trigger `gh workflow run deploy.yml` (the PAT
+  gained Actions write on 2026-08-07) and check whether push events start
+  firing on their own.
