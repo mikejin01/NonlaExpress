@@ -2,25 +2,29 @@
 	/**
 	 * Homepage — the original nonlaexpress.com's spine (plan §1.3 / Phase C) with
 	 * THREE of our own sections kept deliberately. Phase C first shipped as a
-	 * near-faithful copy and the client asked for five of our sections back; on
-	 * 2026-08-07 they then removed two of those five (the Lunch Special section
-	 * and the Signature Drinks feature row). Plan §2.4 tracks the current list —
-	 * the point of it is that our sections are not deleted to "match the
-	 * original", NOT that any particular section is permanent.
+	 * near-faithful copy and the client asked for five of our sections back; over
+	 * 2026-08-07 they then trimmed the page three times — out went the Lunch
+	 * Special section, the Signature Drinks feature row, and the three-column
+	 * intro. Plan §2.4 tracks what is in and what was removed; the point of it is
+	 * that our sections are not deleted to "match the original", NOT that any
+	 * particular section is permanent.
 	 *
 	 * SURFACES are as of plan §1.2d (the colour swap): the page ground is CREAM,
 	 * so a section with no .on-* class is cream and green is what you ask for.
 	 *
 	 *   1  video hero              OURS   ·  .on-media + curve w/ terracotta ring
+	 *                                     ·  carries the page's ONLY h1
 	 *   2  sliding dish cards      OURS   ·  rAF marquee w/ prev / next / pause
-	 *   3  intro: rooster · slideshow · h1 + buffalo, pig lower-left  (cream)
-	 *   4  statement hero + 3 phở cards   .on-green-deep + .on-cream cards
-	 *   5  feature: phở            OURS   ·  .on-green panel + sand media half
-	 *   6  type marquee, two rows          (cream — black type, red animals)
-	 *   7  interior grid, 3×2
-	 *   8  find us                 OURS
-	 *   9  drinks collage                 .on-charcoal
+	 *   3  statement hero + 3 phở cards   .on-green-deep + .on-cream cards
+	 *   4  feature: phở            OURS   ·  .on-green panel + sand media half
+	 *   5  type marquee, two rows          (cream — black type, red animals)
+	 *   6  interior grid, 3×2
+	 *   7  find us                 OURS
+	 *   8  drinks collage                 .on-charcoal
 	 *   →  footer carries the newsletter + the arc (Footer.svelte)
+	 *
+	 * ⚠️ §1.5 M4 (intro animal parallax) and M6 (intro slideshow) went with the
+	 * intro section and are NOT buildable here any more. C2 is M1/M2/M3/M5.
 	 *
 	 * MOTION. The rAF card marquee and the scroll-arrow bob are the only moving
 	 * parts, and both already bail out under prefers-reduced-motion. Everything
@@ -34,9 +38,6 @@
 		IMG,
 		VID,
 		BRAND,
-		KITCHEN,
-		TAGLINE,
-		AN_NAO,
 		INTRO_SEO,
 		STATEMENT,
 		PHO_FAVORITES,
@@ -52,7 +53,7 @@
 	} from '$lib/content.js';
 
 	/* ---------- auto media marquee (kept from the Editorial template) ----------
-	   Not the same thing as the type marquee in section 6: that one is the
+	   Not the same thing as the type marquee in section 5: that one is the
 	   original's giant "nón lá / express" band and gets pure-CSS tracks in C2.
 	   This is ours, it is a photo carousel with real controls, and it stays.
 	   FIVE dish cards since 2026-08-07 — the drinks-trio photo was removed on
@@ -94,20 +95,11 @@
 		setTimeout(() => trackEl && (trackEl.style.transition = 'none'), 460);
 	}
 
-	/* ---------- M6 intro slideshow ---------- */
-	const slides = [
-		{ src: `${IMG}/interior-dining-tall.jpg`, alt: 'The dining room at Nón Lá Express, Tangram Food Hall' },
-		{ src: `${IMG}/merch-stickers.jpg`, alt: 'Nón Lá Express zodiac-animal brand stickers' },
-		{ src: `${IMG}/pho-bowl-tall.jpg`, alt: 'A bowl of phở with Thai basil and bean sprouts' }
-	];
-	let slide = $state(0);
-	const move = (d) => (slide = (slide + d + slides.length) % slides.length);
-
 	/* Four repeats is enough to overflow the widest viewport; C2's duplicated
 	   track doubles it again. */
 	const MQ = [0, 1, 2, 3];
 
-	/* Six interiors, tight 3×2 masonry — the original's section 6. */
+	/* Six interiors, tight 3×2 masonry — the original's section 6 (ours is 6 too). */
 	const interiors = [
 		{ src: `${IMG}/interior-entrance.jpg`, alt: 'The entrance to the Nón Lá Express stall' },
 		{ src: `${IMG}/interior-tables-tall.jpg`, alt: 'Tables and red banquette seating' },
@@ -135,9 +127,10 @@
 
 <main>
 	<!-- ============================== 1 · VIDEO HERO ==============================
-	     OURS, kept on client direction (plan §2.4). The page's real h1 is the SEO
-	     line in the intro below — same as the original, where the statement type
-	     is not the heading. So this headline is a <p>, not a second h1. -->
+	     OURS, kept on client direction (plan §2.4). Carries the page's ONLY h1
+	     since 2026-08-07: the intro section that used to hold the SEO line was
+	     removed and its copy moved up here, so the hero headline became a real
+	     <h1> instead of the <p> it was while the intro existed. -->
 	<section class="section hero">
 		<div class="hero-bg">
 			<!-- HEVC .mov first for Safari; H.264 .mp4 for browsers without HEVC decode -->
@@ -159,12 +152,12 @@
 			</svg>
 		</div>
 		<div class="container container--md text-center hero-content on-media">
-			<span class="eyebrow">Tangram Food Hall · Flushing, Queens</span>
-			<p class="display display-xl hero-title">{TAGLINE}</p>
-			<p class="hero-sub">
-				{BRAND} — fast-casual {KITCHEN}. Fresh phở, rice plates & signature drinks, made quick
-				without cutting corners. <em>{AN_NAO}</em>
-			</p>
+			<!-- Eyebrow says the STALL, not the borough: the h1 and the blurb below it
+			     both end "in Flushing, Queens", and the old "Tangram Food Hall ·
+			     Flushing, Queens" made that three times in three lines. -->
+			<span class="eyebrow">Tangram Food Hall · Stall FH17</span>
+			<h1 class="display hero-title">{INTRO_SEO.h1}</h1>
+			<p class="hero-sub">{INTRO_SEO.blurb}</p>
 			<div class="hero-links">
 				<a class="btn btn-primary" href={ORDER_URL} target="_blank" rel="noopener">Order Online</a>
 				<a class="btn btn-outline" href="{base}/menu/">View Menu</a>
@@ -204,54 +197,13 @@
 			</div>
 		</section>
 
-		<!-- ============================== 3 · INTRO ==============================
-		     Three columns, not two (plan §1.3 item 2 — the tall-capture reading was
-		     wrong). The animals overflow their columns and clip at the viewport;
-		     that bleed is the effect. They need no recolor, and on the cream page
-		     they get better for free: each is drawn as a cream body carrying its own
-		     terracotta line-work (plan §2.2), so the body vanishes into the ground
-		     and they read as the original's pure red line-art. -->
-		<section class="section intro">
-			<div class="container container--lg intro-grid">
-				<div class="intro-art intro-art--left">
-					<img class="animal animal--rooster" src="{base}/assets/art/rooster.svg" alt="" />
-					<img class="animal animal--pig" src="{base}/assets/art/pig.svg" alt="" />
-				</div>
+		<!-- The three-column INTRO (rooster · slideshow · h1 + buffalo, pig
+		     lower-left) was removed 2026-08-07 on client direction, and its copy
+		     moved into the hero above — which is why the hero headline is now the
+		     real <h1>. See plan §2.4; the folk animals still appear in the type
+		     marquee, and §1.5 M4/M6 are no longer buildable on this page. -->
 
-				<div class="intro-stage">
-					<div class="slideshow" role="group" aria-roledescription="carousel" aria-label="Inside Nón Lá Express">
-						<div class="slide-frame">
-							{#each slides as s, i}
-								<img
-									class="slide"
-									class:active={i === slide}
-									src={s.src}
-									alt={s.alt}
-									aria-hidden={i === slide ? undefined : 'true'}
-									loading="lazy"
-								/>
-							{/each}
-						</div>
-						<button class="slide-arrow prev" aria-label="Previous slide" onclick={() => move(-1)}>
-							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 4 L7 12 L15 20" /></svg>
-						</button>
-						<button class="slide-arrow next" aria-label="Next slide" onclick={() => move(1)}>
-							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4 L17 12 L9 20" /></svg>
-						</button>
-					</div>
-				</div>
-
-				<div class="intro-art intro-art--right">
-					<div class="intro-copy">
-						<h1 class="display intro-h1">{INTRO_SEO.h1}</h1>
-						<p class="intro-blurb">{INTRO_SEO.blurb}</p>
-					</div>
-					<img class="animal animal--buffalo" src="{base}/assets/art/buffalo.svg" alt="" />
-				</div>
-			</div>
-		</section>
-
-		<!-- ============================== 4 · STATEMENT + PHO CARDS ==============================
+		<!-- ============================== 3 · STATEMENT + PHO CARDS ==============================
 		     The original's terracotta block, in --green-deep. The cards are cream
 		     panels sitting ON the band exactly as the originals sit on terracotta —
 		     and the dish cut-outs' own backdrop is #F1EAD7, one step off our cream,
@@ -280,7 +232,7 @@
 			</div>
 		</section>
 
-		<!-- ============================== 5 · FEATURE: PHỞ ==============================
+		<!-- ============================== 4 · FEATURE: PHỞ ==============================
 		     OURS. The single feature row: client direction 2026-08-07 removed the
 		     Lunch Special section and the Signature Drinks row that used to sit
 		     either side of it, leaving this one (plan §2.4).
@@ -308,7 +260,7 @@
 			</div>
 		</section>
 
-		<!-- ============================== 6 · TYPE MARQUEE ==============================
+		<!-- ============================== 5 · TYPE MARQUEE ==============================
 		     Two duplicated tracks; C2 animates them in opposite directions at 30.9s
 		     and 36.5s (§1.5 M1). Static they still read as the original's band. -->
 		<section class="section marquee-band" aria-hidden="true">
@@ -331,7 +283,7 @@
 		</section>
 		<h2 class="sr-only">Inside {BRAND}</h2>
 
-		<!-- ============================== 7 · INTERIOR GRID ============================== -->
+		<!-- ============================== 6 · INTERIOR GRID ============================== -->
 		<section class="section interiors">
 			<div class="interior-grid">
 				{#each interiors as p}
@@ -340,7 +292,7 @@
 			</div>
 		</section>
 
-		<!-- ============================== 8 · FIND US ============================== -->
+		<!-- ============================== 7 · FIND US ============================== -->
 		<section class="section padding-md" id="find-us">
 			<div class="container container--lg">
 				<div class="info-row">
@@ -376,7 +328,7 @@
 			</div>
 		</section>
 
-		<!-- ============================== 9 · DRINKS COLLAGE ==============================
+		<!-- ============================== 8 · DRINKS COLLAGE ==============================
 		     Charcoal against the green ground is a subtle step, so this one runs
 		     full-bleed with no rounding — the change of surface has to read on its
 		     own. Polaroids keep their static −8° / +9° even with motion off (§1.5 M3).
@@ -471,7 +423,16 @@
 	}
 	/* The tagline is lowercase by design ("phở, the new era") — and .display no
 	   longer uppercases anything, so no override is needed here any more. */
+	/* Off the measured type scale on purpose, and for a different reason than the
+	   drinks headline's 0.9 shave (plan §2.3). This headline changed JOB on
+	   2026-08-07: it used to be the four-word brand line "phở, the new era" at
+	   --fs-xl/105px, and is now the 50-character SEO h1 moved up from the deleted
+	   intro. At 105px that sets three lines and swallows the hero; the scale has
+	   no step between 36px and 105px, so this role gets its own clamp, sized to
+	   break to TWO lines at 1440 inside the 68rem container. Re-measure if the
+	   copy changes — it is fitted to this exact string. */
 	.hero-title {
+		font-size: clamp(1.75rem, 4.4vw, 3.95rem);
 		color: var(--fg);
 		margin: 0 0 0.8rem;
 		text-shadow: 0 2px 22px rgba(26, 22, 19, 0.55);
@@ -649,172 +610,7 @@
 		background: none;
 	}
 
-	/* ================= 3 · intro ================= */
-	.intro {
-		padding: calc(var(--u) * 3) 0 calc(var(--u) * 4);
-	}
-	.intro-grid {
-		display: grid;
-		grid-template-columns: minmax(0, 1fr) minmax(280px, 30rem) minmax(0, 1fr);
-		align-items: start;
-		gap: clamp(1rem, 3vw, 3rem);
-	}
-	.intro-art {
-		position: relative;
-		display: flex;
-		flex-direction: column;
-		min-width: 0;
-	}
-	/* The bleed: the art is wider than its column and is allowed to run off the
-	   page edge, which .section's overflow:hidden clips. */
-	.animal {
-		display: block;
-		width: clamp(190px, 26vw, 360px);
-		height: auto;
-	}
-	.animal--rooster {
-		margin-left: -8%;
-	}
-	.animal--pig {
-		width: clamp(160px, 22vw, 310px);
-		margin: clamp(1rem, 3vw, 3rem) 0 0 -14%;
-	}
-	.animal--buffalo {
-		width: clamp(200px, 28vw, 390px);
-		margin: clamp(1.5rem, 4vw, 4rem) -10% 0 auto;
-	}
-	.intro-copy {
-		max-width: 34ch;
-		margin-left: auto;
-	}
-	/* The original sets this h1 small and coloured — it is the SEO line, not a
-	   statement headline. Red there; --accent-ink (= --sand, 7.2:1) here, since
-	   terracotta is 1.89:1 on the ground. */
-	/* The original sets this line in RED display type (plan §1.3 item 2), which
-	   is exactly the "terracotta draws" role — so it takes --warm rather than
-	   --accent-ink. The clamp FLOOR is 20px on purpose, not taste: terracotta
-	   is 3.88:1 on cream, which clears WCAG large text (3:1) but not normal
-	   text (4.5:1), and "large" needs >=18.66px at weight 700+. --fs-lead alone
-	   resolves to 18.4px at 540px and would drop this below the line. */
-	.intro-h1 {
-		font-size: clamp(1.25rem, 1rem + 0.45vw, 1.406rem);
-		line-height: 1.15;
-		color: var(--warm);
-		margin-bottom: 0.75rem;
-	}
-	.intro-blurb {
-		font-size: 1.0625rem;
-		line-height: 1.6;
-		color: var(--fg-muted);
-		margin: 0;
-	}
-
-	.intro-stage {
-		display: flex;
-		justify-content: center;
-	}
-	/* White frame, arrows on the long edges — the original's M6 carousel. */
-	.slideshow {
-		position: relative;
-		width: 100%;
-		max-width: 30rem;
-		background: #fff;
-		padding: 12px;
-		box-shadow: 0 18px 50px rgba(9, 26, 21, 0.35);
-	}
-	.slide-frame {
-		position: relative;
-		aspect-ratio: 467 / 584;
-		overflow: hidden;
-		background: var(--cream);
-	}
-	.slide {
-		position: absolute;
-		inset: 0;
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-		opacity: 0;
-		visibility: hidden;
-	}
-	.slide.active {
-		opacity: 1;
-		visibility: visible;
-	}
-	.slide-arrow {
-		position: absolute;
-		top: 50%;
-		transform: translateY(-50%);
-		width: 44px;
-		height: 44px;
-		display: grid;
-		place-items: center;
-		border: none;
-		border-radius: 50%;
-		background: #fff;
-		color: var(--ink);
-		cursor: pointer;
-		box-shadow: 0 4px 16px rgba(9, 26, 21, 0.28);
-		transition: background-color 0.4s ease;
-	}
-	.slide-arrow:hover {
-		background: var(--cream);
-	}
-	.slide-arrow svg {
-		width: 20px;
-		height: 20px;
-	}
-	.slide-arrow.prev {
-		left: -22px;
-	}
-	.slide-arrow.next {
-		right: -22px;
-	}
-	/* The frame reaches the container gutter below ~620px, so arrows that
-	   straddle its edge fall off the viewport. Move them inside the photo. */
-	@media (max-width: 620px) {
-		.slide-arrow.prev {
-			left: 18px;
-		}
-		.slide-arrow.next {
-			right: 18px;
-		}
-	}
-
-	@media (max-width: 991.98px) {
-		.intro-grid {
-			grid-template-columns: 1fr 1fr;
-		}
-		.intro-stage {
-			grid-column: 1 / -1;
-			order: 2;
-		}
-		.intro-art--right {
-			grid-column: 1 / -1;
-			order: 1;
-		}
-		.intro-art--left {
-			grid-column: 1 / -1;
-			order: 3;
-			flex-direction: row;
-			align-items: flex-end;
-			justify-content: space-between;
-		}
-		.intro-copy {
-			max-width: none;
-			margin: 0;
-			text-align: center;
-		}
-		.animal--buffalo {
-			margin: 1.2rem auto 0;
-		}
-		.animal--rooster,
-		.animal--pig {
-			margin: 1.4rem 0 0;
-		}
-	}
-
-	/* ================= 4 · statement + pho cards ================= */
+	/* ================= 3 · statement + pho cards ================= */
 	.statement {
 		padding: calc(var(--u) * 6) 0 calc(var(--u) * 5);
 	}
@@ -886,7 +682,7 @@
 		margin: 0;
 	}
 
-	/* ================= 5 · feature row (panel + photo) ================= */
+	/* ================= 4 · feature row (panel + photo) ================= */
 	.feature {
 		display: grid;
 		grid-template-columns: 1fr;
@@ -959,7 +755,7 @@
 		transform: scale(1.04);
 	}
 
-	/* ================= 6 · type marquee ================= */
+	/* ================= 5 · type marquee ================= */
 	.marquee-band {
 		padding: clamp(1.5rem, 4vw, 3.5rem) 0;
 		overflow: hidden;
@@ -993,7 +789,7 @@
 		flex: none;
 	}
 
-	/* ================= 7 · interiors ================= */
+	/* ================= 6 · interiors ================= */
 	.interiors {
 		padding: 0;
 	}
@@ -1014,7 +810,7 @@
 		object-fit: cover;
 	}
 
-	/* ================= 8 · find us ================= */
+	/* ================= 7 · find us ================= */
 	.info-row {
 		display: grid;
 		grid-template-columns: 1fr;
@@ -1052,7 +848,7 @@
 		}
 	}
 
-	/* ================= 9 · drinks collage ================= */
+	/* ================= 8 · drinks collage ================= */
 	.drinks {
 		padding: calc(var(--u) * 5) 0 calc(var(--u) * 6);
 	}

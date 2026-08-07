@@ -692,21 +692,30 @@ The order below is what shipped after the client's 2026-08-07 correction (see
 is deliberate:
 
 ⚠️ **Surfaces are as of §1.2d (the swap) — the ground is CREAM — and the section
-list is as of the 2026-08-07 trim**, which removed the Lunch Special section and
-the Signature Drinks feature row from the homepage (client direction; see §2.4).
-The page is **9 sections**, down from 11.
+list is as of the 2026-08-07 trims**, which removed the Lunch Special section,
+the Signature Drinks feature row and the three-column intro from the homepage
+(all client direction; see §2.4). The page is **8 sections**, down from 11.
+
+⚠️ **The `<h1>` moved into the hero** when the intro went, since the intro's SEO
+line was the page's only heading. The hero headline was a `<p>` precisely
+*because* that h1 lived below it — it is now a real `<h1>` carrying
+`INTRO_SEO.h1`, and the hero sub carries `INTRO_SEO.blurb`. Verified one h1 on
+the page. **`--fs-xl` no longer fits it**: at 105px a 50-character line sets
+three and swallows the hero, and the measured scale has no step between 36 and
+105, so `.hero-title` gets its own clamp fitted to break at two lines
+(63.2px at 1440, 28px at 540 — both measured). It is fitted to *that exact
+string*; re-measure if the copy changes.
 
 | # | Section | Surface | vs original |
 | --- | --- | --- | --- |
-| 1 | **video hero** + curve w/ terracotta ring | `.on-media` | **OURS** |
+| 1 | **video hero** + curve w/ terracotta ring — carries the page's **only `<h1>`** | `.on-media` | **OURS** |
 | 2 | **sliding dish cards** (rAF, prev/next/pause) | ground (cream) | **OURS** |
-| 3 | intro: rooster · slideshow · h1 + buffalo, pig lower-left | ground (cream) | same — and the animals now read as the original's red line-art (§1.2d) |
-| 4 | statement hero + 3 phở cards | `.on-green-deep` + `.on-cream` cards | their terracotta block |
-| 5 | **feature: phở** — panel + photo | `.on-green` + `--sand` media half | **OURS** |
-| 6 | type marquee, two rows | ground (cream) | same — black type, red animals, as the original |
-| 7 | interior grid, 3×2 | full-bleed | same |
-| 8 | Find Us | ground (cream) | **OURS** |
-| 9 | drinks collage | `.on-charcoal` | same |
+| 3 | statement hero + 3 phở cards | `.on-green-deep` + `.on-cream` cards | their terracotta block |
+| 4 | **feature: phở** — panel + photo | `.on-green` + `--sand` media half | **OURS** |
+| 5 | type marquee, two rows | ground (cream) | same — black type, red animals, as the original |
+| 6 | interior grid, 3×2 | full-bleed | same |
+| 7 | Find Us | ground (cream) | **OURS** |
+| 8 | drinks collage | `.on-charcoal` | same |
 | → | footer: arc + newsletter + columns | `.on-green-deep` | same |
 
 **The feature row's media half needed its own surface, and a background alone
@@ -756,6 +765,7 @@ section:
 | **Feature row: phở** | ✅ in | One 24px-radius panel+photo row — `.on-green` panel, `--sand` media half | The surviving feature row. `.feature--reverse` was removed with the drinks row; re-add its two `order` rules if a second row ever returns (one row alone shouldn't alternate). See §2.3 for the multiply trick that gives the media half a real surface. |
 | **Find Us** | ✅ in | Hours / address / transit / order strip | The original buries this in the footer. Must stay **above** the drinks collage (§2.3). |
 | **Lunch Special** | ❌ removed from home 2026-08-07 | Promo panel, bilingual set steps, $25 price oval | **The component still exists and still ships on `/menu`** — only the homepage section went. Don't delete `LunchSpecial.svelte`. |
+| **Three-column intro** | ❌ removed 2026-08-07 | Rooster/pig/buffalo bleeding off both edges, centred photo slideshow, SEO h1 + blurb | Not one of "ours" — this was the ORIGINAL's section (§1.3 item 2), and removing it is the one trim that moves away from the original rather than toward it. Its copy lives in the hero now. **The folk animals survive in the type marquee**; the three dish illustrations and the other art are untouched. Killed **§1.5 M4 and M6** (see Phase C2). |
 | **Feature row: drinks** | ❌ removed 2026-08-07 | Charcoal panel + photo, reversed, $6 + order CTA | Charcoal now appears exactly once on the page (the drinks collage). `drinks-trio.jpg` is still used by the carousel and the collage. |
 
 Everything else on the homepage is the original's structure and should keep
@@ -833,8 +843,8 @@ correct with every animation removed.
 - [ ] **M1 marquee** — pure CSS, duplicated track, `linear infinite`; row 1 left/30.9s, row 2 right/36.5s, ~20px item gap. This is the **type band (section 6 since the 2026-08-07 trim, formerly 8)**; `.mq-row` / `.mq-track` exist and only need the keyframes. The tracks are rendered once with 4 repeats, so duplicate the track element before animating. ⚠️ **Do NOT touch the rAF photo carousel in section 2** — different section, client-kept, has its own controls (§2.4).
 - [ ] **M2 footer arc** — the `.arc` div **already exists** in `Footer.svelte` at its full 255vw size (§2.3 has the geometry and the two rules that must not be removed). All C2 owes it is scrubbing `width` ~120vw→255vw across the footer's view progress via `animation-timeline: view()`; where unsupported it stays at full size, which is the current, correct-looking state. Re-check `hscroll=no` after — the footer's `overflow: hidden` is what holds that.
 - [ ] **M3 drinks parallax** — cup/phin drift ≈±105px, polaroids ≈±60px in opposite directions, bean cluster static. Same `view()` timeline approach; keep rates small and unequal.
-- [ ] **M4 intro parallax** — rooster/buffalo/pig drift ≈+18/+35/+25px over the first ~700px. Mobile (≤750px) idle loops: swing 5.4s / 6.7s, bounce 2.9s, breathe 14.3s / 14.7s / 5.0s.
-- [ ] **M6 intro slideshow** — 3 slides, auto-advance ≈4s, horizontal push transition, working Previous/Next arrows. Pause the auto-advance under reduced motion (arrows still work) and when the section is off-screen. **The markup, the 3 slides and the arrows already work** (Phase C); slides currently cut rather than push. Only the timer and the transition are left.
+- [x] ~~**M4 intro parallax**~~ — ❌ **NOT BUILDABLE: the intro section was removed 2026-08-07** (§2.4). Kept for the record and because the mobile idle-loop numbers are reusable if the animals ever get a section again: rooster/buffalo/pig drift ≈+18/+35/+25px over the first ~700px. Mobile (≤750px) idle loops: swing 5.4s / 6.7s, bounce 2.9s, breathe 14.3s / 14.7s / 5.0s.
+- [x] ~~**M6 intro slideshow**~~ — ❌ **NOT BUILDABLE: the intro section was removed 2026-08-07** (§2.4), and the slideshow markup went with it. Original spec kept for the record: 3 slides, auto-advance ≈4s, horizontal push transition, working Previous/Next arrows. Pause the auto-advance under reduced motion (arrows still work) and when the section is off-screen. **The markup, the 3 slides and the arrows already work** (Phase C); slides currently cut rather than push. Only the timer and the transition are left.
 - [ ] **M5** — ORDER ONLINE pill transition `.4s` on background/border. Deliberately add **no** scroll-entrance fades (the original has none).
 - [ ] Prefer CSS scroll-driven animations over scroll listeners; if a JS fallback is needed, rAF-throttle it and bail out under reduced-motion.
 - Verify: capture at several scroll offsets (the arc is invisible in a full-page render — see §4), and once with reduced-motion forced.
@@ -965,6 +975,19 @@ c.close()
 `c.js()` returns real values, so it also reads computed styles, element rects,
 transform matrices, and `getAnimations()` states — that's how §1.5's numbers
 were measured, and how to check ours match.
+
+⚠️ **A leaked Chrome silently measures at the wrong width** (found and fixed
+2026-08-07). `cdp.py` uses a **fixed** debug port, so if an instance is already
+listening the new process exits and `Chrome(w, h)` attaches to the **old
+browser at its `--window-size`**. Nothing errors; every number comes back
+plausible and wrong. It turned a `verify.py` "desktop" pass into a second
+mobile pass, and was only caught because a `clamp()` floor value showed up
+where a much larger number was expected. **Fixed** by forcing
+`Emulation.setDeviceMetricsOverride` right after connecting, so the requested
+size wins regardless of who owns the browser — reproduced and confirmed. If a
+measurement ever still looks subtly off, check `lsof -ti:9333` for a leaked
+browser before doubting the CSS, and kill it **by port**, not with `pkill`.
+Same failure shape as the stale `vite preview` on 4173.
 
 ## 5. Open questions for the client (batch before Phase C ships)
 
@@ -1388,6 +1411,44 @@ were measured, and how to check ours match.
   Also swept with it: the now-dead `.feature--reverse` rules (with a note on how
   to bring them back), the unused `LunchSpecial` import, and the section
   numbering in both the markup and the CSS comments.
+
+- **2026-08-07 — INTRO SECTION REMOVED; its copy is now the hero.** Client:
+  *"remove Authentic Vietnamese Restaurant in Flushing, Queens section… use its
+  text to replace the current hero text."* Confirmed the scope first (the block
+  also held the folk animals and the slideshow, so the two readings were very
+  different pages) — the answer was the **whole** section. Homepage is **8
+  sections**. Build clean, **0 contrast failures across 7 routes × 2 widths, no
+  horizontal scroll**.
+  1. **Deleting a section moved the `<h1>`.** The intro's SEO line was the page's
+     only heading, and the hero headline was a `<p>` *precisely because* of it.
+     With the intro gone the hero headline became the real `<h1>` carrying
+     `INTRO_SEO.h1`. Verified exactly one h1. **Check heading structure whenever
+     a section is deleted** — it is the least visible thing that breaks.
+  2. **The headline changed job, so it needed a new size.** It went from a
+     4-word brand line ("phở, the new era", `--fs-xl`/105px) to a 50-character
+     SEO sentence. At 105px that sets three lines and swallows the hero, and the
+     measured scale has no step between 36 and 105 — so `.hero-title` got its
+     own clamp, **measured** to break at two lines (63.2px at 1440, 28px at 540).
+     Second time a substitute-font/copy fit has forced an off-scale size; cf. the
+     drinks headline's 0.9 shave (§2.3).
+  3. **The eyebrow had to change too.** "Tangram Food Hall · Flushing, Queens"
+     above an h1 and a blurb that both end "in Flushing, Queens" said it three
+     times in three lines. Now "Tangram Food Hall · Stall FH17" — more useful,
+     no repetition. Flagged to the client as an unrequested tidy.
+  4. ⚠️ **§1.5 M4 and M6 are dead** — the animal parallax and the intro
+     slideshow had no section left to live in. Phase C2 is now M1/M2/M3/M5.
+     Marked in place rather than deleted, since the measurements stay valid if
+     the animals ever get a section again.
+  5. **A leaked headless Chrome invalidated an audit, silently** — see the
+     warning in §4. `cdp.py`'s fixed debug port let a crashed run's 540px
+     browser hijack the "desktop" pass. Now fixed with
+     `Emulation.setDeviceMetricsOverride` and reproduced to confirm. **The
+     lesson is about trust: a checker that reports confident numbers from the
+     wrong viewport is worse than one that crashes.**
+  Swept with it: the intro's markup, its entire CSS block (~165 lines: grid,
+  animals, slideshow, arrows), the `slides`/`slide`/`move()` state, the now-unused
+  `TAGLINE` / `AN_NAO` / `KITCHEN` imports (the exports stay — `AN_NAO` is still
+  used on /menu), and section renumbering in markup and CSS.
 
 ## 7. Deploy state — the live Pages site is NOT the current build
 

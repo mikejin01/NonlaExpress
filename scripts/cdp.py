@@ -73,6 +73,17 @@ class Chrome:
         else:
             raise RuntimeError("chrome did not start")
         self.mid = 0
+        # ⚠️ The debug port is FIXED, so if an instance is already listening our
+        # new process just exits and the loop above happily attaches to the OLD
+        # browser — at ITS --window-size, not the one asked for here. That is
+        # silent: every measurement comes back plausible and wrong. It bit a
+        # verify.py run on 2026-08-07, where a leaked 540px Chrome turned the
+        # "desktop" pass into a second mobile pass and the sizes looked fine
+        # until one clamp value gave it away.
+        # Forcing the metrics over CDP makes the requested size authoritative no
+        # matter who owns the browser, so this can't recur.
+        self.cmd("Emulation.setDeviceMetricsOverride",
+                 width=width, height=height, deviceScaleFactor=1, mobile=False)
 
     def cmd(self, method, **params):
         self.mid += 1

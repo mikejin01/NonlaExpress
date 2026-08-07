@@ -16,13 +16,18 @@ and TERRACOTTA as a third brand colour** (§1.2d, "the swap" — see "Design
 system" below). **Phase B SHIPPED 2026-08-07** — brand assets: the real
 logo vectors replace the interim hand-drawn mark, 16 harvested SVGs are
 optimized into themed art, and the photo set turned out to need nothing (plan
-§2.2). **Phase C SHIPPED 2026-08-07** (amended twice the same day, see below) —
-the homepage runs the original's section order around three sections of our own,
-**9 sections** after the 2026-08-07 trim: video hero · sliding dish cards ·
-intro (three columns, folk animals bleeding off both edges, photo slideshow) ·
-statement hero + three phở cards · feature phở · type marquee · interior grid ·
-Find Us · charcoal drinks collage · footer with the newsletter panel and **the
-arc** (plan §2.3). **Next: Phase C2 — the motion layer.**
+§2.2). **Phase C SHIPPED 2026-08-07** (amended repeatedly the same day, see
+below) — the homepage runs the original's section order around three sections of
+our own, **8 sections** after three client trims: video hero · sliding dish
+cards · statement hero + three phở cards · feature phở · type marquee ·
+interior grid · Find Us · charcoal drinks collage · footer with the newsletter
+panel and **the arc** (plan §2.3). **Next: Phase C2 — the motion layer, now
+M1/M2/M3/M5 only** (M4 and M6 died with the intro section).
+
+⚠️ **The hero carries the page's only `<h1>`** since the intro was removed —
+`INTRO_SEO.h1` + `.blurb`. `.hero-title` has a **measured** off-scale clamp
+fitted to break that exact 50-character string at two lines; re-measure if the
+copy changes (plan §2.3).
 
 ⚠️ **Read redesign-plan.md §2.4 before restructuring any page.** The first
 Phase C build reproduced the original too faithfully and deleted things our
@@ -65,6 +70,11 @@ Three tools, all stdlib-only, all in `scripts/`:
 - `cdp.py` — Chrome DevTools driver. Use it for anything scroll-driven: a plain
   full-page `--screenshot` renders those effects in their end state and shows
   nothing. The original's motion system is measured in redesign-plan.md §1.5.
+  ⚠️ It uses a **fixed** debug port, so a leaked browser used to hijack new
+  sessions at *its* window size and silently measure the wrong viewport — it
+  invalidated a verify run on 2026-08-07. Now pinned with
+  `setDeviceMetricsOverride`; if numbers still look off check `lsof -ti:9333`
+  and kill **by port**. Plan §4.
 - `svgclean.py` — regenerates the brand art from the harvest. **Don't hand-edit
   anything in `src/lib/art/` or `static/assets/art/`** — edit the MANIFEST and
   re-run. `--sheet` renders every asset on all four surfaces for eyeballing.
