@@ -13,3 +13,23 @@ vite.config.ts.timestamp-*
 # Full-resolution photography harvested from the old Wix site (~162MB).
 # Reference only — web renditions live in static/assets/images/.
 docs/assets/original-site/photos/
+
+# Generated WordPress theme — rebuilt by `pnpm run build:wordpress` every time.
+/wordpress-theme
+/*.zip
+
+# Theme pulled down from the live server for inspection (`make pull`).
+/siteground
+
+# Throwaway WP-CLI exports used by `make pull-content` / `make check-content-drift`.
+# The merged result lands in the tracked src/lib/content-overrides.json.
+/.content-sync
+
+# Per-site SSH/deploy credentials — must NEVER be committed.
+# Only the documented template and README are tracked.
+.live-sites/*.mk
+!.live-sites/_template.mk
+
+# Shared cross-project reference, symlinked in from another client repo.
+# Local convenience only — the link would dangle for anyone else.
+docs/SPA-TO-WORDPRESS-THEME-PLAYBOOK.md

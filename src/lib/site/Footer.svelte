@@ -11,14 +11,38 @@
 	import Logo from './Logo.svelte';
 	import { ADDRESS, PHONE, ORDER_URL, SOCIAL, SEO_BLURB, NEWSLETTER_PITCH } from '$lib/content.js';
 
+	import { submitNewsletter, wordPressAvailable } from '$lib/wp/leads.js';
+
 	const year = new Date().getFullYear();
 
 	let email = $state('');
 	let subscribed = $state(false);
-	function subscribe(e) {
+	let sending = $state(false);
+	let error = $state('');
+	// Honeypot: hidden from people, irresistible to bots. Its value is posted as
+	// `company`, which the server treats as "silently discard".
+	let company = $state('');
+
+	async function subscribe(e) {
 		e.preventDefault();
-		// TODO: wire to the chosen newsletter provider before launch (brief §5).
-		if (email.trim()) subscribed = true;
+		if (!email.trim() || sending) return;
+		error = '';
+
+		// GitHub Pages has no backend to accept this. Say so rather than showing
+		// a thank-you for a signup that went nowhere.
+		if (!wordPressAvailable()) {
+			error = 'The newsletter is not connected on this preview build.';
+			return;
+		}
+
+		sending = true;
+		const result = await submitNewsletter(email, company);
+		sending = false;
+
+		// A repeat signup is deliberately indistinguishable from a first one —
+		// the visitor only cares that they are on the list.
+		if (result.ok) subscribed = true;
+		else error = result.message ?? 'Something went wrong. Please try again.';
 	}
 </script>
 
@@ -52,9 +76,26 @@
 						placeholder="Email address"
 						required
 						aria-label="Email address"
+						disabled={sending}
 					/>
-					<button class="btn btn-primary">Submit</button>
+					<!-- Honeypot. Hidden from assistive tech and keyboard order too, so
+					     nobody who isn't a bot can land in it by accident. -->
+					<input
+						class="hp-field"
+						type="text"
+						name="company"
+						bind:value={company}
+						tabindex="-1"
+						autocomplete="off"
+						aria-hidden="true"
+					/>
+					<button class="btn btn-primary" disabled={sending}>
+						{sending ? 'Submitting…' : 'Submit'}
+					</button>
 				</form>
+				{#if error}
+					<p class="mail-error" role="alert">{error}</p>
+				{/if}
 			{/if}
 			<p class="consent">
 				By signing up, I agree to Nón Lá Express's
@@ -123,7 +164,11 @@
 		left: 50%;
 		width: 255vw;
 		aspect-ratio: 1;
-		transform: translateX(-50%);
+		/* transform-origin pins the circle's TOP-CENTRE point, which is what
+		   makes scale() geometrically identical to the width scrub §1.5 M2
+		   measured — see the @keyframes note below. */
+		transform-origin: top center;
+		transform: translateX(-50%) scale(1);
 		border-radius: 50%;
 		background: var(--green-deep);
 		/* The ring is the THIRD COLOUR's biggest moment (plan §1.2d). It began
@@ -135,6 +180,46 @@
 		   page. Decorative, so terracotta's 3.88:1 does not apply. */
 		border: 2px solid var(--terracotta);
 		z-index: 0;
+	}
+	/* §1.5 M2 — the scroll-scrub, and the one effect on the site that a
+	   full-page screenshot cannot show (plan §4: it renders in its end state).
+	   The original grows the circle from 1.21 to 2.54 viewport widths over the
+	   last stretch of the page; 120vw → 255vw is that, measured.
+	   WHY scale() AND NOT width. The plan says "scrub width", and with the top
+	   edge pinned the two are the same shape: a circle of width 255vw·s whose
+	   top-centre sits at y=0 IS the circle this scales to. But `width` is a
+	   layout property, so scrubbing it re-lays-out a ~3700px box on every
+	   scroll frame; a transform stays on the compositor. Only visible
+	   difference: the 2px ring scales with it, reaching ~0.9px at the smallest
+	   — invisible at that moment because the dome is still below the fold.
+	   The timeline is named on the FOOTER rather than taken as view() on the
+	   arc itself: the arc is 255vw TALL, so its own entry/exit ranges describe
+	   a box three-and-a-half viewports high and have nothing to do with when
+	   the footer appears. Because the footer is the last thing in the document,
+	   `entry 100%` lands exactly at maximum scroll — so the circle is always at
+	   full size by the time the reader is at the bottom, including on pages too
+	   short to scroll at all. Where scroll-driven animations are unsupported it
+	   simply stays at full size, which is the correct-looking Phase C state. */
+	@media (prefers-reduced-motion: no-preference) {
+		@supports (animation-timeline: view()) {
+			.site-footer {
+				view-timeline-name: --footer-arc;
+				view-timeline-axis: block;
+			}
+			.arc {
+				animation: arc-grow linear both;
+				animation-timeline: --footer-arc;
+				animation-range: entry 0% entry 100%;
+			}
+		}
+	}
+	@keyframes arc-grow {
+		from {
+			transform: translateX(-50%) scale(0.4706); /* 120vw / 255vw */
+		}
+		to {
+			transform: translateX(-50%) scale(1);
+		}
 	}
 	.footer-body {
 		position: relative;
@@ -207,6 +292,32 @@
 	}
 	.mail-form .btn {
 		flex: none;
+	}
+	.mail-form input:disabled,
+	.mail-form .btn:disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
+	}
+	/* Honeypot. `.mail-form input` above would otherwise make this a visible
+	   flex child — it has to be removed from layout entirely, not just made
+	   transparent, or a bot that reads computed styles spots the trap. */
+	.mail-form .hp-field {
+		position: absolute;
+		left: -9999px;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		border: 0;
+		flex: none;
+		opacity: 0;
+		pointer-events: none;
+	}
+	.mail-error {
+		/* rust, not terracotta: this is small text on cream, where --warm only
+		   clears WCAG at display size (design system, "the third colour"). */
+		color: var(--warm-ink);
+		font-size: var(--fs-fine);
+		margin: 0.75rem 0 0;
 	}
 	.subscribed-msg {
 		font-size: var(--fs-lead);

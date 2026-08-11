@@ -8,7 +8,9 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build:wordpress": "node scripts/build-wordpress-theme.mjs",
+    "check-content-drift": "node scripts/merge-live-content.mjs --check"
   },
   "devDependencies": {
     "@sveltejs/adapter-static": "^3.0.6",

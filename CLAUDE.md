@@ -1,5 +1,32 @@
 # Nonla Express — client website project
 
+## Content sync rule (live WordPress is the source of truth for content)
+
+Since 2026-08-11 this site also ships as a **WordPress theme** on SiteGround
+(`jeffl248.sg-host.com`, theme slug `nonla-express`). Logged-in users edit text,
+images and links directly on the live site; those edits are stored in the
+WordPress DB and **SHADOW** the defaults in `src/lib/content.js`. The local file
+is therefore possibly stale at any moment — and a stale default is invisible on
+the live site until someone resets content or greps the repo for copy that no
+longer matches production.
+
+- BEFORE editing `src/lib/content.js`, `src/lib/content-overrides.json`, or any
+  `getText()` default string in a component: run `make check-content-drift`.
+- If it reports drift: **STOP.** Run `make pull-content`, review the diff, commit
+  the sync (`chore(content): sync live edits from nonla`), and only then apply
+  the requested change on top.
+- If SSH is unavailable, say so explicitly and warn that local content may be
+  stale — do not edit content silently.
+- After deploying content changes (`make build-and-push`), remember DB overrides
+  still win over the new defaults. Clearing a stale override means deleting it
+  (`wp option delete` / route override), not just redeploying.
+
+⚠️ **Two build shapes, one codebase.** `pnpm build` prerenders for GitHub Pages;
+`WP_BUILD=1 pnpm build` emits the client-only SPA the theme needs. `make build`
+runs the WordPress one. Anything that bakes content into HTML at build time
+breaks the WordPress shape — WordPress must supply content at runtime.
+`verify.py`'s `pnpm build && pnpm preview` loop is unaffected and still correct.
+
 ## Project status
 Intake CLOSED 2026-08-06. **Phase 6 scaffold BUILT 2026-08-06** — full site at
 repo root (SvelteKit static, all pages + bilingual menu), builds clean
@@ -21,8 +48,9 @@ below) — the homepage runs the original's section order around three sections 
 our own, **8 sections** after three client trims: video hero · sliding dish
 cards · statement hero + three phở cards · feature phở · type marquee ·
 interior grid · Find Us · charcoal drinks collage · footer with the newsletter
-panel and **the arc** (plan §2.3). **Next: Phase C2 — the motion layer, now
-M1/M2/M3/M5 only** (M4 and M6 died with the intro section).
+panel and **the arc** (plan §2.3). **Phase C2 SHIPPED 2026-08-11** — the motion
+layer (M4 and M6 died with the intro section, so it was M1/M2/M3/M5).
+**Next: Phase D — the menu page re-skin.**
 
 ⚠️ **The hero carries the page's only `<h1>`** since the intro was removed —
 `INTRO_SEO.h1` + `.blurb`. `.hero-title` has a **measured** off-scale clamp
@@ -41,14 +69,30 @@ original's layout, typography and motion carrying the brand's own colour* —
 don't delete the component.)
 
 Two live traps that follow from that: the **sliding dish carousel (section 2)
-is not the type marquee (section 6)** — an older line in the plan told C2 to
+is not the type marquee (section 5)** — an older line in the plan told C2 to
 "retire the rAF marquee", which is now cancelled, and deleting the wrong one
 would remove a client-kept section. And the **drinks collage must stay last**,
 because the footer arc rises out of its charcoal band.
 
-Motion today is just the rAF carousel and the scroll-arrow bob, both
-reduced-motion-guarded; C2 (plan §1.5 M1–M6) extends that pattern and nothing
-it adds may be load-bearing.
+Motion (Phase C2, plan §2.5) is **five effects and no new JavaScript**: the rAF
+card carousel and the scroll-arrow bob from Phase C, plus M1 the two-row type
+marquee (30.9s left / 36.5s right), M2 the footer arc scrubbing 1.20×→2.55×
+viewport widths, and M3 the drinks parallax (phin ±107px, cup ±102px, polaroids
+±60px counter-moving, beans static). M5's button transition was already in from
+Phase A. Every effect is `@media (prefers-reduced-motion: no-preference)` and
+the scroll-driven three are also `@supports (animation-timeline: view())`; both
+fallbacks land on the Phase C page, which was already correct. **Nothing motion
+adds may be load-bearing** — keep it that way.
+
+⚠️ **The `animation` shorthand RESETS `animation-timeline` and
+`animation-range`.** Put the shorthand *before* those longhands, or use
+longhands throughout. Get it wrong and the effect silently moves to the document
+timeline, runs once on load and parks at its end state — which is
+indistinguishable from "broken" in a screenshot and from "correct" in a
+full-page capture. ⚠️ **The marquee's seam only hides while one `.mq-track`
+stays wider than the viewport + the row's 14vw offset** (measured 3288/3822px at
+1440, 1338px at 540) — re-measure if `MQ`'s repeat count or `.mq-word`'s size
+changes.
 
 Open client questions are redesign-plan.md §5 (8 of them). **Q4** (BLOG vs
 PRESS in the nav) is the only one still blocking anything shipped. **Q2** (TT

@@ -26,7 +26,7 @@ import json, sys, time, pathlib
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from cdp import Chrome
 
-OUT_TAG = "swap"  # bump per phase — this dir is overwritten unconditionally,
+OUT_TAG = "phaseC2"  # bump per phase — this dir is overwritten unconditionally,
 # so leaving it stale silently relabels the previous phase's captures as this
 # one's. (Phase A's cream captures survive only in git at a4bc657; the ones
 # now in screenshots/phaseA/ are the 2026-08-07 green-ground re-skin.

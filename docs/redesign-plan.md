@@ -485,7 +485,7 @@ the site's motion budget goes entirely into M1–M4 and M6. Don't add fade-ins.
 | G9 | ~~Newsletter: plain section vs cream panel on terracotta footer~~ — **CLOSED Phase C**, and it is now in the footer on every route. | resolved |
 | G10 | ~~Marquee: our photo-card marquee vs giant type marquee w/ animals~~ — **CLOSED Phase C, and it was never an either/or.** The type band ships (static; C2 animates) **and** the photo carousel stays as its own section (§2.4). | resolved |
 | G11 | ~~No footer arc~~ — **CLOSED Phase C**: the circle ships at full size with a `--sand-3` hairline; C2 adds only the scroll-scrub. | resolved |
-| G12 | No scroll parallax anywhere (M3/M4). The site's only motion is the rAF card carousel and the scroll-arrow bob, both reduced-motion-guarded. | medium — all of C2 |
+| G12 | ~~No scroll parallax anywhere (M3/M4)~~ — **CLOSED Phase C2 2026-08-11.** M1 (marquee), M2 (arc scrub) and M3 (drinks parallax) all ship as pure CSS scroll-driven animations; M5 was already in from Phase A. M4/M6 died with the intro section (§2.4). | resolved |
 | G13 | ~~Drinks collage: no tilted polaroids or scattered illustration art~~ — **CLOSED Phase C**; the −8°/+9° tilts are static CSS, so they survive reduced motion. | resolved |
 | G14 | ~~No intro slideshow (M6)~~ — **CLOSED Phase C** for markup + arrows; auto-advance and the push transition are C2. | assets done, motion open |
 
@@ -834,20 +834,101 @@ adds must extend that pattern, and the page must stay correct with all of it
 removed. Still deliberately **no scroll-entrance fades** — the original has zero
 (§1.5 M5) and neither do we.
 
-### Phase C2 — motion layer (needs Phase C sections to exist first)
+### Phase C2 — motion layer ✅ DONE 2026-08-11
 
 Implement §1.5 in order of payoff. All of it goes inside
 `@media (prefers-reduced-motion: no-preference)`; the page must be complete and
 correct with every animation removed.
 
-- [ ] **M1 marquee** — pure CSS, duplicated track, `linear infinite`; row 1 left/30.9s, row 2 right/36.5s, ~20px item gap. This is the **type band (section 6 since the 2026-08-07 trim, formerly 8)**; `.mq-row` / `.mq-track` exist and only need the keyframes. The tracks are rendered once with 4 repeats, so duplicate the track element before animating. ⚠️ **Do NOT touch the rAF photo carousel in section 2** — different section, client-kept, has its own controls (§2.4).
-- [ ] **M2 footer arc** — the `.arc` div **already exists** in `Footer.svelte` at its full 255vw size (§2.3 has the geometry and the two rules that must not be removed). All C2 owes it is scrubbing `width` ~120vw→255vw across the footer's view progress via `animation-timeline: view()`; where unsupported it stays at full size, which is the current, correct-looking state. Re-check `hscroll=no` after — the footer's `overflow: hidden` is what holds that.
-- [ ] **M3 drinks parallax** — cup/phin drift ≈±105px, polaroids ≈±60px in opposite directions, bean cluster static. Same `view()` timeline approach; keep rates small and unequal.
+- [x] **M1 marquee** — pure CSS, duplicated track, `linear infinite`; row 1 left/30.9s, row 2 right/36.5s, ~20px item gap. This is the **type band (section 5 since the 2026-08-07 trims)**; `.mq-row` / `.mq-track` exist and only need the keyframes. The tracks are rendered once with 4 repeats, so duplicate the track element before animating. ⚠️ **Do NOT touch the rAF photo carousel in section 2** — different section, client-kept, has its own controls (§2.4). → Shipped exactly as specified: `MQ_COPIES` renders each track twice, row 1 `mq-left` 30.9s, row 2 `mq-right` 36.5s, measured running in opposite directions. The carousel was not touched. §2.5 has the seam rule.
+- [x] **M2 footer arc** — the `.arc` div **already exists** in `Footer.svelte` at its full 255vw size (§2.3 has the geometry and the two rules that must not be removed). All C2 owes it is scrubbing `width` ~120vw→255vw across the footer's view progress via `animation-timeline: view()`; where unsupported it stays at full size, which is the current, correct-looking state. Re-check `hscroll=no` after — the footer's `overflow: hidden` is what holds that. → Shipped as a **`scale()` scrub, not a `width` scrub** — geometrically identical with the top edge pinned, and it stays off the layout path. Measured 1.20×→2.55× viewport widths. `hscroll=no` re-confirmed on all 7 routes × 2 widths. §2.5.
+- [x] **M3 drinks parallax** — cup/phin drift ≈±105px, polaroids ≈±60px in opposite directions, bean cluster static. Same `view()` timeline approach; keep rates small and unequal. → Measured on the shipped build: phin ±107px, cup ±102px, polaroids ±60px counter-moving, both beans static. Amplitudes are clamped vw so a phone gets a proportional shove.
 - [x] ~~**M4 intro parallax**~~ — ❌ **NOT BUILDABLE: the intro section was removed 2026-08-07** (§2.4). Kept for the record and because the mobile idle-loop numbers are reusable if the animals ever get a section again: rooster/buffalo/pig drift ≈+18/+35/+25px over the first ~700px. Mobile (≤750px) idle loops: swing 5.4s / 6.7s, bounce 2.9s, breathe 14.3s / 14.7s / 5.0s.
 - [x] ~~**M6 intro slideshow**~~ — ❌ **NOT BUILDABLE: the intro section was removed 2026-08-07** (§2.4), and the slideshow markup went with it. Original spec kept for the record: 3 slides, auto-advance ≈4s, horizontal push transition, working Previous/Next arrows. Pause the auto-advance under reduced motion (arrows still work) and when the section is off-screen. **The markup, the 3 slides and the arrows already work** (Phase C); slides currently cut rather than push. Only the timer and the transition are left.
-- [ ] **M5** — ORDER ONLINE pill transition `.4s` on background/border. Deliberately add **no** scroll-entrance fades (the original has none).
-- [ ] Prefer CSS scroll-driven animations over scroll listeners; if a JS fallback is needed, rAF-throttle it and bail out under reduced-motion.
-- Verify: capture at several scroll offsets (the arc is invisible in a full-page render — see §4), and once with reduced-motion forced.
+- [x] **M5** — ORDER ONLINE pill transition `.4s` on background/border. Deliberately add **no** scroll-entrance fades (the original has none). → **Already shipped in Phase A** and verified here rather than rebuilt: `.btn` carries `background-color / border-color / color .4s ease`, confirmed in `verify.py`'s resolved-token dump. No fades were added.
+- [x] Prefer CSS scroll-driven animations over scroll listeners; if a JS fallback is needed, rAF-throttle it and bail out under reduced-motion. → **Zero JS was added by C2.** All three effects are CSS; no scroll listener exists on the site. The only rAF on the page is still the client-kept card carousel.
+- [x] Verify: capture at several scroll offsets (the arc is invisible in a full-page render — see §4), and once with reduced-motion forced. → `verify.py` at `OUT_TAG="phaseC2"`: **0 contrast failures across 7 routes × 2 widths, no horizontal scroll.** Motion measured at a real viewport with `cdp.py` at five scroll offsets per effect, plus a reduced-motion pass (every animation count 0), a 540px pass, and a short-route pass. Captures in `screenshots/phaseC2/` (`m1-*`, `m2-*`, `m3-*`).
+
+#### 2.5 What Phase C2 actually shipped (read before touching any animation)
+
+**All three effects are pure CSS and C2 added no JavaScript at all.** The site
+still has exactly one scroll-independent JS animation — the client-kept card
+carousel's rAF loop — and **no scroll listener anywhere**. Everything below is
+`animation-timeline`, which means the browser owns the scrubbing and there is
+nothing to throttle, debounce or tear down.
+
+⚠️ **The trap that will bite the next person: the `animation` shorthand RESETS
+`animation-timeline` and `animation-range`.** Writing `animation: foo 2s linear`
+*after* `animation-timeline: --x` silently moves the effect back onto the
+document timeline, where it plays once on load and then sits at its end state —
+which looks like "the scroll animation is broken" but is really "it already
+finished". M3 uses longhands for this reason; M2's shorthand is written *before*
+its timeline lines, which is the other safe order.
+
+| Effect | Timeline | Range | Animates |
+| --- | --- | --- | --- |
+| M1 marquee | none — plain `linear infinite` | — | `transform: translateX` on each track |
+| M2 footer arc | `--footer-arc`, named on `.site-footer` | `entry 0%` → `entry 100%` | `transform: scale` 0.4706 → 1 |
+| M3 drinks | `--drinks-view`, named on `.drinks` | `cover 0%` → `cover 100%` | `transform: translateY` (+ baked-in rotation) |
+
+**M1 · the seam rule.** Each row renders its track **twice** and both copies run
+the same keyframe, so when track 1 has travelled exactly its own width the
+duplicate is standing where it started. That only hides the seam while **one
+track is wider than the viewport** — measured 3288px / 3822px at 1440 and
+1338px at 540, against a row-2 offset of 14vw. Cutting `MQ` below 4 repeats, or
+shrinking `--fs`-driven `.mq-word`, can break the loop at large viewports;
+re-measure if either changes. Two smaller consequences:
+
+- The row-2 offset moved from `.mq-track--right` onto a new `.mq-row--right`.
+  **A margin on the animated element travels with it** — it has to sit on the
+  static parent or it stops being an offset and becomes part of the motion.
+- `.mq-track` needs `flex: none`. Two tracks in one flex row will otherwise
+  negotiate widths, and `translateX(-100%)` stops matching the wrap point.
+
+**M2 · why `scale()` rather than the `width` this plan specified.** With the
+circle's top edge pinned (`transform-origin: top center`), a circle of width
+255vw scaled by *s* **is** a circle of width 255vw·*s* — same dome, same cap
+position, same everything. But `width` is a layout property, so scrubbing it
+re-lays-out a ~3700px box on every scroll frame while a transform stays on the
+compositor. The only visible difference is that the 2px terracotta ring scales
+too, reaching ~0.9px at the smallest — and at that moment the dome is still
+below the fold. **Measured 1.20× → 2.55× viewport widths, against the original's
+1.21× → 2.54×.**
+
+**M2 · the timeline is named on the FOOTER, not taken as `view()` on the arc,**
+and this is not a style preference. The arc is 255vw *tall* — its own
+entry/exit ranges describe a box three-and-a-half viewports high and have
+nothing to do with when the footer appears. Naming the timeline on the footer
+and reading it from the descendant is what makes the range mean what it says.
+
+**M2 · `entry 100%` lands exactly on maximum scroll, on every route.** The
+footer is the last thing in the document, so its end edge *is* the document end;
+when the reader is at the bottom of the page, the arc is at full size by
+construction. Verified on the homepage (7528px of scroll) **and** on a short
+legal route (1755px) — and a page too short to scroll at all starts past the
+range, so it renders full-size too. There is no route where the arc can get
+stuck mid-scrub.
+
+**M3 · the amplitudes are clamped vw, not the measured px.** §1.5's numbers were
+read at 1440; shoving a 540px phone by the same ±107px would throw the art out
+of the collage. `--drift-phin: clamp(38px, 7.4vw, 110px)` (and siblings) holds
+the measured value at 1440, scales down on a phone, and stops a 2560px monitor
+from doubling it. The keyframes read `var(--drift)` and each element just points
+`--drift` at the right one, so **two keyframe pairs cover four elements**.
+
+**M3 · the polaroids' rotation is baked into their keyframes,** written
+`translateY(…) rotate(…)` in that order so the drift runs down the page rather
+than along the tilted axis. Their static −8°/+9° survives reduced motion because
+the tilt also lives on the base rule. And **both bean pieces stay static on
+purpose** — measured static on the original; they are the fixed point the rest
+of the collage moves against.
+
+**Everything degrades to the Phase C page, twice over.** Under
+`prefers-reduced-motion: reduce` every animation count measures **0** and the
+arc sits at full size; where `animation-timeline` is unsupported the `@supports`
+guard does the same thing. Both fallbacks land on exactly the state Phase C
+shipped, which was already correct — that is the requirement C2 was given and
+it is worth preserving in D/E.
 
 ### Phase D — menu page re-skin
 - [ ] ⚠️ **Re-read for §1.2d:** the page is now CREAM, like the original's menu, and the dish cards are `--cream-lift` + `--rule` on it (they already paint that themselves, so they read correctly today). The original shows cut-out dish photos **directly on cream with no cards at all** — with the swap that is finally available to us, so decide deliberately whether to keep the cards or drop to the original's card-less treatment. Header = lime SVG + script "ăn nào!" + "NónLá Express Menu" + intro; noodle squiggle right.
@@ -1449,6 +1530,56 @@ Same failure shape as the stale `vite preview` on 4173.
   animals, slideshow, arrows), the `slides`/`slide`/`move()` state, the now-unused
   `TAGLINE` / `AN_NAO` / `KITCHEN` imports (the exports stay — `AN_NAO` is still
   used on /menu), and section renumbering in markup and CSS.
+
+- **2026-08-11 — PHASE C2 SHIPPED: the motion layer.** M1 (type marquee), M2
+  (footer arc scrub) and M3 (drinks parallax) are in; M5 turned out to be
+  already done in Phase A and was verified rather than rebuilt. Build clean in
+  **both** shapes (`pnpm build` and `WP_BUILD=1`), **0 contrast failures across
+  7 routes × 2 widths, no horizontal scroll** (`verify.py`, `OUT_TAG="phaseC2"`),
+  and every motion claim measured at a real viewport with `cdp.py` rather than
+  eyeballed. Full detail in **§2.5**; six things worth carrying forward:
+  1. **The `animation` shorthand resets `animation-timeline` and
+     `animation-range`.** This is the single sharpest edge in scroll-driven CSS:
+     a shorthand written after the timeline silently puts the effect back on the
+     document timeline, where it runs once on load and parks at its end state.
+     That failure *looks* like "the scrub is broken" and is actually "it already
+     finished" — and a screenshot can't tell the two apart. M3 uses longhands;
+     M2 puts its shorthand first.
+  2. **A huge element is the wrong subject for `view()`.** The arc is 255vw
+     *tall*, so its own entry/exit ranges describe a box three-and-a-half
+     viewports high and say nothing about when the footer appears. Naming the
+     timeline on the **footer** and reading it from the descendant is what makes
+     the range mean what it reads as. Generalisable: the timeline subject should
+     be the thing whose arrival you are describing, not the thing you are moving.
+  3. **The spec said scrub `width`; `scale()` is the same shape and a better
+     build.** With the top edge pinned via `transform-origin`, the two are
+     geometrically identical — but `width` re-lays-out a ~3700px box every
+     scroll frame. Deviating from the plan was right here, and the reason is
+     recorded in §2.5 so it doesn't read as drift.
+  4. **`entry 100%` coincides with maximum scroll for free, because the footer
+     is the last element in the document.** So the arc is always at full size
+     when the reader is at the bottom — on the 7528px homepage, on a 1755px
+     legal page, and on a page too short to scroll at all. Checked all three
+     rather than assuming; a scrub that can strand itself half-grown on some
+     route would have been invisible in a homepage-only test.
+  5. **Measured px don't transfer down to a phone.** §1.5's ±107px was read at
+     1440; the same shove at 540px throws the art out of the collage. The
+     amplitudes ship as `clamp(38px, 7.4vw, 110px)`-style values fed to the
+     keyframes through a `--drift` custom property, which also let two keyframe
+     pairs cover four elements.
+  6. **The marquee's seam has a measurable precondition** — one track must stay
+     wider than the viewport plus the row's 14vw offset (measured 3288/3822px at
+     1440, 1338px at 540). It is the same class of constraint the card carousel
+     already carries, and both are now written down next to the thing that
+     breaks them.
+  Also: the row-2 phase offset moved from the animated track onto the row (a
+  margin on an animated element travels with it), `.mq-track` gained `flex: none`
+  so two tracks can't renegotiate the wrap point, and `verify.py`'s `OUT_TAG` is
+  bumped to `phaseC2` so the swap's captures stop being relabelled.
+  **Next: Phase D — the menu page re-skin.** §5 still has 8 open client
+  questions; **Q4 (BLOG vs PRESS) is the only one blocking shipped work**, and
+  Q5/Q6 (menu prices, the Burger section) both land inside Phase D, so they are
+  the ones to batch now.
 
 ## 7. Deploy state — the live Pages site is NOT the current build
 

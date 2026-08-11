@@ -34,9 +34,14 @@
 	import { base } from '$app/paths';
 	import { onMount } from 'svelte';
 	import Art from '$lib/site/Art.svelte';
+	import InlineEdit from '$lib/inline-edit/InlineEdit.svelte';
+	import ImageEdit from '$lib/inline-edit/ImageEdit.svelte';
+	import { wpEdit } from '$lib/wp/wpEdit.svelte.js';
+	import { telHref } from '$lib/wp/client.js';
 	import {
 		IMG,
 		VID,
+		ART,
 		BRAND,
 		INTRO_SEO,
 		STATEMENT,
@@ -49,8 +54,27 @@
 		ORDER_URL,
 		DELIVERY_NOTE,
 		SOCIAL,
-		SEO_BLURB
+		META_DESCRIPTION
 	} from '$lib/content.js';
+
+	/* ---------- values that live in X.O. Admin rather than in a content key ----
+	   These are the same options the schema.org listing and the lead emails read,
+	   so the page can't be allowed to disagree with them. The admin fields for
+	   hours and address are textareas: one line each, blank lines dropped. */
+	const lines = (/** @type {string} */ value) =>
+		String(value ?? '')
+			.split('\n')
+			.map((l) => l.trim())
+			.filter(Boolean);
+
+	const liveHours = $derived(
+		lines(wpEdit.text('global_contact_hours', HOURS.map((h) => `${h.days}\n${h.time}`).join('\n')))
+	);
+	const liveAddress = $derived(
+		lines(wpEdit.text('global_contact_address', ADDRESS.lines.join('\n')))
+	);
+	const livePhone = $derived(wpEdit.text('global_contact_phone', PHONE.display));
+	const liveOrderUrl = $derived(wpEdit.text('global_order_url', ORDER_URL));
 
 	/* ---------- auto media marquee (kept from the Editorial template) ----------
 	   Not the same thing as the type marquee in section 5: that one is the
@@ -95,9 +119,16 @@
 		setTimeout(() => trackEl && (trackEl.style.transition = 'none'), 460);
 	}
 
-	/* Four repeats is enough to overflow the widest viewport; C2's duplicated
-	   track doubles it again. */
+	/* Four repeats is enough to overflow the widest viewport; the duplicated
+	   track below doubles it again. */
 	const MQ = [0, 1, 2, 3];
+	/* §1.5 M1's mechanism: each row renders its track TWICE and animates both
+	   between translateX(0) and translateX(-100%), so the second copy is
+	   standing exactly where the first one started at the moment it wraps. The
+	   loop is only seamless while ONE track is wider than the viewport —
+	   4 repeats holds that down to 540px (measured: ~1520px of track against a
+	   540px viewport). Drop the repeat count and the wrap shows a gap. */
+	const MQ_COPIES = [0, 1];
 
 	/* Six interiors, tight 3×2 masonry — the original's section 6 (ours is 6 too). */
 	const interiors = [
@@ -122,7 +153,7 @@
 
 <svelte:head>
 	<title>Nón Lá Express — Pho & Vietnamese Kitchen in Flushing, NY</title>
-	<meta name="description" content={SEO_BLURB + ' 法拉盛越南河粉 · Tangram Food Hall.'} />
+	<meta name="description" content={META_DESCRIPTION} />
 </svelte:head>
 
 <main>
@@ -155,12 +186,17 @@
 			<!-- Eyebrow says the STALL, not the borough: the h1 and the blurb below it
 			     both end "in Flushing, Queens", and the old "Tangram Food Hall ·
 			     Flushing, Queens" made that three times in three lines. -->
-			<span class="eyebrow">Tangram Food Hall · Stall FH17</span>
-			<h1 class="display hero-title">{INTRO_SEO.h1}</h1>
-			<p class="hero-sub">{INTRO_SEO.blurb}</p>
+			<span class="eyebrow"><InlineEdit k="hero_eyebrow" value="Tangram Food Hall · Stall FH17" /></span>
+			<!-- ⚠️ .hero-title carries a MEASURED clamp fitted to break this exact
+			     50-character string at two lines (plan §2.3). Editing this copy live
+			     can therefore change the hero's line count — re-measure if it does. -->
+			<h1 class="display hero-title"><InlineEdit k="hero_h1" value={INTRO_SEO.h1} /></h1>
+			<p class="hero-sub"><InlineEdit k="hero_blurb" value={INTRO_SEO.blurb} multiline /></p>
 			<div class="hero-links">
-				<a class="btn btn-primary" href={ORDER_URL} target="_blank" rel="noopener">Order Online</a>
-				<a class="btn btn-outline" href="{base}/menu/">View Menu</a>
+				<a class="btn btn-primary" href={wpEdit.text('global_order_url', ORDER_URL)} target="_blank" rel="noopener">
+					<InlineEdit k="hero_cta_order" value="Order Online" />
+				</a>
+				<a class="btn btn-outline" href="{base}/menu/"><InlineEdit k="hero_cta_menu" value="View Menu" /></a>
 			</div>
 		</div>
 		<div class="scroll-arrow-container">
@@ -210,21 +246,35 @@
 		     so they drop in with no visible seam (plan §2.2). -->
 		<section class="section statement on-green-deep">
 			<div class="container container--md text-center">
-				<h2 class="display display-hero statement-title">{STATEMENT.headline}</h2>
-				<p class="statement-body">{STATEMENT.body}</p>
-				<a class="tag-link" href={SOCIAL.instagram.url} target="_blank" rel="noopener">{STATEMENT.tag}</a>
-				<p class="favorites-caption">{PHO_FAVORITES.caption}</p>
+				<h2 class="display display-hero statement-title">
+					<InlineEdit k="statement_headline" value={STATEMENT.headline} />
+				</h2>
+				<p class="statement-body"><InlineEdit k="statement_body" value={STATEMENT.body} multiline /></p>
+				<a
+					class="tag-link"
+					href={wpEdit.text('global_instagram_url', SOCIAL.instagram.url)}
+					target="_blank"
+					rel="noopener"><InlineEdit k="statement_tag" value={STATEMENT.tag} /></a>
+				<p class="favorites-caption">
+					<InlineEdit k="favorites_caption" value={PHO_FAVORITES.caption} multiline />
+				</p>
 			</div>
 			<div class="container container--lg">
 				<div class="fav-row">
-					{#each PHO_FAVORITES.cards as card}
+					{#each PHO_FAVORITES.cards as card, i}
 						<figure class="fav">
 							<div class="fav-card on-cream">
-								<img src="{IMG}/{card.item.img}" alt={card.item.en} loading="lazy" />
+								<ImageEdit
+									k="fav_{i}_img"
+									src="{IMG}/{card.item.img}"
+									altKey="fav_{i}_alt"
+									alt={card.item.en}
+									loading="lazy"
+								/>
 							</div>
 							<figcaption>
-								<h3 class="fav-name">{card.label}</h3>
-								<p class="fav-desc">{card.item.desc}</p>
+								<h3 class="fav-name"><InlineEdit k="fav_{i}_name" value={card.label} /></h3>
+								<p class="fav-desc"><InlineEdit k="fav_{i}_desc" value={card.item.desc} multiline /></p>
 							</figcaption>
 						</figure>
 					{/each}
@@ -244,41 +294,59 @@
 			<div class="container container--lg">
 				<div class="feature">
 					<div class="feature-panel on-green">
-						<span class="feature-eyebrow">On the Menu · 河粉</span>
-						<h2 class="display display-lg">Phở, made for right now</h2>
+						<span class="feature-eyebrow"><InlineEdit k="feature_eyebrow" value="On the Menu · 河粉" /></span>
+						<h2 class="display display-lg">
+							<InlineEdit k="feature_headline" value="Phở, made for right now" />
+						</h2>
 						<p class="feature-body">
-							Fresh ingredients, tender meats, and aromatic herbs in every bowl — silky rice
-							noodles in a rich, comforting broth, served with bean sprouts, Thai basil, lime, and
-							jalapeños on the side.
+							<InlineEdit
+								k="feature_body"
+								value="Fresh ingredients, tender meats, and aromatic herbs in every bowl — silky rice noodles in a rich, comforting broth, served with bean sprouts, Thai basil, lime, and jalapeños on the side."
+								multiline
+							/>
 						</p>
-						<a class="btn btn-outline feature-btn" href="{base}/menu/">View Full Menu</a>
+						<a class="btn btn-outline feature-btn" href="{base}/menu/">
+							<InlineEdit k="feature_cta" value="View Full Menu" />
+						</a>
 					</div>
 					<div class="feature-media">
-						<img src="{IMG}/pho-bowl-tall.jpg" alt="Rare eye round beef phở with Thai basil" loading="lazy" />
+						<ImageEdit
+							k="feature_img"
+							src="{IMG}/pho-bowl-tall.jpg"
+							altKey="feature_img_alt"
+							alt="Rare eye round beef phở with Thai basil"
+							loading="lazy"
+						/>
 					</div>
 				</div>
 			</div>
 		</section>
 
 		<!-- ============================== 5 · TYPE MARQUEE ==============================
-		     Two duplicated tracks; C2 animates them in opposite directions at 30.9s
-		     and 36.5s (§1.5 M1). Static they still read as the original's band. -->
+		     Two duplicated tracks running in OPPOSITE directions at 30.9s and
+		     36.5s — deliberately co-prime-ish so the rows never re-sync (§1.5 M1).
+		     Static (reduced motion, or no CSS animation at all) they still read as
+		     the original's band, which is the requirement on everything C2 adds. -->
 		<section class="section marquee-band" aria-hidden="true">
 			<div class="mq-row">
-				<div class="mq-track">
-					{#each MQ as n (n)}
-						<span class="script mq-word">nón lá</span>
-						<img class="mq-animal" src="{base}/assets/art/buffalo.svg" alt="" />
-					{/each}
-				</div>
+				{#each MQ_COPIES as copy (copy)}
+					<div class="mq-track">
+						{#each MQ as n (n)}
+							<span class="script mq-word">nón lá</span>
+							<img class="mq-animal" src="{ART}/buffalo.svg" alt="" />
+						{/each}
+					</div>
+				{/each}
 			</div>
-			<div class="mq-row">
-				<div class="mq-track mq-track--right">
-					{#each MQ as n (n)}
-						<span class="script mq-word">express</span>
-						<img class="mq-animal" src="{base}/assets/art/rooster.svg" alt="" />
-					{/each}
-				</div>
+			<div class="mq-row mq-row--right">
+				{#each MQ_COPIES as copy (copy)}
+					<div class="mq-track">
+						{#each MQ as n (n)}
+							<span class="script mq-word">express</span>
+							<img class="mq-animal" src="{ART}/rooster.svg" alt="" />
+						{/each}
+					</div>
+				{/each}
 			</div>
 		</section>
 		<h2 class="sr-only">Inside {BRAND}</h2>
@@ -286,8 +354,8 @@
 		<!-- ============================== 6 · INTERIOR GRID ============================== -->
 		<section class="section interiors">
 			<div class="interior-grid">
-				{#each interiors as p}
-					<img src={p.src} alt={p.alt} loading="lazy" />
+				{#each interiors as p, i}
+					<ImageEdit k="interior_{i}_img" src={p.src} altKey="interior_{i}_alt" alt={p.alt} loading="lazy" />
 				{/each}
 			</div>
 		</section>
@@ -297,32 +365,47 @@
 			<div class="container container--lg">
 				<div class="info-row">
 					<div class="info-col">
-						<span class="eyebrow">Hours</span>
-						{#each HOURS as h}
-							<p class="info-strong">{h.days}<br />{h.time}</p>
-						{/each}
-						<p class="info-dim">Lunch special · {LUNCH_WINDOW}</p>
-					</div>
-					<div class="info-col">
-						<span class="eyebrow">Find Us</span>
+						<span class="eyebrow"><InlineEdit k="findus_hours_label" value="Hours" /></span>
+						<!-- Hours and the address come from X.O. Admin, not from a content
+						     key: they are the same values the schema.org listing and the
+						     lead emails use, and a restaurant whose hours disagree between
+						     the page and Google is worse than one that can't edit them
+						     inline. Both admin fields are textareas — one line each. -->
 						<p class="info-strong">
-							{#each ADDRESS.lines as line}{line}<br />{/each}
+							{#each liveHours as line}{line}<br />{/each}
 						</p>
-						<p class="info-dim">{ADDRESS.transit}</p>
-						<p>
-							<a class="info-link" href={ADDRESS.mapsUrl} target="_blank" rel="noopener">Get Directions</a><br />
-							<a class="info-link" href={PHONE.tel}>Tel: {PHONE.display}</a>
+						<p class="info-dim">
+							<InlineEdit k="findus_lunch_note" value="Lunch special · {LUNCH_WINDOW}" />
 						</p>
 					</div>
 					<div class="info-col">
-						<span class="eyebrow">Order</span>
+						<span class="eyebrow"><InlineEdit k="findus_label" value="Find Us" /></span>
+						<p class="info-strong">
+							{#each liveAddress as line}{line}<br />{/each}
+						</p>
+						<p class="info-dim"><InlineEdit k="findus_transit" value={ADDRESS.transit} multiline /></p>
+						<p>
+							<a class="info-link" href={ADDRESS.mapsUrl} target="_blank" rel="noopener">
+								<InlineEdit k="findus_directions" value="Get Directions" /></a><br />
+							<a class="info-link" href={telHref(livePhone)}>Tel: {livePhone}</a>
+						</p>
+					</div>
+					<div class="info-col">
+						<span class="eyebrow"><InlineEdit k="findus_order_label" value="Order" /></span>
 						<p class="info-links-stack">
-							<a class="btn btn-primary" href={ORDER_URL} target="_blank" rel="noopener">Order on Snackpass</a>
-							<a class="btn btn-outline btn-sm" href={SOCIAL.instagram.url} target="_blank" rel="noopener">
-								Instagram {SOCIAL.instagram.label}
+							<a class="btn btn-primary" href={liveOrderUrl} target="_blank" rel="noopener">
+								<InlineEdit k="findus_order_cta" value="Order on Snackpass" />
+							</a>
+							<a
+								class="btn btn-outline btn-sm"
+								href={wpEdit.text('global_instagram_url', SOCIAL.instagram.url)}
+								target="_blank"
+								rel="noopener"
+							>
+								<InlineEdit k="findus_instagram_cta" value="Instagram {SOCIAL.instagram.label}" />
 							</a>
 						</p>
-						<p class="info-dim">{DELIVERY_NOTE}</p>
+						<p class="info-dim"><InlineEdit k="findus_delivery_note" value={DELIVERY_NOTE} /></p>
 					</div>
 				</div>
 			</div>
@@ -335,7 +418,12 @@
 		     It also has to stay LAST: the footer arc rises out of it. -->
 		<section class="section drinks on-charcoal">
 			<div class="container container--lg">
-				<h2 class="display display-hero drinks-title">{DRINKS_BLURB.headline}</h2>
+				<!-- ⚠️ This headline already sits off the measured type scale because
+				     Playfair 900 is ~9% wider than the real face (plan §2.3, Q2).
+				     Lengthening it live will push it further. -->
+				<h2 class="display display-hero drinks-title">
+					<InlineEdit k="drinks_headline" value={DRINKS_BLURB.headline} />
+				</h2>
 
 				<div class="drinks-collage">
 					<Art class="d-art d-phin" name="phin" width="clamp(90px, 11vw, 168px)" />
@@ -344,16 +432,28 @@
 					<Art class="d-art d-bean" name="bean" width="clamp(20px, 2.4vw, 36px)" />
 
 					<figure class="polaroid polaroid--a">
-						<img src="{IMG}/drinks-trio.jpg" alt="Sugarcane juice, Vietnamese iced coffee and salted limeade" loading="lazy" />
+						<ImageEdit
+							k="drinks_photo_a"
+							src="{IMG}/drinks-trio.jpg"
+							altKey="drinks_photo_a_alt"
+							alt="Sugarcane juice, Vietnamese iced coffee and salted limeade"
+							loading="lazy"
+						/>
 					</figure>
 					<figure class="polaroid polaroid--b">
-						<img src="{IMG}/lifestyle-bw.jpg" alt="Friends sharing bowls of phở" loading="lazy" />
+						<ImageEdit
+							k="drinks_photo_b"
+							src="{IMG}/lifestyle-bw.jpg"
+							altKey="drinks_photo_b_alt"
+							alt="Friends sharing bowls of phở"
+							loading="lazy"
+						/>
 					</figure>
 				</div>
 
 				<div class="drinks-copy text-center">
-					<p>{DRINKS_BLURB.en}</p>
-					<p class="zh">{DRINKS_BLURB.zh}</p>
+					<p><InlineEdit k="drinks_body_en" value={DRINKS_BLURB.en} multiline /></p>
+					<p class="zh"><InlineEdit k="drinks_body_zh" value={DRINKS_BLURB.zh} multiline /></p>
 				</div>
 			</div>
 		</section>
@@ -661,7 +761,7 @@
 		border-radius: 20px;
 		overflow: hidden;
 	}
-	.fav-card img {
+	.fav-card :global(img) {
 		display: block;
 		width: 100%;
 		aspect-ratio: 4 / 3;
@@ -743,7 +843,7 @@
 		background: var(--sand); /* decorative fill only — sand is unreadable as
 		   text on cream (~1.1:1) but is exactly right behind a photo */
 	}
-	.feature-media img {
+	.feature-media :global(img) {
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
@@ -751,7 +851,7 @@
 		mix-blend-mode: multiply;
 		transition: transform 1.2s ease;
 	}
-	.feature:hover .feature-media img {
+	.feature:hover .feature-media :global(img) {
 		transform: scale(1.04);
 	}
 
@@ -769,12 +869,39 @@
 		align-items: center;
 		gap: 20px;
 		padding-right: 20px;
+		flex: none; /* two tracks share the row — neither may shrink, or the
+		               wrap point stops matching translateX(-100%) */
 	}
 	/* Row 2 starts shifted so the two rows never line up vertically — the
-	   original's rows also run at different phases (and, in C2, different
-	   directions and durations). */
-	.mq-track--right {
+	   original's rows also run at different phases as well as different
+	   directions and durations. The offset lives on the ROW, not on a track:
+	   a margin on the animated element would move with it. */
+	.mq-row--right {
 		margin-left: -14vw;
+	}
+	/* §1.5 M1. Each track slides exactly its own width, so the duplicate lands
+	   where the original started — the seam never shows. Row 1 runs left, row 2
+	   runs right (its keyframe is the same journey read backwards), and the two
+	   durations are the measured ones; being unequal is the point.
+	   The row-2 direction needs one track's width of content sitting off-screen
+	   LEFT at rest, which is exactly what the duplicate provides. */
+	@media (prefers-reduced-motion: no-preference) {
+		.mq-track {
+			animation: mq-left 30.9s linear infinite;
+		}
+		.mq-row--right .mq-track {
+			animation: mq-right 36.5s linear infinite;
+		}
+	}
+	@keyframes mq-left {
+		to {
+			transform: translateX(-100%);
+		}
+	}
+	@keyframes mq-right {
+		from {
+			transform: translateX(-100%);
+		}
 	}
 	.mq-word {
 		font-size: clamp(3.25rem, 16.4vw, 14.75rem); /* 236px @1440 (§1.5 M1) */
@@ -803,7 +930,7 @@
 			grid-template-columns: repeat(2, 1fr);
 		}
 	}
-	.interior-grid img {
+	.interior-grid :global(img) {
 		display: block;
 		width: 100%;
 		aspect-ratio: 3 / 2;
@@ -851,6 +978,15 @@
 	/* ================= 8 · drinks collage ================= */
 	.drinks {
 		padding: calc(var(--u) * 5) 0 calc(var(--u) * 6);
+		/* §1.5 M3 drift amplitudes. Measured on the original at 1440 (cup ±102px,
+		   phin ±107px, polaroids ±60px) and expressed in vw so a phone doesn't
+		   get a desktop-sized shove — the clamps hold the measured value at 1440
+		   and stop a 2560px monitor from doubling it.
+		   Read by the keyframes below via --drift; custom properties inherit, so
+		   each element only has to point --drift at the right one. */
+		--drift-phin: clamp(38px, 7.4vw, 110px);
+		--drift-cup: clamp(36px, 7.1vw, 105px);
+		--drift-polaroid: clamp(22px, 4.2vw, 62px);
 	}
 	/* 90% of the hero size, and this is the one place the measured scale bends.
 	   The original sets this at 157.5px and breaks it COOL DRINKS / WARM
@@ -920,7 +1056,7 @@
 		padding: 10px 10px 34px;
 		box-shadow: 0 16px 42px rgba(0, 0, 0, 0.42);
 	}
-	.polaroid img {
+	.polaroid :global(img) {
 		display: block;
 		width: 100%;
 		aspect-ratio: 1 / 1;
@@ -931,6 +1067,80 @@
 	}
 	.polaroid--b {
 		transform: rotate(9deg);
+	}
+
+	/* ---------- §1.5 M3 · drinks parallax ----------
+	   Scroll-linked drift over the section's own pass through the viewport
+	   (`cover` = first pixel in to last pixel out ≈ 1800px of scroll here,
+	   against the ~1600px the original was measured over, so the measured
+	   amplitudes transfer directly).
+	   THE POINT OF THE EFFECT IS THE DISAGREEMENT: the art drifts DOWN the page
+	   as you scroll (it lags) while polaroid A drifts UP (it leads) and
+	   polaroid B drifts down against it. The two polaroids moving apart from
+	   each other is what sells the collage as a pile of loose objects.
+	   The bean cluster and the single bean stay STATIC — measured as static on
+	   the original, and they are the fixed point the rest moves against.
+	   Rotation is baked into the polaroids' keyframes because they carry a
+	   static tilt that has to survive; translateY is written FIRST so the drift
+	   runs down the page rather than along the tilted axis. */
+	@media (prefers-reduced-motion: no-preference) {
+		@supports (animation-timeline: view()) {
+			.drinks {
+				view-timeline-name: --drinks-view;
+				view-timeline-axis: block;
+			}
+			/* Longhands on purpose: the `animation` shorthand RESETS
+			   animation-timeline and animation-range to their initial values,
+			   so a shorthand written after these two would silently put every
+			   drift back on the document timeline and run it once on load. */
+			.drinks-collage :global(.d-phin),
+			.drinks-collage :global(.d-cup),
+			.polaroid--a,
+			.polaroid--b {
+				animation-timing-function: linear;
+				animation-fill-mode: both;
+				animation-timeline: --drinks-view;
+				animation-range: cover 0% cover 100%;
+			}
+			.drinks-collage :global(.d-phin) {
+				--drift: var(--drift-phin);
+				animation-name: d-lag;
+			}
+			.drinks-collage :global(.d-cup) {
+				--drift: var(--drift-cup);
+				animation-name: d-lag;
+			}
+			.polaroid--a {
+				animation-name: d-lead-a;
+			}
+			.polaroid--b {
+				animation-name: d-lag-b;
+			}
+		}
+	}
+	@keyframes d-lag {
+		from {
+			transform: translateY(calc(var(--drift) * -1));
+		}
+		to {
+			transform: translateY(var(--drift));
+		}
+	}
+	@keyframes d-lead-a {
+		from {
+			transform: translateY(var(--drift-polaroid)) rotate(-8deg);
+		}
+		to {
+			transform: translateY(calc(var(--drift-polaroid) * -1)) rotate(-8deg);
+		}
+	}
+	@keyframes d-lag-b {
+		from {
+			transform: translateY(calc(var(--drift-polaroid) * -1)) rotate(9deg);
+		}
+		to {
+			transform: translateY(var(--drift-polaroid)) rotate(9deg);
+		}
 	}
 	.drinks-copy {
 		max-width: 52ch;

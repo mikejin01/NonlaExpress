@@ -3,11 +3,17 @@
 // enriched with the old web menu's descriptions where items match.
 // Bilingual captions (EN / 中文 / Viet) mirror the printed menu exactly.
 
-import { base } from '$app/paths';
+import { assetUrl } from '$lib/wp/assets.js';
 
-const A = `${base}/assets`;
-export const IMG = `${A}/images`;
-export const VID = `${A}/videos`;
+// Resolved once, against whichever host is serving this bundle: `<base>/assets`
+// on GitHub Pages, `/wp-content/themes/nonla-express/assets` inside the
+// WordPress theme. Every `${IMG}/x.jpg` in the components then works in both
+// places untouched — see src/lib/wp/assets.js for the resolution order.
+export const IMG = assetUrl('/assets/images');
+export const VID = assetUrl('/assets/videos');
+// The un-themed folk-art SVGs served as plain <img> (the themed ones are
+// inlined by Art.svelte instead — redesign-plan.md §2.2).
+export const ART = assetUrl('/assets/art');
 
 export const BRAND = 'Nón Lá Express';
 export const KITCHEN = 'Vietnamese Kitchen';
@@ -49,8 +55,21 @@ export const VALUES = [
 	{ title: 'Care and efficiency', body: 'Served with care and efficiency — a quick meal that never feels like fast food.' }
 ];
 
+// VISIBLE prose — the footer paragraph under the stacked logo. Long on purpose:
+// it is read, not truncated. Not the meta description; see META_DESCRIPTION.
 export const SEO_BLURB =
 	'Nón Lá Express is a Vietnamese restaurant in Flushing, Queens, serving fresh pho, noodle soups, rice dishes, and signature drinks. Visit us at Tangram Food Hall or order online when you are craving Vietnamese food near Flushing.';
+
+// The homepage <meta name="description">, kept under ~155 characters so Google
+// shows it whole. It was SEO_BLURB + a Chinese suffix, which ran to ~260 and got
+// cut mid-sentence in results.
+//
+// ⚠️ This string is duplicated in the live WordPress database as the Yoast SEO
+// description for the Home page. Change it here and the two disagree — a crawler
+// that runs JavaScript sees this one, a crawler that doesn't sees Yoast's. Update
+// both, or run `make pull-content` first if the client edited it live.
+export const META_DESCRIPTION =
+	'Vietnamese restaurant in Flushing, Queens — fresh pho, noodle soups, rice dishes and signature drinks at Tangram Food Hall. 法拉盛越南河粉.';
 
 export const NEWSLETTER_PITCH = 'Sign up for exclusive promos, new menu drops, store openings, and more.';
 
