@@ -1581,11 +1581,31 @@ Same failure shape as the stale `vite preview` on 4173.
   Q5/Q6 (menu prices, the Burger section) both land inside Phase D, so they are
   the ones to batch now.
 
-## 7. Deploy state — the live Pages site is NOT the current build
+## 7. Deploy state — ✅ RESOLVED 2026-08-07, both targets current 2026-08-11
 
-Found 2026-08-07 while answering "why does GitHub look different from local?".
-It is worth keeping until the first successful deploy of a post-Phase-A commit,
-because it makes the live site misleading as a reference.
+⚠️ **This section is HISTORY.** The Pages site is no longer stale: pushes have
+triggered Actions runs normally since 2026-08-07, and as of the Phase C2 push
+(`00f3422`) both live targets serve the current build — **verified by fetching
+their CSS bundles and grepping for the C2 keyframes**, not by eye:
+
+| Target | URL | Deployed by | C2 verified |
+| --- | --- | --- | --- |
+| GitHub Pages | `mikejin01.github.io/NonlaExpress/` | Actions, automatically on push to `main` | `arc-grow` + `mq-left/right` + `d-lead-a` in the bundles; 4 `.mq-track` in the prerendered HTML (2 rows × the M1 duplicate) |
+| WordPress | `jeffl248.sg-host.com` | `make build-and-push` — **manual, a git push does NOT do it** | same chunk hashes, same markers, `http=200` |
+
+The WordPress shape is a **client-only SPA**, so its route CSS is code-split and
+fetched at runtime — `mq-*` and `d-*` are absent from the initial HTML and live
+in the homepage chunk (`2.*.css`). Grepping only the stylesheets referenced by
+`/` will therefore show M2 and miss M1/M3; that is correct behaviour, not a
+failed deploy.
+
+The original finding is kept below because the diagnostic technique is the
+reusable part.
+
+**Original finding, 2026-08-07** — while answering "why does GitHub look
+different from local?". It was worth keeping until the first successful deploy
+of a post-Phase-A commit, because it made the live site misleading as a
+reference.
 
 - `https://mikejin01.github.io/NonlaExpress/` serves commit **68ad303**, the
   **pre-Phase-A scaffold** — dark green `#2b584a`, Fraunces/Montserrat/Bitter/

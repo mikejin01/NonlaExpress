@@ -102,9 +102,16 @@ face, which already forced the drinks headline off the measured type scale
 section 1, so its **33MB of a 37MB deploy** is load-bearing; the open part is
 whether a lighter rendition is acceptable.
 
-⚠️ **The live GitHub Pages site is stale** — it serves the pre-Phase-A
-scaffold, because the Phase A commits never triggered an Actions run. Don't use
-it to judge the design; see redesign-plan.md §7.
+**Two live deploys, both current as of 2026-08-11 (Phase C2).** ~~The Pages site
+is stale~~ — that was true through Phase A and is **fixed**: pushes trigger
+Actions runs normally again, and both targets were verified by fetching their
+CSS bundles, not by eye (plan §7).
+- **GitHub Pages** — `mikejin01.github.io/NonlaExpress/`, prerendered, deployed
+  by Actions on every push to `main`.
+- **WordPress** — `jeffl248.sg-host.com`, the client-editable theme, deployed by
+  `make build-and-push`. **A push to git does NOT deploy this one**; it is a
+  separate manual step, and content edits made live shadow the repo's defaults
+  (see the content sync rule at the top).
 
 Three tools, all stdlib-only, all in `scripts/`:
 - `verify.py` — **run after every phase.** Real WCAG audit (composites each
