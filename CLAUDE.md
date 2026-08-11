@@ -49,8 +49,24 @@ our own, **8 sections** after three client trims: video hero · sliding dish
 cards · statement hero + three phở cards · feature phở · type marquee ·
 interior grid · Find Us · charcoal drinks collage · footer with the newsletter
 panel and **the arc** (plan §2.3). **Phase C2 SHIPPED 2026-08-11** — the motion
-layer (M4 and M6 died with the intro section, so it was M1/M2/M3/M5).
-**Next: Phase D — the menu page re-skin.**
+layer (M4 and M6 died with the intro section, so it was M1/M2/M3/M5). **Phase D
+SHIPPED 2026-08-11** — the /menu re-skin: the red "ăn nào!" header with lime +
+noodle art bleeding off both edges, ruled section heads, and **cut-out dish
+photos directly on cream with NO cards** (plan §2.6).
+**Next: Phase E — /company + the remaining pages.**
+
+⚠️ **The dish photos ship on a `#F1EAD7` studio backdrop**, one step off
+`--cream`. That is why /menu needs no cards — and it is a constraint, not just a
+convenience: **those photos cannot sit on a non-cream surface** without
+`mix-blend-mode: multiply` over the fill (the trick the homepage feature row
+uses, plan §2.3).
+
+⚠️ **Plan §1.3's claim that the original's /menu ends on a charcoal drinks band
+is WRONG**, and is corrected in place. Its drinks are on cream; the dark band in
+`orig-menu-full.png` is the **original footer's own ground**. Ours differs on
+purpose — our footer is transparent and the arc *is* its surface, so the wedges
+show the page — so don't read `arc-scroll-5300.png` as our arrangement. /menu now
+closes on a charcoal CTA so the arc rises out of it as on the homepage.
 
 ⚠️ **The hero carries the page's only `<h1>`** since the intro was removed —
 `INTRO_SEO.h1` + `.blurb`. `.hero-title` has a **measured** off-scale clamp

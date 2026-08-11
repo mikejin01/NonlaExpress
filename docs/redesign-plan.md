@@ -335,12 +335,20 @@ get each of these backwards:
 8. Terracotta footer — a **giant terracotta circle grows on scroll** out of the charcoal band (§1.5 M2), and on it: stacked cream logo + SEO paragraph, big cream rounded panel "Subscribe to our newsletter" (black Maname, radius 16px) + email input + Submit; link columns (nav / social / legal), address + phone + © line.
 
 **Menu** (`/menu`): cream throughout. Header: green lime + cut-lime art left,
-red script "ăn nào!" + "NónLá Express Menu" + intro paragraph center, cream
+red script "ăn nào!" + "NónLá Express Menu" + intro paragraph center, **white**
 noodle-squiggle right. Sections **Appetizers → Phở Noodle Soup → Main Dishes →
-Drinks**, each a thin-ruled heading (script/serif) + 3-col grid of cut-out
-photos of dishes in branded to-go containers; items numbered 1–10 across
-Phở + Mains; protein options listed as sublists. **No prices shown on the web
-menu.** Drinks on dark band at page bottom (3 branded cups).
+Drinks**, each a heading + serving note bracketed between **two** hairlines +
+3-col grid of cut-out photos of dishes in branded to-go containers, sitting
+**directly on the cream with no cards**; items numbered 1–10 across Phở + Mains
+(inline in the name, "1. Ribeye Phở"); protein options listed as sublists, one
+per line. **No prices shown on the web menu.**
+
+⚠️ ~~Drinks on dark band at page bottom (3 branded cups).~~ **WRONG — corrected
+Phase D from the source HTML.** The drinks sit on cream like every other section.
+The dark band at the bottom of `orig-menu-full.png` is the **original footer's
+own charcoal ground**, which is also what the wedges either side of the
+terracotta dome are showing in `arc-scroll-5300.png`. Evidence and the
+consequences for our footer are in §2.6.
 
 **Company** (`/company`): 50/50 split. Left cream: "About NónLá Express" label,
 red script heading "Serving Fresh Healthy Pho, with Modern Convenience", red
@@ -477,9 +485,9 @@ the site's motion budget goes entirely into M1–M4 and M6. Don't add fade-ins.
 | G1 | ~~Palette: dark-green site vs a light site~~ — **closed, re-opened and closed three times.** Phase A went cream-dominant (§1.2a); 2026-08-07 put green back as the ground (§1.2c); the client then swapped them again and added terracotta as a third colour (**§1.2d**, current). Net result: a light cream page like the original, in the brand's own green, with the original's red back as a real accent. | resolved |
 | G2 | Fonts: Fraunces/Montserrat/Bitter/Chewy vs **TT Nooks Bold (display) + Maname (everything else)** — see §1.1 | big |
 | G3 | ~~Logo: interim redraw vs real vector~~ — **CLOSED Phase B.** Both real lockups ship, `currentColor`-themed; favicon redrawn from the real mark. | resolved |
-| G4 | Zero illustration language — original leans on folk-art SVGs everywhere. Phase B shipped the assets; **Phase C placed the homepage set** (3 animals in the intro, 2 in the marquee, phin/cup/beans in the drinks collage). **Phase D/E still has to place the menu + company pieces** (lime, noodles, shrimp, herb, the three dish illustrations). | home done, D/E open |
+| G4 | Zero illustration language — original leans on folk-art SVGs everywhere. Phase B shipped the assets; **Phase C placed the homepage set** (2 animals in the marquee, phin/cup/beans in the drinks collage) and **Phase D the menu set** (lime + noodles bleeding off the header's two edges, shrimp on Appetizer, herb on Noodle). **Phase E owes only the three `/company` dish illustrations** — plus shrimp/herb again, which the original repeats there. | home + menu done, E open |
 | G5 | ~~Home structure: video hero + template sections~~ — **CLOSED Phase C**, but *not* by wholesale replacement: the original's section order ships **around** five of our own sections, video hero included (**§2.4** — the keep list). | resolved |
-| G6 | Menu: dark w/ price ovals + text lists vs cream w/ cut-out dish photos, script headers, no prices | big |
+| G6 | ~~Menu: dark w/ price ovals + text lists vs cream w/ cut-out dish photos, script headers, no prices~~ — **CLOSED Phase D 2026-08-11.** Card-less cut-outs on cream, ruled section heads, the red "ăn nào!" header with lime + noodles. Prices *stay* by the §5 Q5 default but as a small green label, not an oval. | resolved |
 | G7 | Company: single column vs 50/50 split with story + media | medium |
 | G8 | Nav labels: MENU·ABOUT·PRESS·FIND US vs OUR MENU·OUR COMPANY·BLOG | small — **blocked on §5 Q4**, everything else about the header shipped in Phase C |
 | G9 | ~~Newsletter: plain section vs cream panel on terracotta footer~~ — **CLOSED Phase C**, and it is now in the footer on every route. | resolved |
@@ -798,10 +806,15 @@ values where it used to be two. Mechanics worth knowing before touching it:
 - ⚠️ **The wedges either side of the dome show the PAGE GROUND, not the section
   above** — they are cream since §1.2d. That reads well wherever the preceding
   band is the ground or charcoal (home, /company, /press, all three legal
-  pages): charcoal → cream wedges → green dome is a clean three-value seam. But
-  **/menu still ends on a `--green-deep` strip**, so there the same green meets
-  itself across a band of cream wedges. Harmless, and Phase D fixes it for free
-  by giving /menu the charcoal drinks strip the original has.
+  pages): charcoal → cream wedges → green dome is a clean three-value seam.
+  ~~But **/menu still ends on a `--green-deep` strip**~~ — **FIXED Phase D**, by
+  making /menu's closing order CTA `.on-charcoal` rather than by adding the
+  drinks strip this line predicted (that strip does not exist on the original —
+  §2.6). Every route now ends on cream or charcoal, and none on green.
+  ⚠️ Note the **original's footer works the opposite way**: it paints its own
+  charcoal ground and puts a terracotta dome on it, on every page. Ours is
+  transparent by design (the circle *is* the surface), so the wedges are the
+  page. Don't read `arc-scroll-5300.png` as showing our arrangement.
 - C2 scrubs `width` 120vw→255vw and nothing else. At rest the circle is at full
   size, which is also the no-`view()`-support fallback.
 
@@ -930,21 +943,117 @@ guard does the same thing. Both fallbacks land on exactly the state Phase C
 shipped, which was already correct — that is the requirement C2 was given and
 it is worth preserving in D/E.
 
-### Phase D — menu page re-skin
-- [ ] ⚠️ **Re-read for §1.2d:** the page is now CREAM, like the original's menu, and the dish cards are `--cream-lift` + `--rule` on it (they already paint that themselves, so they read correctly today). The original shows cut-out dish photos **directly on cream with no cards at all** — with the swap that is finally available to us, so decide deliberately whether to keep the cards or drop to the original's card-less treatment. Header = lime SVG + script "ăn nào!" + "NónLá Express Menu" + intro; noodle squiggle right.
-- [ ] **Third-colour opportunities on this page** (§1.2d, "terracotta draws"): the numbered 1–10 badges are already terracotta; the section rules and the "ăn nào!" script heading are the original's red moments. Prices/accent text stay `--accent-ink` (green) — terracotta cannot be small text on cream.
-- [ ] ⚠️ **Section mismatch — resolve before building (§5 Q6).** Our `content.js` MENU has five sections: Appetizer $9 · **Burger $12** · Noodle $17 · Main $17 · Signature Drink $6. The original web menu shows only four (Appetizers / Phở Noodle Soup / Main Dishes / Drinks) — **no burgers**. Either the Wix menu is out of date or burgers were dropped. Don't silently delete a real menu section; default is to keep Burger and give it the same treatment.
-- [ ] Sections w/ thin rules + script headings; 3-col cut-out photo grid (18 harvested dish photos map to `content.js` items), numbered 1–10 items, protein sublists.
-- [ ] Prices: original shows none on the web (§5 Q5). Default: keep our prices (useful) but restyle — small `--accent-ink` text, which resolves to `--green` on cream (5.13:1) and `--sand` on any green band (7.2:1); never hard-code either. Retire the price-oval on this page (it's a printed-menu signature, keep for LunchSpecial only).
-- [ ] Keep bilingual EN/中文/Viet names from `content.js` — that's our value-add; set 中文 in Noto Serif SC. It sits on the cream cards, where it has the most headroom.
-- [ ] Drinks band: charcoal strip w/ 3 branded cup photos — give it a full-bleed edge (charcoal-on-green is a subtle step).
-- Verify vs `screenshots/orig-menu-full.png`.
+### Phase D — menu page re-skin ✅ DONE 2026-08-11
+- [x] ⚠️ **Re-read for §1.2d:** the page is now CREAM, like the original's menu, and the dish cards are `--cream-lift` + `--rule` on it (they already paint that themselves, so they read correctly today). The original shows cut-out dish photos **directly on cream with no cards at all** — with the swap that is finally available to us, so decide deliberately whether to keep the cards or drop to the original's card-less treatment. Header = lime SVG + script "ăn nào!" + "NónLá Express Menu" + intro; noodle squiggle right. → **Card-less**, and the decision was easy once the swap landed: the cut-outs' `#F1EAD7` backdrop composites invisibly into `--cream`, so a card is a box drawn around nothing. Header built as specified; the lime is the one placement that overrides `--art-fill` (§2.6).
+- [x] **Third-colour opportunities on this page** (§1.2d, "terracotta draws"): the numbered 1–10 badges are already terracotta; the section rules and the "ăn nào!" script heading are the original's red moments. Prices/accent text stay `--accent-ink` (green) — terracotta cannot be small text on cream. → All taken except the section rules, which stayed `--rule`: the original's are hairline grey, and a red rule under every heading would have out-shouted the "ăn nào!". Terracotta on this page is the script (105px), the ten badges and the two folk-art ornaments.
+- [x] ⚠️ **Section mismatch — resolve before building (§5 Q6).** Our `content.js` MENU has five sections: Appetizer $9 · **Burger $12** · Noodle $17 · Main $17 · Signature Drink $6. The original web menu shows only four (Appetizers / Phở Noodle Soup / Main Dishes / Drinks) — **no burgers**. Either the Wix menu is out of date or burgers were dropped. Don't silently delete a real menu section; default is to keep Burger and give it the same treatment. → **Kept, on the stated default.** It is the one section with no photographs, so it runs the same grid with the media box dropped entirely rather than five empty frames. **Q6 is still open** — this is a default, not an answer.
+- [x] Sections w/ thin rules + script headings; 3-col cut-out photo grid (18 harvested dish photos map to `content.js` items), numbered 1–10 items, protein sublists. → Heading + serving note bracketed between **two** hairlines, as the original does it. Grid is a fixed `repeat(3, 1fr)`, not `auto-fill` (§2.6). Protein sublists now stack one per line like the original, split off our single `choice` string for display only.
+- [x] Prices: original shows none on the web (§5 Q5). Default: keep our prices (useful) but restyle — small `--accent-ink` text, which resolves to `--green` on cream (5.13:1) and `--sand` on any green band (7.2:1); never hard-code either. Retire the price-oval on this page (it's a printed-menu signature, keep for LunchSpecial only). → Done exactly. The oval is gone from the five section headings and survives only on `LunchSpecial`, so **Phase E must not sweep `.price-oval` as dead CSS**. Prices are per-section, not per-item, so they read as a small green label beside the heading; the soda/water extras take the same treatment.
+- [x] Keep bilingual EN/中文/Viet names from `content.js` — that's our value-add; set 中文 in Noto Serif SC. It sits on the cream cards, where it has the most headroom. → Kept; with the cards gone it sits on the cream page, which has *more* headroom (ink 14.9:1), not less.
+- [x] ~~Drinks band: charcoal strip w/ 3 branded cup photos — give it a full-bleed edge (charcoal-on-green is a subtle step).~~ ❌ **NOT BUILT — the premise was wrong, see §2.6.** The original's /menu has no charcoal drinks band: its drinks sit on cream like every other section, and the dark band at the bottom of `orig-menu-full.png` is the **original footer's own charcoal ground**. What the task was really for — stopping /menu ending on `--green-deep` right under the green dome (§2.3) — is fixed instead by making the closing **order CTA** charcoal.
+- [x] Verify vs `screenshots/orig-menu-full.png`. → `verify.py` at `OUT_TAG="phaseD"`: **0 contrast failures across 7 routes × 2 widths, no horizontal scroll.** Every type size re-measured against the original at a real 1440 viewport with `cdp.py`, plus a 540px pass and the footer seam.
+
+#### 2.6 What Phase D actually shipped (read before E/F)
+
+**The page is card-less, and that is the whole re-skin.** Everything else follows
+from deleting the card: with no `--cream-lift` panel there is no border, no
+radius, no padding and no clipped photo, so the page is dish · name · caption ·
+description on bare cream, which is exactly what the original is. It only became
+possible with §1.2d — the cut-outs ship on a `#F1EAD7` studio backdrop that is
+one step off `--cream`, so they composite invisibly on this ground and visibly
+on any other (§2.2). ⚠️ **That is also the constraint: these photos cannot leave
+a cream surface.** The homepage's phở cards keep their cream panels for the same
+reason, and the feature row needs `mix-blend-mode: multiply` to sit on sand.
+
+**⚠️ §1.3's menu description was wrong about the drinks, and the source HTML is
+what settled it.** It said "Drinks on dark band at page bottom (3 branded cups)".
+The drinks are on **cream**, like every other section. Three checks, cheapest
+first: the capture shows cups on `#F0EAD6` with black type; `original-menu.html`
+contains exactly two `#2D2926` rules and **both are the mobile hamburger
+container**; and the visible-text extraction runs Salted Limeade → `$6` →
+straight into the footer, with nothing between. The dark band at y=6000 of the
+capture is the **original footer's own ground** — which also explains
+`arc-scroll-5300.png`, where the wedges either side of the terracotta dome are
+charcoal on the homepage *and* the menu page. **The original's footer paints
+charcoal and puts a terracotta dome on it; ours is transparent with a green dome
+and shows the page ground through the wedges** (§2.3). Different by choice, but
+worth knowing before reading either capture again.
+
+**The seam fix survived the correction, because it was never really about
+drinks.** /menu used to end on an `.on-green-deep` order CTA, which put the same
+green either side of a band of cream wedges (§2.3 flagged it). The CTA is now
+`.on-charcoal`, so the page closes charcoal → cream wedges → green dome +
+terracotta ring — the identical three-value seam the homepage has, and the
+nearest thing on our site to the original's charcoal footer ground. One class,
+no new section. Generalisable: **when a task's stated mechanism turns out to be
+fictional, re-derive it from the problem it was solving** — the problem was real.
+
+**Type is the measured scale and nothing else, re-measured for THIS page.**
+§1.1's numbers came off the homepage; the menu page uses the same scale at
+different steps, measured off `orig-menu-full.png` at 1440 by dividing each
+string's rendered width by its character count and dividing out the face's
+average advance:
+
+| Element | Measured | Token | Shipped |
+| --- | --- | --- | --- |
+| "ăn nào!" | ~109px | `--fs-xl` | 104.98px |
+| kicker "NónLá Express Menu" | ~24px | `--fs-md` | 24px |
+| intro paragraph | ~22px | `--fs-lead` | 22.5px |
+| section heading | ~35px | `--fs-lg` | 36px |
+| item name | ~25px | `--fs-md` | 24px |
+| item description | ~18px | `--fs-nav` | 18px |
+| serving note / captions | ~15px | `--fs-label` | 14px |
+
+Two things fall out of that. The item description is **18px, not 16px** — the
+`--fs-nav` step, which the scale had only ever used for nav links; and the
+serving note is genuinely *smaller* than the description (15 vs 18), which is
+what stops a one-line note from competing with the dish copy. **No off-scale
+value was needed on this page** — the first phase since A where that is true
+(cf. the drinks headline's 0.9 shave and `.hero-title`'s fitted clamp).
+
+**Three things that looked right in code and wrong on screen.** All three were
+caught at a real viewport, none would have shown in a build:
+
+1. **`auto-fill minmax(260px, 1fr)` gave five columns**, not three, on an 88rem
+   container — every dish shrank to a thumbnail. The grid is now a fixed
+   `repeat(3, 1fr)` stepping to 2 at 1000px and 1 at 620px. On a page whose
+   photographs *are* the content, the column count is a design decision, not a
+   fitting problem to hand to the browser.
+2. **The two ornaments were sized by width and the herb is portrait.** Shrimp is
+   1.51:1, herb 0.84:1; one shared width made the herb half again as tall as the
+   heading row and opened a gap under "Noodle" that read as a layout bug. Sizing
+   by **height** is what makes the pieces read as one set — worth remembering for
+   Phase E, which places the three dish illustrations.
+3. **One item has no photograph** (Thai Green Milk Tea) and in source order it
+   landed in the middle of a row, leaving a hole between two cups that reads as a
+   broken image. Photo-less items now sort to the tail of their section and drop
+   the media box entirely. The numbered sections are untouched — every item there
+   has a photo — so the kitchen's 1–10 order is never reordered.
+
+**Art placed (gap G4): lime and noodles in the header, shrimp and herb on two
+section heads.** The lime is **the one placement on the site that overrides the
+art tokens**: every other piece takes whatever `--art-fill` / `--art-detail` the
+surface hands it, but the lime has a colour of its own on the original (#53B28F)
+and stops reading as a lime without it. It gets `--green-bright` — the client's
+vivid green, which is decorative-fill-only at 3.08:1, and a 38vw graphic with no
+text on it is exactly the job that token exists for. The noodle squiggle is
+monochrome, so it takes `color`, and `--cream-bright` is the token nearest the
+original's pure white. ⚠️ **On a phone the lime leaves the absolute layer and
+flows above the heading** — at 3.08:1 it cannot have text over it, which an
+absolutely-positioned decoration on a narrow screen would guarantee.
+
+**Still open on this page.** /menu carries **no `InlineEdit`** — the WordPress
+live-edit layer is wired on the homepage only, so the menu's copy is not
+client-editable and cannot drift (the content-sync rule has nothing to check
+here). Wiring it is a real piece of work, not a sweep: `MENU` is a nested data
+structure and each string needs a stable key, so it wants its own pass rather
+than being smuggled into a re-skin.
 
 ### Phase E — company page + remaining pages
 - [ ] /company: 50/50 split — left story column (label, script heading, «phở, the new era» pull-quote, story paragraphs from `content.js`, mural photo), right full-bleed media (hero video from Phase C, else `pho-near-me-…-dining-area.jpg`). Below-fold: illustrated-dish SVG row + values band on `.on-green-deep` (values cards are already `.on-cream` + `--cream-lift`). The red script pull-quote is a `--warm` candidate (§1.2d) — check the rendered size clears 18.66px at weight 700+.
 - [ ] /press, legal pages, accessibility: already on the cream ground with `--cream-lift` cards / `.prose-panel`; check prose contrast and that nothing re-introduces a hard-coded color.
 - [ ] Nav labels + footer links aligned with §5 Q4 outcome (BLOG vs PRESS).
-- [ ] Remove dead CSS: `.price-oval` if unused, hero-video styles if dropped, `.on-green-lift` if nothing ends up using it. ⚠️ **Do NOT sweep `.on-terracotta`** — it is deliberately unused and kept AA-correct as the statement hero's option if the client wants more of the third colour (§1.2d). (The old dark-green-era vars are already gone — Phase A removed them outright.)
+- [ ] Remove dead CSS: ~~`.price-oval` if unused~~ (**it is used** — Phase D retired it from /menu's section headings and it now lives only on `LunchSpecial`, which is deliberate: it is a printed-menu signature and one price deserves it. Don't sweep it), hero-video styles if dropped, `.on-green-lift` if nothing ends up using it. ⚠️ **Do NOT sweep `.on-terracotta`** — it is deliberately unused and kept AA-correct as the statement hero's option if the client wants more of the third colour (§1.2d). (The old dark-green-era vars are already gone — Phase A removed them outright.)
 - Verify all 7 routes, both widths.
 
 ### Phase F — QA + launch prep
@@ -1085,8 +1194,8 @@ Same failure shape as the stale `vite preview` on 4173.
    else, so both are needed.) Separately, Phase E's /company pane can use the
    harvested kitchen video (7.6MB, 720×1062) rather than this one.
 4. **BLOG vs PRESS in nav:** original has an active (Chinese-SEO) Wix blog; our static site has /press instead. Blog content strategy + the parked `/blog`, `/post/*` redirect map are one decision.
-5. **Menu prices on the website:** original shows none; we currently show prices. Keep or hide?
-6. **Burger section:** our menu data has it, the live site's menu doesn't (Phase D). Still on the menu, or discontinued?
+5. **Menu prices on the website:** original shows none; we currently show prices. Keep or hide? — **Phase D shipped the stated default (keep), and the question is now cheap to answer either way:** prices are per-section, so they are five `.section-price` labels plus the three drink extras, and hiding them is a one-line `display:none`. Worth asking with a screenshot of each.
+6. **Burger section:** our menu data has it, the live site's menu doesn't (Phase D). Still on the menu, or discontinued? — **Phase D kept it** on the stated default, and it is the only section with no dish photography, so it reads visibly thinner than the other four. If it stays, it wants photos; if it goes, delete the block in `content.js`. **Ask before Phase F.**
 7. **Maname's Vietnamese diacritics (new, Phase A).** On ơ/ư the tone mark sits
    far too high — *phở*, *Cơm*, *Sườn*, *Nướng*, *Cuốn* all show a floating gap
    (§1.1). No CSS fixes it. The original site has the identical flaw, so the
@@ -1580,6 +1689,74 @@ Same failure shape as the stale `vite preview` on 4173.
   questions; **Q4 (BLOG vs PRESS) is the only one blocking shipped work**, and
   Q5/Q6 (menu prices, the Burger section) both land inside Phase D, so they are
   the ones to batch now.
+
+- **2026-08-11 — PHASE D SHIPPED: the menu page re-skin.** /menu is now the
+  original's page — the red "ăn nào!" header with the green lime and the white
+  noodle squiggle bleeding off either edge, ruled section heads, and **cut-out
+  dish photos directly on cream with no cards**. Build clean in **both** shapes
+  (`pnpm build` and `WP_BUILD=1`), **0 contrast failures across 7 routes × 2
+  widths, no horizontal scroll** (`verify.py`, `OUT_TAG="phaseD"`), and every
+  type size measured against the original at a real viewport with `cdp.py`.
+  Content-drift check ran clean before any of it (`make check-content-drift`, 9
+  keys). Full detail in **§2.6**; six things worth carrying forward:
+  1. **A plan task's premise was fictional, and the source HTML said so.** Phase
+     D was told to build a "charcoal drinks strip w/ 3 branded cup photos"
+     because §1.3 said the original had one. It doesn't: its drinks are on cream,
+     the only two `#2D2926` rules in `original-menu.html` are the mobile
+     hamburger, and the dark band at the bottom of the capture is the
+     **original footer's own ground**. Three cheap checks beat one confident
+     sentence written from a truncated screenshot. §1.3 is corrected in place.
+  2. **The task's *problem* was real even though its *mechanism* wasn't.** The
+     strip was there to stop /menu ending on `--green-deep` under a green dome.
+     Making the closing CTA `.on-charcoal` fixes that in one class and gives the
+     page the homepage's three-value seam. When a task turns out to be fiction,
+     re-derive it from what it was solving before dropping it.
+  3. **Deleting the card was the entire re-skin.** No border, no radius, no
+     padding, no clipped photo — and it only works because §1.2d made the ground
+     cream and the cut-outs' `#F1EAD7` backdrop composites into it. The corollary
+     is a constraint: **these photos cannot leave a cream surface** without the
+     multiply trick (§2.3).
+  4. **`auto-fill` is the wrong tool when the photographs are the content.**
+     `minmax(260px, 1fr)` fitted five columns into 88rem and shrank every dish to
+     a thumbnail. Column count on this page is a design decision — it is fixed at
+     3 now, stepping to 2 and 1.
+  5. **Size illustration by height when pieces have different aspect ratios.**
+     Shrimp is 1.51:1 and herb 0.84:1; one shared *width* made the herb tower
+     over its heading row. Phase E places three more dish illustrations — same
+     trap.
+  6. **The measured scale covered this page with nothing left over.** Every size
+     landed on `--fs-xl / md / lead / lg / nav / label`, including the two that
+     had to be re-measured off the original (descriptions are **18px**, the step
+     the scale had only used for nav; serving notes are smaller than the copy
+     they introduce). First phase since A needing no off-scale value.
+  Also: the price ovals left the five section headings for a small green label
+  (§5 Q5's default) — **`.price-oval` is still live on `LunchSpecial`, so Phase
+  E must not sweep it**; the Burger section stays on §5 Q6's default and is now
+  visibly the only one without photography; photo-less items sort to the tail of
+  their section so a missing photo can't punch a hole mid-row; and /menu still
+  has **no `InlineEdit`**, which is a deliberate deferral, not an oversight.
+  **Next: Phase E — /company + the remaining pages.** §5 still has 8 open client
+  questions; **Q4 (BLOG vs PRESS) still blocks the header**, and Q5/Q6 now have
+  shipped defaults to react to rather than abstract choices — batch all three.
+
+- **2026-08-11 — MENU ITEM REMOVED: "Squid Game" (client direction).** Gone from
+  `MENU.appetizers`, which is now four items. ⚠️ **Do not restore it** when
+  reconciling against the printed menu — the printed "New Menu" is authoritative
+  for names and prices (see the header comment in `content.js`) and it still
+  lists this dish, so the two now disagree **on purpose**. Two consequences:
+  1. **The Lunch Special's exclusion note went with it.** Step ① read "Squid
+     Game not included · 不包括鱿鱼小吃" — a carve-out naming a dish the menu no
+     longer has, which is worse than no note at all. Removed, with a comment in
+     place saying why. Generalisable: **deleting a menu item means grepping for
+     the item, not just the item's record** — exclusions, upsells and "not
+     available with" notes all name dishes from a distance.
+  2. **`static/assets/images/squid-game.jpg` is now unreferenced** and was left
+     on disk deliberately — it is client-supplied photography and deleting it is
+     not ours to decide (same reasoning as the hero video, §2.2 item 5). Sweep
+     it in Phase F if the client confirms the dish is discontinued rather than
+     merely hidden.
+  Re-verified: build clean, **0 contrast failures across 7 routes × 2 widths, no
+  horizontal scroll**. Content-drift check clean before the edit.
 
 ## 7. Deploy state — ✅ RESOLVED 2026-08-07, both targets current 2026-08-11
 

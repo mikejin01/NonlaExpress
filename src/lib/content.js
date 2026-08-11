@@ -107,7 +107,10 @@ export const LUNCH_SPECIAL = {
 	price: 25,
 	window: LUNCH_WINDOW,
 	steps: [
-		{ n: '①', en: 'Any appetizer — half portion', zh: '任意一份小吃（半份）', note: 'Squid Game not included · 不包括鱿鱼小吃' },
+		// The "Squid Game not included" exclusion went with the dish itself
+		// (removed 2026-08-11, client direction) — the carve-out named an
+		// appetizer the menu no longer has.
+		{ n: '①', en: 'Any appetizer — half portion', zh: '任意一份小吃（半份）' },
 		{ n: '②', en: 'Any noodle or main', zh: '任意一份河粉／主食' },
 		{ n: '③', en: 'Any drink', zh: '任意一杯饮品' }
 	]
@@ -133,11 +136,6 @@ export const MENU = [
 				en: 'Lemongrass Chicken Wings (4)', vi: 'Cánh Gà Sả', zh: '香茅鸡翅',
 				desc: 'Crispy fried wings in a lemongrass-garlic marinade with a tangy dip.',
 				img: `wings.jpg`
-			},
-			{
-				en: 'Squid Game', vi: '', zh: '鱿鱼小吃',
-				desc: 'Savory squid patty, air-fried and served with a tangy ginger dip.',
-				img: `squid-game.jpg`
 			},
 			{
 				en: 'Viet Salad w. Ginger Sauce', vi: 'Gỏi', zh: '越式沙拉',
