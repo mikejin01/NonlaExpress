@@ -8,8 +8,36 @@ session log at the bottom as work proceeds.
 **Goal:** the client (and we) find the original Wix site stronger than our Phase 6
 scaffold. Adopt its typography, palette, illustration language, and page
 structure, while keeping our SvelteKit/static/GitHub-Pages stack and the useful
-things the scaffold added (bilingual menu data, lunch-special panel, press page,
-legal pages, 301-parity routes).
+things the scaffold added (bilingual menu data, lunch-special panel, ~~press
+page~~ → blog, legal pages, 301-parity routes).
+
+---
+
+## 0. Status — 2026-08-12
+
+**Every phase is done: A · B · C · C2 · D · E · F.** `verify.py` at
+`OUT_TAG="phaseF"` reports **`RESULT: PASS`** (0 contrast failures, `fonts=ALL`,
+`hscroll=no`, 7 routes × 2 widths) and both build shapes build clean. **§5 Q4 is
+settled**, so nothing in the redesign is blocked on the client.
+
+**What is NOT done, and none of it is design work:**
+
+1. ⚠️ **The Phase F work and the blog are UNCOMMITTED.**
+2. ⚠️ **Both live targets are behind — §7 has the measurements.** Pages has
+   Phase E; WordPress has no blog at all (`/blog/` → 404). Pages catches up on a
+   push to `main`; WordPress needs `make build-and-push`, which a git push does
+   **not** do.
+3. ⚠️ **The blog has never run against a real WordPress.** It was verified by
+   injecting the exact `xo_post_payload()` shape before boot, which exercises
+   every part that lives in this repo — but PHP actually producing that payload
+   is read, not run. **Smoke-test `/blog/` first after deploying.**
+4. **7 open client questions in §5** (Q1 and Q4 are answered). Q3 (hero video,
+   ~15 MB) and Q9 (CJK webfont, 0.75 MB) carry measured price tags. None blocks
+   anything.
+
+⚠️ **Reading order for Q4:** §2.9 was written before the reversal and its nav
+conclusion is superseded — **read §2.10 and §2.11 first**. §2.9's sitemap
+findings and redirect map are still correct and still shipping.
 
 ---
 
@@ -366,6 +394,9 @@ to the footer. §2.7 has what that meant for our build.
 
 **Blog** (`/blog`): Wix blog card grid, 4-col, mostly Chinese-language SEO
 posts (法拉盛/Flushing pho keywords) + a couple EN. Feeds the footer band.
+→ **We have this route too, as of 2026-08-12** — a 3-col card grid backed by
+WordPress posts, replacing /press (§2.10, §2.11). The original's 12 posts are
+**not** ported; they 301 by topic (§2.9).
 
 **Order:** all CTAs → `https://order.snackpass.co/67be450e8c2c2460a8b96002`.
 
@@ -497,7 +528,7 @@ the site's motion budget goes entirely into M1–M4 and M6. Don't add fade-ins.
 | G5 | ~~Home structure: video hero + template sections~~ — **CLOSED Phase C**, but *not* by wholesale replacement: the original's section order ships **around** five of our own sections, video hero included (**§2.4** — the keep list). | resolved |
 | G6 | ~~Menu: dark w/ price ovals + text lists vs cream w/ cut-out dish photos, script headers, no prices~~ — **CLOSED Phase D 2026-08-11.** Card-less cut-outs on cream, ruled section heads, the red "ăn nào!" header with lime + noodles. Prices *stay* by the §5 Q5 default but as a small green label, not an oval. | resolved |
 | G7 | ~~Company: single column vs 50/50 split with story + media~~ — **CLOSED Phase E 2026-08-12.** The split measures on the original's own geometry (720/720 panes, 76px inset, the same two-line heading break), with the harvested kitchen video in the right pane at 1.12MB. §2.7. | resolved |
-| G8 | Nav labels: MENU·ABOUT·PRESS·FIND US vs OUR MENU·OUR COMPANY·BLOG | small — **blocked on §5 Q4**, everything else about the header shipped in Phase C |
+| G8 | Nav labels: MENU·ABOUT·PRESS·FIND US vs OUR MENU·OUR COMPANY·BLOG | ✅ **CLOSED 2026-08-12** — and it closed on the ORIGINAL's label, not ours: **OUR MENU · OUR COMPANY · BLOG · FIND US**. Q4 was answered "keep PRESS" and reversed the same day once it emerged /press could never be written from the dashboard; /blog is now a real WordPress-backed route (§2.10, §2.11) |
 | G9 | ~~Newsletter: plain section vs cream panel on terracotta footer~~ — **CLOSED Phase C**, and it is now in the footer on every route. | resolved |
 | G10 | ~~Marquee: our photo-card marquee vs giant type marquee w/ animals~~ — **CLOSED Phase C, and it was never an either/or.** The type band ships (static; C2 animates) **and** the photo carousel stays as its own section (§2.4). | resolved |
 | G11 | ~~No footer arc~~ — **CLOSED Phase C**: the circle ships at full size with a `--sand-3` hairline; C2 adds only the scroll-scrub. | resolved |
@@ -615,7 +646,7 @@ this goes with it.
 - [x] ⚠️ Diff the harvest against the 31 existing photos rather than bulk-importing. → Done by perceptual hash, and **the answer inverts the plan's assumption: there is nothing to import.** All 31 existing files already *are* these photographs (dHash distance ≤4 on every one), including the 18 cut-out dish shots and the pho cut-outs this bullet expected to gain. The harvest's 32nd file is a byte-identical rename of another. **No filenames changed, no `content.js` edits needed.** Numbers in §2.2.
 - [x] Web renditions (max ~1600px, ~80% quality). → Already satisfied, with two exceptions that broke the rule: `interior-hat-wide.jpg` and `interior-murals-wide.jpg` were 2560px/~660KB each. Resampled to 1600px q82 — **4.3MB → 3.6MB**, filenames unchanged.
 - [x] Originals stay out of git — `.gitignore` line left in place, verified still effective.
-- [ ] ⚠️ **Hero video: NOT decided — this is client question §5 Q3 and it is now the single biggest thing in the deploy.** Measured, not estimated: `build/` is **38MB, of which 33MB (87%) is the two hero videos**. They are tracked in git and still wired into the homepage hero (`+page.svelte:89-92`), so deleting them would break the page and pre-empt Q3. Left in place deliberately. Phase C re-decides the hero anyway; note `/company` already has its own 7.6MB kitchen video harvested, so the hero pair may be redundant rather than merely oversized.
+- [—] ⚠️ **Hero video: NOT A TASK — it is client question §5 Q3, parked here deliberately.** The box stays unticked because the decision is the client's and has never been made; **no build work is outstanding.** (It is the only unticked box in this file, so: this is why.) Measured at the time: `build/` **38MB, of which 33MB (87%) is the two hero videos**, tracked in git and wired into the homepage hero, so deleting them would break the page and pre-empt Q3. ✅ **Phase F made the number precise and smaller than it looks:** 33MB is the DEPLOY figure counting both renditions — a visitor downloads exactly one, **17.86MB** (`.mp4`) or ~15.5MB (`.mov`, Safari), against a **17.90MB** homepage, so the hero is **99% of it**. /company's own harvested video went 7.9MB → **1.12MB** with no visible loss (§2.7), which is the worked example of what the answer looks like.
 - [x] Update `docs/website-brief.md` §6: logo-vector question RESOLVED. → Updated in three places (§4 Logo, §6 #2, §7 assumption 8). The brief said "no vector found" because the media-library sweep only saw the 48px favicon — **the real lockups were inline SVG in the page markup all along.**
 - [x] Verify: favicon + navbar logo render at both sizes; page weight sane. → `verify.py` (now `OUT_TAG="phaseB"`): **0 contrast failures across 7 routes × 2 widths, no horizontal scroll.** Logo confirmed rendering cream-on-green in navbar and footer at 1440 and 540.
 
@@ -1057,10 +1088,10 @@ here). Wiring it is a real piece of work, not a sweep: `MENU` is a nested data
 structure and each string needs a stable key, so it wants its own pass rather
 than being smuggled into a re-skin.
 
-### Phase E — company page + remaining pages ✅ DONE 2026-08-12 (one task blocked)
+### Phase E — company page + remaining pages ✅ DONE 2026-08-12 (fully — the blocked task closed later the same day)
 - [x] /company: 50/50 split — left story column (label, script heading, «phở, the new era» pull-quote, story paragraphs from `content.js`, mural photo), right full-bleed media (hero video from Phase C, else `pho-near-me-…-dining-area.jpg`). Below-fold: illustrated-dish SVG row + values band on `.on-green-deep` (values cards are already `.on-cream` + `--cream-lift`). The red script pull-quote is a `--warm` candidate (§1.2d) — check the rendered size clears 18.66px at weight 700+. → Split shipped and it measures on the original's own geometry (720/720 panes, 76px content inset, the same two-line heading break). Three deviations, all deliberate and all in §2.7: the media is the **harvested kitchen video**, re-encoded 7.9MB → **1.12MB**; the dish illustrations are **one per value block**, which is where the source HTML actually puts them, not a row; and the values stay **on cream, card-less** rather than on `.on-green-deep` — the dishes are the site's only multi-colour art and do not adapt to a surface. The pull-quote check **failed as posed and that decided it**: it is weight 400, so 22.5px is normal text, so it takes `--warm-ink` not `--warm`.
 - [x] /press, legal pages, accessibility: already on the cream ground with `--cream-lift` cards / `.prose-panel`; check prose contrast and that nothing re-introduces a hard-coded color. → Confirmed correct as-is, no edits needed. `.press-card` carries both `--cream-lift` **and** the `--rule` hairline the §1.2d trap requires; all three legal routes are `.prose.prose-panel.on-cream`. The only hard-coded colours left in `src/` are `src/lib/inline-edit/*` (the WordPress editor chrome, deliberately un-themed — it is not the site) and `.polaroid { background: #fff }`, which is photo paper on the charcoal band, carries no text, and is a physical object rather than a surface.
-- [ ] ⛔ **BLOCKED on §5 Q4** — nav labels + footer links (BLOG vs PRESS). Untouched on purpose; the header still ships OUR MENU · OUR COMPANY · PRESS · FIND US. This is the last thing in the redesign waiting on the client rather than on us.
+- [x] ~~⛔ **BLOCKED on §5 Q4**~~ — nav labels + footer links (BLOG vs PRESS). → **UNBLOCKED AND DONE 2026-08-12**, in two steps on the same day. First answer: keep PRESS, retire the blog — which generated the **redirect map** for the 12 retired post URLs (§2.9). Then **REVERSED**, once it emerged that /press could never be written from the WordPress dashboard: the nav is now **OUR MENU · OUR COMPANY · BLOG · FIND US**, /press is a redirect stub, and /blog renders real WordPress posts (**§2.10, §2.11**). ⚠️ Read §2.10 before §2.9 — §2.9's "the nav is final at PRESS" is superseded.
 - [x] Remove dead CSS: ~~`.price-oval` if unused~~ (**it is used** — Phase D retired it from /menu's section headings and it now lives only on `LunchSpecial`, which is deliberate: it is a printed-menu signature and one price deserves it. Don't sweep it), hero-video styles if dropped, `.on-green-lift` if nothing ends up using it. ⚠️ **Do NOT sweep `.on-terracotta`** — it is deliberately unused and kept AA-correct as the statement hero's option if the client wants more of the third colour (§1.2d). (The old dark-green-era vars are already gone — Phase A removed them outright.) → Swept by **measurement, not by eye**: a script cross-referenced every class defined in `app.css` against all of `src/`, and the entire dead list was three names — `.on-green-lift` (removed, with a note in place saying why), `.on-terracotta` (kept, protected above) and a regex artifact. The hero-video styles stay because the video stayed. `--green` itself is untouched.
 - [x] Verify all 7 routes, both widths. → `verify.py` at `OUT_TAG="phaseE"`: **`RESULT: PASS` — 0 contrast failures, `fonts=ALL`, `hscroll=no` across 7 routes × 2 widths**, plus both build shapes clean and every /company measurement re-taken at a real viewport with `cdp.py`. ⚠️ This is the **first phase to report PASS on the fonts line**, and not because anything about the fonts changed — see §2.7, the checker was wrong.
 
@@ -1175,13 +1206,352 @@ and `pho-ga-tall.jpg` — and all three are **left on disk deliberately**, on th
 same reasoning as the squid-game entry: deleting client photography is not ours
 to decide. Sweep in Phase F if confirmed.
 
-### Phase F — QA + launch prep
-- [ ] Cross-page consistency pass at 1440 + 540 (memory: headless Chrome clamps <~540px; judge narrower via CSS).
-- [ ] Reduced-motion: force it on and confirm every §1.5 effect is inert and the page still reads correctly (marquee static, arc at full size, no parallax drift).
-- [ ] Contrast audit — **automated**: `scripts/verify.py` walks every route at both widths, composites each element's color over its real background, and reports anything under 4.5:1 (3.0 for large text). Re-run it after every phase. Phase A left it at 0 failures; the numbers behind the palette are in §2.1. Note it cannot see through `.on-media` (it walks past the video to the page background) — those are checked by sampling the video directly.
-- [ ] Font subset sizes; Lighthouse-ish sanity (static, should be fast).
-- [ ] Update README.md + CLAUDE.md (new design system), refresh `docs/website-brief.md` §6 parked list (logo Q resolved; hours/newsletter/press/redirects still open).
-- [ ] Then resume the original next step: git init + push for Pages deploy (the 162MB photo exclusion is already in `.gitignore` — just confirm `git status` is clean of it before the first commit).
+### Phase F — QA + launch prep ✅ DONE 2026-08-12
+- [x] Cross-page consistency pass at 1440 + 540 (memory: headless Chrome clamps <~540px; judge narrower via CSS). → Ran as a **cross-route diff**, which is the thing per-route checks structurally cannot catch. Nav, footer, button, `lang`, viewport, body bg/size and favicon are byte-identical on all 7; every route has exactly one `<h1>`, no heading-level skips and no `<img>` missing `alt`; containers resolve 1088 (content) / 736 (prose) by design. Three apparent findings **dissolved on inspection** and are written up in §2.8 — do not "re-fix" them.
+- [x] Reduced-motion: force it on and confirm every §1.5 effect is inert and the page still reads correctly (marquee static, arc at full size, no parallax drift). → All 7 routes × both widths: **0 running animations, 0 elements still declaring one**, arc at full size (2.55vw), marquee `translateX` 0, all three drift values 0, scroll-arrow `animation-name: none`. Run **paired with an unforced control** so the probe is known to be able to see motion; the control's numbers also re-confirm §2.5's spec (phin 106.6 vs ±107, cup 102.2 vs ±102, polaroids −60.5 vs ±60).
+- [x] Contrast audit — **automated**: `scripts/verify.py` walks every route at both widths, composites each element's color over its real background, and reports anything under 4.5:1 (3.0 for large text). Re-run it after every phase. Phase A left it at 0 failures; the numbers behind the palette are in §2.1. Note it cannot see through `.on-media` (it walks past the video to the page background) — those are checked by sampling the video directly. → `OUT_TAG="phaseF"`: **`RESULT: PASS` — 0 contrast failures, `fonts=ALL`, `hscroll=no` on 7 routes × 2 widths**, both build shapes clean. The `.on-media` blind spot was **actually sampled this time** rather than waved through, and it found a real miss — see §2.8.
+- [x] Font subset sizes; Lighthouse-ish sanity (static, should be fast). → Both, and this was the richest task in the phase. Two unused CJK weights removed (**91.7 KB → 31.5 KB** of render-blocking CSS on *every* route), and a **767 KB** per-page CJK webfont cost measured that no other tool on this project could see. §2.8.
+- [x] Update README.md + CLAUDE.md (new design system), refresh `docs/website-brief.md` §6 parked list (logo Q resolved; hours/newsletter/press/redirects still open). → Done. README was still describing the **pre-redesign** stack (old palette, old fonts, "interim logo", no mention of WordPress) and is rewritten.
+- [x] ~~Then resume the original next step: git init + push for Pages deploy~~ — **already true since Phase A**; both deploy targets have been live and verified since 2026-08-11 (§7). Struck rather than done.
+
+#### 2.8 What Phase F actually shipped (read before launch)
+
+Phase F changed five files and found more by measuring than by looking. The
+through-line: **three of the seven things that looked wrong were not, and two of
+the things that looked fine were wrong.** Both directions cost real time, and
+both are cheap to re-litigate if this section isn't read.
+
+**The `.on-media` blind spot was hiding a real miss.** verify.py has always
+listed the three hero elements separately and always said they are "verified
+instead by sampling the video directly" — which nobody had done since the scrim
+was tuned, and the hero has changed since (the `<h1>` moved up here when the
+intro was deleted, plan §2.3). Sampling the actual video across 8 timestamps and
+compositing the overlay per-pixel:
+
+| | as shipped | after |
+| --- | --- | --- |
+| `.hero-title` 63.2px/900 | 4.12:1 worst, 0.00% under | unchanged |
+| `.hero-sub` @1440 | **3.94:1 worst, 0.29% under** | 4.44:1, 0.01% |
+| `.hero-sub` @540 | **4.02:1 worst, 0.37% under** | 4.54:1, 0.00% |
+| `.eyebrow`, `.btn-outline` | 4.95 / 5.33:1, 0.00% | unchanged |
+
+The cause is worth generalising: **on `.on-media`, `--fg-muted` is cream at 0.9
+ALPHA**, so it composites toward whatever video frame is behind it, while
+`--fg` is opaque. Muting text over video costs contrast in a way muting it over
+a painted surface never does. `.hero-sub` now takes `--fg`; the 0.9 was
+invisible against a dark video anyway. (The estimator ignores the element's
+`text-shadow`, so the real margin is wider than the table shows.)
+
+⚠️ **The skip link shipped broken first, and the way it was broken is the
+lesson.** WCAG 2.4.1 Bypass Blocks was genuinely missing — five links precede
+the content on every route and the homepage then opens on a full-viewport video
+— so `.skip-link` + `<main id="main" tabindex="-1">` on all 7 routes is new.
+The first version was `position: absolute; z-index: 1000`. It tested **perfect**:
+first tab stop on all 7 routes, `getBoundingClientRect().top === 0`, correct
+label. It was also **completely invisible**, painted underneath the navbar
+(`position: fixed; z-index: 8000`). Geometry cannot tell you a thing is visible —
+only `document.elementFromPoint()` at the element's own centre can, and that is
+what the check does now. It is also `fixed`, because `absolute` positions
+against the document and the link only reached the viewport while the page
+happened to be scrolled to the top.
+
+**Two unused CJK weights were costing 60 KB of render-blocking CSS per route.**
+Measuring the *rendered* `font-family`/`font-weight` of every text element on
+every route (rather than reading the stylesheet) showed Noto Serif SC is only
+ever used at **600** — `.zh` is its one rule — while the font URL asked for
+`600;700;900`. Each CJK weight publishes ~100 `@font-face` rules:
+
+| | before | after |
+| --- | --- | --- |
+| Google Fonts CSS, uncompressed | 340.3 KB | **121.1 KB** |
+| …transferred, every route | 91.7 KB | **31.5 KB** |
+| `@font-face` rules | 325 | **123** |
+
+The legal routes lost a third of their total page weight to this one edit
+(0.18 → 0.12 MB). The same audit caught the skip link inheriting Overpass 400
+when only 600/700 are fetched — now stated explicitly — and confirmed the
+`<em>`/`<strong>` in prose are faux-styled Maname, which is expected and fine
+for a single-weight face.
+
+⚠️ **The largest asset on /menu/ is not a photo — it is 767 KB of Chinese
+webfont, and Resource Timing cannot see it.** Chrome records **no resource
+entries at all** for `fonts.gstatic.com` here (cold profile, cache disabled), so
+every per-route weight number below *understates* the CJK routes. Computed
+instead by intersecting each page's painted characters against the CSS's
+`unicode-range` declarations and fetching the subsets that match:
+
+| route | CJK chars | subsets pulled | webfont |
+| --- | --- | --- | --- |
+| `/menu/` | 82 | 19 | **767.3 KB** |
+| `/` | 55 | 16 | **622.3 KB** |
+| the other five | 0 | 0 | 0 |
+
+This is the classic CJK failure shape: Google splits Noto Serif SC into ~100
+subsets of ~40 KB, and 82 *scattered* characters land in 19 different ones.
+**The fix is one line and it is deliberately NOT taken** — appending
+`&text=<the 119 glyphs the site paints>` returns a single custom subset,
+measured at **25.1 KB, i.e. 96.7% smaller**. It is parked as **§5 Q9** because
+it freezes the glyph set: any Chinese character a client types into the live
+WordPress site afterwards falls out of the subset and renders in the fallback
+serif mid-sentence. That trade belongs to whoever owns the content-editing
+model, not to a QA phase. Verified separately via
+`CSS.getPlatformFontsForNode` that the CJK really is **Noto Serif SC SemiBold**
+today and not macOS's Songti SC fallback.
+
+**Per-route weight, for the record** (excluding the CJK above): home
+**17.90 MB**, company 2.76 MB, press 0.36 MB, menu 0.34 MB, the three legal
+routes 0.12 MB. FCP 216–400ms locally on every route.
+
+**A number in §5 Q3 was being read wrong and is now precise.** "33MB of a 37MB
+deploy" is the **deploy** figure and counts both hero renditions. A *visitor*
+downloads exactly one: **17.86 MB** (`.mp4`, everything except Safari) or
+~15.5 MB (`.mov`, Safari HEVC). So the hero costs one viewer ~17.9 MB, not 33 —
+still 99% of the homepage, and still the single biggest thing on the site.
+
+**Three findings that were NOT real** — recorded so nobody re-opens them:
+
+- **Focus rings.** A first probe called `.focus()` from JS and read no outline
+  on any interactive element. Driving real `Tab` keypresses instead shows the UA
+  default ring (`outline: auto 1px`) on **every** stop. `:focus-visible` does not
+  reliably match a programmatic focus, so the probe could not have passed.
+  Nothing in `src/` suppresses an outline except `.mail-form input`, which
+  replaces it with a `box-shadow` ring.
+- **Tap targets.** 14–17 targets per route measure under 24×24 (WCAG 2.2
+  SC 2.5.8). Every one is either an inline link inside a sentence or clears the
+  spacing exception with room — the tightest centre-to-centre gap on the whole
+  site is **44px at 540** against a 24px requirement.
+- **Missing meta descriptions on the three legal routes.** They carry
+  `<meta name="robots" content="noindex">`. A description on a noindex page is
+  dead weight; this is correct by design.
+
+**Two real gaps deliberately left for a decision rather than fixed:**
+
+- **No `<header>` banner landmark.** The navbar is `<nav aria-label="Main">`,
+  which is already a labelled landmark, so this is a best-practice gap and not a
+  WCAG failure. Wrapping a `position: fixed` navbar mid-QA to gain `role=banner`
+  is not worth the regression risk while the header is **frozen pending Q4**.
+  (`/menu/` reporting six `<header>` elements is *not* an inconsistency — those
+  are section headers inside `<section>`, which is what the element is for.)
+- **No JSON-LD on the GitHub Pages build.** `build-wordpress-theme.mjs` emits
+  `Restaurant` schema into `wp_head`, so the **WordPress target has it and the
+  Pages target does not**. Adding it to `svelte:head` unguarded would emit it
+  **twice** on the WordPress site; it needs a `WP_BUILD` guard and a deliberate
+  choice about which target is canonical at DNS cutover.
+
+**Tooling.** `cdp.py` gained `emulate_media()` (call it *before* `goto` — the
+carousel and the hero video both read `matchMedia` in `onMount`) and
+`--autoplay-policy=no-user-gesture-required`. The second one is not cosmetic:
+headless blocks autoplay, so "the hero video pauses under reduced motion" read
+`paused` in **both** conditions and was **untestable**. It now discriminates —
+normal plays to 6.61s, reduced sits at 0. verify.py's docstring also lost the
+written excuse for the CJK font check that Phase E disproved; per §2.7, a
+documented reason to ignore a red check is how a red check survives five phases.
+
+**Still deferred, unchanged:** the three unreferenced images (`squid-game.jpg`,
+`lemongrass-beef-bowl.jpg`, `pho-ga-tall.jpg`) stay on disk — deleting client
+photography is still not ours to decide.
+
+#### 2.9 Q4, first answer — the retired blog's redirect map
+
+> ⚠️ **HALF OF THIS SECTION IS SUPERSEDED. READ §2.10 FIRST.** The nav decision
+> below ("keep PRESS") was reversed the same day, so `OUR MENU · OUR COMPANY ·
+> PRESS · FIND US` is **not** what ships — the nav is
+> `OUR MENU · OUR COMPANY · BLOG · FIND US`. What survives intact is everything
+> from "Reading the live sitemap" onward: **the sitemap findings and the
+> redirect map are still correct and still shipping**, because retiring the old
+> Wix posts was right under either answer. Two specific corrections to apply as
+> you read: `/blog` is **no longer** in the redirect map (it is a live route),
+> and `/press` **is** now in it.
+
+**The first answer cost no design work.** §5 Q4 came back **keep PRESS, retire
+the blog**, so `OUR MENU · OUR COMPANY · PRESS · FIND US` — held unchanged since
+Phase C precisely because it was blocked — appeared to be final as written. Gap
+**G8 is closed** (though at the *other* label — see §2.10).
+
+⚠️ **Reading the live sitemap before answering changed the answer's shape.** The
+question had been framed as "the original has an active blog"; nobody had
+checked *how* active. `nonlaexpress.com/sitemap.xml` (fetched 2026-08-12, and
+**this stops being possible at DNS cutover**) gave the real picture:
+
+- **12 posts**, of which **11 are Chinese-language** Flushing local-SEO articles
+  (法拉盛 phở/noodle guides) and one is the English
+  `best-pho-in-flushing-queens`.
+- **Two were updated 2026-07-29** — a fortnight before this session. The blog was
+  live, not abandoned.
+- Also in the sitemap: `/blog`, `/tracker-page` (a Wix internal page), and the
+  nine ordinary pages — **all nine of which already match our routes**, which is
+  the "301 parity" the route names were chosen for. So only 14 URLs needed
+  mapping at all.
+
+The brief flagged those posts as "doing local-SEO work", and the sitemap proved
+it, so retiring the blog by simply deleting it would have 404'd the site's whole
+Chinese-search surface. `scripts/redirects.js` is the canonical map and
+`build-wordpress-theme.mjs` compiles it into `functions.php`.
+
+**Targets are chosen per topic, not swept to `/`.** Google reads a mass redirect
+to the homepage as a soft 404 and drops the ranking, so the nine phở/noodle
+guides go to **`/menu/`** — which already carries the 法拉盛越南河粉菜单 copy and
+the bilingual dish names, making it a genuine content match — and only the three
+general pieces (the brand-named post, "best food spots in Flushing", "authentic
+Chinese food") go to `/`.
+
+⚠️ **The `/post/` prefix fallback is the load-bearing part, not the tidy map.**
+Those slugs contain Han characters, a fullwidth colon `：`, a fullwidth `！` and
+an accented `ó`. A request arrives percent-encoded and may be in NFC **or NFD**,
+so an exact string match is one Unicode normalisation away from silently
+missing — verified: NFD-normalising `法拉盛nón-lá-越南河粉` *does* fall out of the
+exact map. It then hits `strpos($path, 'post/') === 0` and still 301s (to
+`/menu/` rather than the ideal `/`). A redirect to a slightly less specific page
+beats a 404, and the same net catches any post published after the list was
+captured. Simulated against all 12 live URLs percent-encoded as a browser sends
+them: **12/12 resolve, 0 would 404**, and `/menu` / `/press` correctly match
+nothing so WordPress serves the real routes.
+
+⚠️ **The redirects are gated on `is_404()`, and that guard is load-bearing.**
+The first version wasn't, and its own docblock claimed a check the code did not
+contain — it said "only for requests WordPress could not resolve itself" while
+in fact matching on the path unconditionally. Consequence: the `/post/` prefix
+rule would have 301'd **every post of any future blog** to `/menu/`, forever,
+looking exactly like "WordPress is broken". Every legacy URL 404s today, so
+gating on `is_404()` costs the redirects nothing and makes them **self-retiring**
+— create real content at one of these paths and the redirect stands aside.
+
+⚠️ **A post written in the WordPress dashboard did NOT appear on /press, and
+could not.** Two independent reasons: (1) `/press` rendered a hard-coded `PRESS`
+array in `content.js` — three placeholder entries not even wrapped in
+`InlineEdit`, so they weren't editable live either; and (2) the theme's
+`index.php` is `get_header(); <boot markup>; get_footer();` — **it never ran the
+WordPress loop**. ✅ **Both fixed on 2026-08-12: /press is retired and /blog
+renders real posts — see §2.11.**
+
+⚠️ **These 301s exist ONLY on the WordPress target.** They are
+`template_redirect` in PHP, so GitHub Pages — which cannot do server-side
+redirects at all — has none. That is correct today because WordPress is the
+client-editable production site and the Pages build lives at a `github.io` path
+these legacy URLs never pointed at. **It stops being correct the moment
+nonlaexpress.com is pointed at GitHub Pages instead**, at which point all 14
+redirects vanish silently. If that is ever the plan, the map is already a plain
+data file and can drive generated meta-refresh stubs — but someone has to
+decide, and this is the note that says so.
+
+#### 2.10 ⚠️ Q4 REVERSED the same day — /press is retired, /blog is real
+
+**The answer in §2.9 was right about the nav and wrong about the premise, and
+the premise was mine.** Q4 was posed as "BLOG or PRESS in the nav", which framed
+it as a labelling question. It was not. When asked whether a post written in the
+WordPress dashboard would show up on /press, the answer turned out to be **no,
+and it never could have** — so "keep PRESS" quietly meant "keep a page nobody
+can ever update", which is not what anyone was choosing between.
+
+Two independent blockers, either sufficient:
+
+1. `/press` rendered a hard-coded `PRESS` array in `content.js` — three
+   entries all titled *"Featured story"*, all noted *"Details coming soon"*,
+   dates harvested from the old Wix page because brief §6 #17 never came back.
+   They weren't even wrapped in `InlineEdit`, so the live inline editor couldn't
+   touch them either.
+2. The theme's `index.php` is `get_header(); <boot markup>; get_footer();` — it
+   **never runs the WordPress loop**. Every URL returns the same SPA shell and
+   the Svelte router decides what to draw. Nothing in the theme queried posts
+   (`WP_Query` appeared only for the `lead_submission` inbox).
+
+**Generalisable, and the reason this is written up rather than quietly fixed: a
+question about a LABEL was really a question about a CAPABILITY.** Nobody had
+asked "can they publish?" because the page looked like a press page and the
+stack was WordPress, so publishing felt implied. Both halves of that intuition
+were wrong at once.
+
+⚠️ **The retired version had also planted a trap, and it is worth knowing what
+kind.** The `/post/` prefix redirect from §2.9 had **no `is_404()` guard**, and
+its own docblock claimed one — the comment said "only for requests WordPress
+could not resolve itself" while the code matched unconditionally. Left in, it
+would have 301'd **every post of the new blog** to `/menu/`, permanently, and
+presented as "WordPress is broken". Fixed by actually gating on `is_404()`,
+which also makes the whole map **self-retiring**: create real content at any
+mapped path and the redirect stands aside. **A docblock is not a check.**
+
+#### 2.11 What the blog actually is
+
+**WordPress owns routing, the SPA owns rendering** — and the split is the whole
+design. `xo_configure_blog()` runs once on theme activation and sets three
+things, each of which is load-bearing:
+
+| Setting | Why |
+| --- | --- |
+| `permalink_structure` = `/blog/%postname%/` | a dashboard post answers **200** at exactly the URL `src/routes/blog/[slug]` expects. Without it WordPress serves posts at `/%postname%/` and every `/blog/<slug>/` is a 404 that only renders because 404.php happens to boot the SPA too — invisible in a browser, fatal to crawlers |
+| `page_for_posts` = the Blog page | `/blog/` is the posts index rather than an empty page |
+| `flush_rewrite_rules()` | rewrite rules are cached in the DB; changing the structure without flushing leaves the OLD routing live and looks exactly like the change did nothing |
+
+It only fills settings that are unset or still WordPress's plain default — it
+must not stamp on a permalink structure someone chose deliberately.
+
+**Data comes over `GET /wp-json/xo/v1/posts`**, our own endpoint rather than
+`wp/v2/posts`, for two reasons: the index response stays small (no
+`content.rendered` per item, no `_embed` round-trip for the featured image), and
+it keeps working on installs where a security plugin has locked `wp/v2` down for
+logged-out visitors. `?slug=` returns one post **with** content, run through
+`apply_filters('the_content')` so blocks and shortcodes arrive as real markup
+rather than block-comment soup. Titles and excerpts are entity-decoded server
+side so the SPA renders them as **text** and never has to trust a post title as
+HTML.
+
+⚠️ **`/blog/[slug]` must opt out of prerendering.** A slug only exists in the
+WordPress database, so there is no entry list at build time and the GitHub Pages
+build fails with *"marked as prerenderable, but was not prerendered"*. Hence
+`prerender = false` + `ssr = false` in `src/routes/blog/[slug]/+page.js`. On
+WordPress that costs nothing — the WP_BUILD shape is client-rendered anyway.
+
+⚠️ **New type tokens, and they cannot be composed from the existing ones.**
+Post titles are user-authored and the blog they replace was **11 Chinese
+articles out of 12**, so blog text needs a chain with the CJK webfont in it.
+`var(--display), var(--zh-font)` does **not** work: `--display` and `--body-font`
+both *end* in a generic `serif`, which matches Han glyphs first, so Noto Serif SC
+is never reached. `--display-intl` / `--body-intl` put the webfont **before** the
+generic. Verified with `CSS.getPlatformFontsForNode`: a Chinese post title and
+excerpt now render in real *Noto Serif SC SemiBold*, where before they fell to
+the system serif. Elsewhere the language is known and `.zh` marks it — these two
+tokens are for user-authored text only.
+
+**Off WordPress there are no posts, and that is not an error.** `pnpm dev` and
+the GitHub Pages build have no WordPress behind them, so `fetchPosts()` resolves
+empty and the index says so explicitly rather than pretending the blog is empty.
+A failed fetch renders the same state — a blog that cannot reach its API must
+never take the route down.
+
+**Verified without a local WordPress** by injecting `window.wpRest` and a fetch
+stub returning the exact payload `xo_post_payload()` builds, via
+`Page.addScriptToEvaluateOnNewDocument` so it lands before the app boots. At
+1440 and 540: index renders 3 cards with dates, titles, excerpts and correct
+`/blog/<slug>/` hrefs **including a Chinese slug**; the single post renders its
+title, date, both `<p>`s and the `<strong>` from `the_content`, with
+`document.title` set; the no-WordPress state appears when the stub is absent;
+`/press/` lands on `/blog/`. `verify.py` at 7 routes × 2 widths: **`RESULT:
+PASS`**. The one link this cannot cover is PHP actually producing that payload —
+that is read off the generated `functions.php`, and is the thing to smoke-test
+first after `make build-and-push`.
+
+⚠️ **Theme setup had to be moved off `after_switch_theme`, and this would have
+shipped the blog broken.** `xo_configure_blog()` and `xo_ensure_required_pages()`
+were hooked to `after_switch_theme`, which fires **only when someone activates
+the theme in wp-admin**. This theme is deployed by `make build-and-push` — an
+**rsync over an already-active theme** — so that hook never fires again for the
+life of the install. Consequence: pushing the blog would have created no Blog
+page and set no permalink base, `/blog/` would have 404'd on the live site, and
+it would have looked exactly like "the feature doesn't work", with nothing in
+the deploy output hinting otherwise. `xo_maybe_run_setup()` now runs the same
+idempotent routines on `init` whenever `XO_THEME_VERSION` differs from the
+stored `xo_setup_version` — one option read per request in the steady state, one
+full setup pass on the first request after each deploy. **Any future route added
+to `THEME.pages` depends on this too**; before this fix, adding a page to an
+already-live install silently did nothing.
+
+**`/press` is kept as a redirect, not deleted.** It was a real URL on the old
+Wix site *and* live on our own Pages deploy for six phases, so links exist. It
+301s server-side via the map on WordPress; the route itself is a `noindex` stub
+that client-side `replaceState`s to `/blog/` — which is the only redirect
+available on GitHub Pages. ⚠️ **`/blog` is deliberately absent from
+`scripts/redirects.js`** now: it is a live route, and listing a live route in a
+redirect map is how you 301 your own blog into the homepage.
 
 ---
 
@@ -1298,7 +1668,7 @@ measurement ever still looks subtly off, check `lsof -ti:9333` for a leaked
 browser before doubting the CSS, and kill it **by port**, not with `pkill`.
 Same failure shape as the stale `vite preview` on 4173.
 
-## 5. Open questions for the client (batch before Phase C ships)
+## 5. Open questions for the client (batch before launch)
 
 1. ~~**Palette direction**~~ — **ANSWERED four times; §1.2d is current.** 2026-08-06: terracotta as the theme color, **no** — use the **brand green** (§1.2a). 2026-08-06: green-dominant like the printed menu, **no** (§1.2b, rejected on sight). 2026-08-07 morning: green as the **page ground**, cream as the panel material (§1.2c). 2026-08-07: **swap them** — cream is the ground, green is the accent, and **terracotta is promoted to a real third brand colour** (§1.2d). ✅ The folk-art half is settled and got better with the swap — the SVGs need no recolor at all, and on cream their cream bodies vanish so they read as the original's red line-art (§2.2, §1.2d).
    - **The one sub-question left open, deliberately:** how much surface the third colour owns. Today it *draws* (logo, folk art, badges, the two arc hairlines, the intro heading) but owns no band. The original gives terracotta the **statement hero and the footer**; `.on-terracotta` is defined and AA-correct, so handing it the statement hero is a one-class change if the client wants more orange. Worth showing them both.
@@ -1317,7 +1687,31 @@ Same failure shape as the stale `vite preview` on 4173.
    cut**. Ask the client to look at that pane; if they accept it, the same
    treatment on the hero pair is the answer here, and it is the single largest
    win available on page weight.
-4. **BLOG vs PRESS in nav:** original has an active (Chinese-SEO) Wix blog; our static site has /press instead. Blog content strategy + the parked `/blog`, `/post/*` redirect map are one decision.
+   ✅ **Phase F made the cost precise, and it is smaller than "33MB" implies.**
+   That is the DEPLOY figure and counts both renditions; a visitor downloads
+   exactly one — **17.86 MB** (`.mp4`) or ~15.5 MB (`.mov`, Safari). Measured
+   cold, the homepage totals **17.90 MB**, so the hero is **99%** of it against
+   0.12–2.76 MB for every other route. Re-encoding the pair the way /company's
+   was would take the homepage to roughly 2.5 MB.
+4. ~~**BLOG vs PRESS in nav**~~ — ✅ **SETTLED 2026-08-12, after a same-day
+   reversal. Final answer: BLOG, and it is a real WordPress-backed blog.**
+   ⚠️ The first answer below ("keep PRESS") was given against a **false
+   premise** — that /press was a working page the client could maintain. It was
+   not, and could not be: it rendered a hard-coded array and the theme never ran
+   the WordPress loop. Once that surfaced, the decision flipped: **/press is
+   retired and 301s to /blog/**, and posts written in the WordPress dashboard
+   now appear on the site. Nav is **OUR MENU · OUR COMPANY · BLOG · FIND US**,
+   matching the original's own labels. See **§2.10 and §2.11**. The superseded
+   reasoning is kept below because the sitemap findings in it still stand.
+   ~~The nav is final at **OUR MENU · OUR COMPANY · PRESS · FIND US**~~
+   (the original's "OUR X" phrasing, our PRESS route in place of its BLOG, plus
+   the FIND US it had no equivalent for — gap G8, closed). The labels needed no
+   edit; they had been held unchanged since Phase C waiting on exactly this.
+   **The blog is retired but its URLs are not dropped** — see §2.9. Before
+   answering this we read the live Wix sitemap, which showed the blog was *not*
+   dormant: 12 posts, 11 Chinese-language Flushing local-SEO articles, two of
+   them updated **2026-07-29**. That is why they 301 by topic rather than all to
+   `/`. This was the last thing in the redesign blocked on the client.
 5. **Menu prices on the website:** original shows none; we currently show prices. Keep or hide? — **Phase D shipped the stated default (keep), and the question is now cheap to answer either way:** prices are per-section, so they are five `.section-price` labels plus the three drink extras, and hiding them is a one-line `display:none`. Worth asking with a screenshot of each.
 6. **Burger section:** our menu data has it, the live site's menu doesn't (Phase D). Still on the menu, or discontinued? — **Phase D kept it** on the stated default, and it is the only section with no dish photography, so it reads visibly thinner than the other four. If it stays, it wants photos; if it goes, delete the block in `content.js`. **Ask before Phase F.**
 7. **Maname's Vietnamese diacritics (new, Phase A).** On ơ/ư the tone mark sits
@@ -1328,7 +1722,27 @@ Same failure shape as the stale `vite preview` on 4173.
    for English and set Vietnamese names in a second face; (c) swap the body
    serif for one with proper Vietnamese. Worth pairing with Q2, since both are
    "how faithful vs how good" calls.
-8. (Existing §6 items still open: hours confirmation, newsletter provider, press details.)
+8. (Existing brief §6 items still open: **hours confirmation**, **newsletter
+   provider** — the footer form is display-only — and **DNS/registrar access**,
+   which is needed at cutover. ~~press details~~ is **moot since Q4**: /press is
+   a blog now, so a press mention is just a post someone writes in the
+   dashboard, not a code change waiting on data.)
+9. **Freeze the Chinese glyph set for a 96.7% webfont saving? (new, Phase F.)**
+   `/menu/` pulls **767 KB** of Noto Serif SC and the homepage **622 KB**,
+   because 82 scattered characters land in 19 of Google's ~40 KB subsets — on
+   /menu/ that is larger than every image on the page combined, and it is
+   invisible to Resource Timing so no ordinary audit reports it. Appending
+   `&text=` to the font URL returns one custom subset with exactly the 119
+   glyphs the site paints: **25.1 KB, measured**. The catch is the reason it is
+   a question and not a commit: the subset is frozen at build time, so any
+   Chinese character someone types into the **live WordPress site** afterwards
+   is not in it and renders in the fallback serif mid-sentence — a silent
+   failure, and precisely the shape of trap the content-sync rule exists for.
+   Three ways to answer: (a) take it and accept that new CJK copy needs a
+   rebuild — pairs naturally with a note in the editing guide; (b) take it only
+   for the GitHub Pages target, where nothing is live-editable, and leave
+   WordPress on the full subsets; (c) leave it, and spend the same attention on
+   Q3 instead, which is worth 15 MB rather than 0.75 MB.
 
 ## 6. Session log
 
@@ -1936,12 +2350,149 @@ Same failure shape as the stale `vite preview` on 4173.
   Q2 (TT Nooks), Q3 (video weight, now with a demo), Q5/Q6 (menu prices, the
   Burger section) all want answers before launch.
 
-## 7. Deploy state — ✅ RESOLVED 2026-08-07, both targets current 2026-08-11
+- **2026-08-12 — PHASE F SHIPPED: QA + launch prep.** The redesign is
+  **structurally complete**; everything still outstanding is a client answer, not
+  work. `verify.py` at `OUT_TAG="phaseF"` reports **`RESULT: PASS`** — 0 contrast
+  failures, `fonts=ALL`, `hscroll=no` across 7 routes × 2 widths — and both build
+  shapes build clean. Full write-up in §2.8; the five things worth carrying
+  forward:
+  1. **Measuring beat looking, in both directions.** Three findings that looked
+     like failures were not (focus rings — the UA ring is on every tab stop, and
+     the first probe just couldn't trigger `:focus-visible`; sub-24px tap targets
+     — all clear SC 2.5.8's spacing exception, tightest gap 44px against 24
+     needed; "missing" meta descriptions on the legal routes — they are
+     `noindex`). Two that looked fine were not: `.hero-sub` and the skip link.
+  2. **The `.on-media` blind spot was hiding a real miss.** verify.py has always
+     said those three hero elements are "verified by sampling the video
+     directly"; nobody had, and the hero changed in Phase C. `.hero-sub` sat at
+     **3.94:1 worst / 0.29% of pixels under 4.5:1**. Cause: on `.on-media`
+     `--fg-muted` is cream at **0.9 alpha**, so it composites toward the video.
+     Now `--fg` → 4.44:1 / 0.01%.
+  3. **The skip link shipped broken and tested perfect.** New for WCAG 2.4.1.
+     v1 was `absolute; z-index: 1000` and was painted **under** the
+     `fixed; z-index: 8000` navbar — first tab stop, `top === 0`, invisible.
+     **`getBoundingClientRect()` cannot tell you something is visible**;
+     `elementFromPoint()` at its own centre can.
+  4. **60 KB of render-blocking CSS per route was two unused CJK weights.** The
+     rendered-weight audit shows Noto Serif SC is only ever used at 600 while the
+     URL asked for `600;700;900`. Google CSS **340.3 → 121.1 KB** uncompressed,
+     **91.7 → 31.5 KB** transferred, 325 → 123 `@font-face`. Legal routes lost a
+     third of their weight.
+  5. ⚠️ **The biggest asset on /menu/ is 767 KB of Chinese webfont and no tool
+     here can see it** — Chrome records no Resource Timing entries for
+     `fonts.gstatic.com` at all. Computed from `unicode-range` intersections
+     instead. The one-line `&text=` fix measures **25.1 KB (96.7% less)** but
+     freezes the glyph set against live WordPress editing, so it is parked as
+     **new §5 Q9** rather than taken.
+  Also: `cdp.py` gained `emulate_media()` and an autoplay flag that turned "the
+  hero video pauses under reduced motion" from an untestable claim into a
+  passing check; the /menu meta description was trimmed under the truncation
+  limit and deliberately decoupled from Q5/Q6; README was still describing the
+  pre-redesign stack and is rewritten. **Left as decisions, not gaps:** no
+  `<header>` banner landmark (the nav is already a labelled landmark and the
+  header is frozen pending Q4) and no JSON-LD on the Pages target (the WordPress
+  theme emits it; doing both unguarded would duplicate it).
+  **Next: nothing but client answers.** ⛔ Q4 still blocks the nav labels. §5 now
+  has **9** open questions; Q3 (video, worth ~15 MB) and Q9 (CJK font, worth
+  0.75 MB) are the two with measured price tags.
 
-⚠️ **This section is HISTORY.** The Pages site is no longer stale: pushes have
-triggered Actions runs normally since 2026-08-07, and as of the Phase C2 push
-(`00f3422`) both live targets serve the current build — **verified by fetching
-their CSS bundles and grepping for the C2 keyframes**, not by eye:
+- **2026-08-12 — Q4 ANSWERED, and with it the redesign has nothing left blocked
+  on the client.** Decision: **keep PRESS, retire the blog.** The nav labels
+  needed **no edit** — `OUR MENU · OUR COMPANY · PRESS · FIND US` had been held
+  unchanged since Phase C waiting on this exact answer, and it was already the
+  right one. Gap **G8 closed**; the ⛔ marker that had been in this plan since
+  Phase C is gone. Write-up in §2.9. The real work the answer generated was a
+  **redirect map**, and one move made it worth doing properly: **reading the
+  live Wix sitemap before answering.** It showed the blog was not dormant —
+  **12 posts, 11 of them Chinese-language Flushing local-SEO articles, two
+  updated 2026-07-29** — so deleting it would have 404'd the site's entire
+  Chinese-search surface. `scripts/redirects.js` now holds the canonical map and
+  `build-wordpress-theme.mjs` compiles it into `functions.php` as
+  `template_redirect` 301s. Three things worth carrying:
+  1. **Only 14 URLs needed mapping**, because the other nine sitemap pages
+     already match our routes — that is the "301 parity" the route names were
+     chosen for, finally cashed in.
+  2. **Targets are per-topic, not swept to `/`.** Google reads mass
+     redirect-to-homepage as a soft 404; the nine phở/noodle guides go to
+     `/menu/`, which genuinely covers them, and only the three general pieces
+     go to `/`.
+  3. ⚠️ **The `/post/` prefix fallback is the load-bearing part.** Those slugs
+     carry Han characters, a fullwidth `：`, a fullwidth `！` and an accented
+     `ó`; NFD-normalising one **does** fall out of the exact map (verified), and
+     the fallback still 301s it. Simulated against all 12 live URLs as a browser
+     encodes them: **12/12 resolve, 0 would 404.**
+  ⚠️ **These 301s live only on the WordPress target** — PHP cannot run on GitHub
+  Pages. Fine while WordPress is the production site; silently wrong the day
+  nonlaexpress.com points at Pages instead. §2.9 says so in full.
+  **Remaining: 7 open questions in §5 (Q1 and Q4 are answered), all genuinely
+  the client's** — Q3 (video, ~15 MB) and Q9 (CJK font, 0.75 MB) carry measured
+  price tags.
+
+- **2026-08-12 — Q4 REVERSED, and /blog is now a real WordPress-backed blog.**
+  The "keep PRESS" answer above was given against a **false premise I supplied**:
+  the question was framed as a nav LABEL, and the real question was a
+  CAPABILITY. Asked whether a post written in the WordPress dashboard would
+  appear on /press, the answer was **no, and it never could have** — /press
+  rendered a hard-coded three-item array in `content.js`, and the theme's
+  `index.php` never ran the WordPress loop at all. So "keep PRESS" had quietly
+  meant "keep a page nobody can update". Reversed: **/press retired, /blog
+  built, nav now OUR MENU · OUR COMPANY · BLOG · FIND US** — which is also what
+  the original site's nav said. Write-ups in **§2.10** (the reversal) and
+  **§2.11** (what the blog is). Five things worth carrying:
+  1. **WordPress owns routing, the SPA owns rendering.** `xo_configure_blog()`
+     sets the permalink base to `/blog/`, points `page_for_posts` at the Blog
+     page, and flushes rewrite rules — all three load-bearing. Without the
+     permalink base, `/blog/<slug>/` is a **404 that renders anyway** because
+     404.php also boots the SPA: invisible in a browser, fatal to crawlers.
+  2. **Own REST endpoint (`xo/v1/posts`), not `wp/v2/posts`** — small index
+     payload, and it survives installs where a security plugin locks `wp/v2`
+     down for logged-out visitors. Content goes through
+     `apply_filters('the_content')`; titles/excerpts are entity-decoded server
+     side so the SPA renders them as text and never trusts a title as HTML.
+  3. ⚠️ **The retired-blog redirect had planted a trap.** Its `/post/` rule had
+     **no `is_404()` guard** while its docblock claimed one — it would have
+     301'd every post of the new blog to `/menu/`, forever. Now gated, which
+     also makes the map self-retiring. **A docblock is not a check.**
+  4. ⚠️ **`--display-intl` / `--body-intl` are new, and cannot be composed from
+     the existing tokens.** `--display` and `--body-font` both END in a generic
+     `serif`, which catches Han glyphs before Noto Serif SC is ever reached — so
+     `var(--display), var(--zh-font)` does not work. Confirmed with
+     `getPlatformFontsForNode` that Chinese post titles now render in the real
+     webfont. This matters because the blog being replaced was **11 Chinese
+     articles out of 12**.
+  5. **`/blog/[slug]` must set `prerender = false`** — a slug only exists in the
+     WP database, so the Pages build otherwise fails on it.
+  Verified without a local WordPress by injecting `window.wpRest` plus a fetch
+  stub of the exact `xo_post_payload()` shape before boot: index, single post,
+  Chinese slug, empty state and the `/press` → `/blog/` hop all render at 1440
+  and 540; `verify.py` **PASS** on 7 routes × 2 widths. The untested link is PHP
+  producing that payload — **smoke-test /blog/ first after
+  `make build-and-push`.**
+
+## 7. Deploy state — ⚠️ BOTH TARGETS ARE BEHIND as of 2026-08-12
+
+⚠️ **This heading said "both targets current 2026-08-11" and that is no longer
+true — re-measured 2026-08-12, not assumed.** Neither live site has Phase F or
+the blog, and WordPress is further behind than Pages:
+
+| Target | State on 2026-08-12 | Evidence | To catch up |
+| --- | --- | --- | --- |
+| GitHub Pages | has **Phase E**; missing Phase F + the blog | `/menu/` serves the Phase D `ăn nào` header, `/company/` the Phase E `company-split` | commit + push to `main` (Actions does the rest) |
+| WordPress | **behind Pages**; no blog at all | `/blog/` → **404**, `/press/` → 200, live theme `start.ZelnBTYp.js` vs local `start.C9pC8Imc.js` | `make build-and-push` — **a git push does NOT do it** |
+
+⚠️ **The Phase F work and the blog are also still UNCOMMITTED**, so "push to
+main" is the second step, not the first.
+
+⚠️ **After the WordPress push, confirm setup actually ran.** The blog needs a
+Blog page and the `/blog/` permalink base, and those are created by
+`xo_maybe_run_setup()` on the first request after the version bump — *not* by
+the rsync. Check `/blog/` returns 200 and publish a test post before calling it
+deployed (plan §2.11).
+
+**The history below is kept because the diagnostic technique is the reusable
+part.** As of the Phase C2 push (`00f3422`) both targets did serve the current
+build — **verified by fetching their CSS bundles and grepping for the C2
+keyframes**, not by eye:
 
 | Target | URL | Deployed by | C2 verified |
 | --- | --- | --- | --- |

@@ -145,6 +145,16 @@
 	--body-font: 'Maname', Georgia, serif;
 	--label: 'Overpass', 'Helvetica Neue', Arial, sans-serif;
 	--zh-font: 'Noto Serif SC', 'Songti SC', serif;
+	/* ⚠️ For text whose LANGUAGE IS NOT KNOWN AT BUILD TIME — i.e. blog posts,
+	   which are written in the WordPress dashboard and whose predecessor was 11
+	   Chinese articles out of 12. You cannot get this by composing the tokens
+	   above: `--display` and `--body-font` both END in a generic `serif`, so a
+	   Han glyph matches the system serif there and never reaches Noto Serif SC.
+	   The webfont has to come BEFORE the generic, which means its own chain.
+	   Elsewhere on the site the language is known and `.zh` marks it, so these
+	   are for the blog and anything else user-authored. */
+	--display-intl: 'Playfair Display', 'Noto Serif SC', 'Songti SC', serif;
+	--body-intl: 'Maname', 'Noto Serif SC', 'Songti SC', Georgia, serif;
 	/* --logo-font is gone: the logo is no longer type. Phase B replaced the
 	   re-drawn wordmark with the brand's own vector lockups, which are art —
 	   see src/lib/site/Logo.svelte and plan §2.2. */
@@ -370,6 +380,51 @@ a {
 	clip: rect(0, 0, 0, 0);
 	white-space: nowrap;
 	border: 0;
+}
+
+/* WCAG 2.4.1 Bypass Blocks (Level A). The navbar puts four links plus the
+   brand ahead of the content on every route, and the homepage then opens on a
+   full-viewport video hero — so a keyboard or screen-reader user had no way
+   past the chrome. Hidden until focused, then it lands on the page's own
+   <main id="main">.
+   NOT .sr-only + :focus: `clip` and a 1px box would still be in effect for the
+   frame the ring is painted on, so the link has to leave the clipped state
+   entirely rather than just gain a style. Painted on green because it appears
+   over the cream page and must not inherit whatever surface is beneath it. */
+.skip-link {
+	/* FIXED, not absolute, and above the navbar's z-index: 8000. Both matter and
+	   neither is cosmetic. Absolute positions against the document, so the link
+	   only reached the viewport while the page was scrolled to the very top;
+	   and at z-index 1000 it was painted UNDERNEATH the fixed navbar, which is
+	   the state that first shipped — focusable, geometrically "at top: 0", and
+	   invisible. Checking getBoundingClientRect() alone said it was fine; only
+	   elementFromPoint() at its own centre showed a .nav-link on top. */
+	position: fixed;
+	left: 8px;
+	top: -100px;
+	z-index: 9000;
+	padding: 12px 22px;
+	border-radius: 0 0 12px 12px;
+	background: var(--green-deep);
+	color: var(--cream);
+	font-family: var(--label);
+	/* Explicit: --label is Overpass, which is only fetched at 600 and 700. A
+	   bare `font-family` would inherit weight 400 and get silently snapped to
+	   the nearest available face, so state the weight the button text uses. */
+	font-weight: 700;
+	font-size: 14px;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	text-decoration: none;
+	transition: top 0.18s ease;
+}
+.skip-link:focus {
+	top: 0;
+}
+/* The skip target itself must not draw a focus ring — it is a landmark that
+   receives focus programmatically, not something the user tabbed to. */
+main:focus {
+	outline: none;
 }
 
 /* ---------- headings ---------- */

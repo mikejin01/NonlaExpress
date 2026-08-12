@@ -25,6 +25,7 @@ import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { LEGACY_REDIRECTS, POST_PREFIX_FALLBACK } from './redirects.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const BUILD_DIR = path.join(ROOT, 'build');
@@ -52,11 +53,17 @@ const THEME = {
 		'': 'Home',
 		menu: 'Our Menu',
 		company: 'Our Company',
-		press: 'Press',
+		// Replaced `press` on 2026-08-12. /blog is BOTH a WordPress page (so the
+		// index URL resolves) and the posts base (so /blog/<slug>/ resolves to a
+		// real post) — see xo_configure_blog().
+		blog: 'Blog',
 		'privacy-policy': 'Privacy Policy',
 		'terms-and-conditions': 'Terms & Conditions',
 		'accessibility-statement': 'Accessibility Statement'
-	}
+	},
+	// Posts live under this base so the SPA route /blog/[slug] and WordPress's
+	// own permalink agree. Changing it means changing src/routes/blog/ too.
+	blogBase: 'blog'
 };
 
 const BANNER = `<?php
@@ -252,6 +259,18 @@ function functionsPhp() {
 		.map(([slug, title]) => `        '${slug}' => '${title.replace(/'/g, "\\'")}',`)
 		.join('\n');
 
+	// Legacy Wix URLs → 301 targets (scripts/redirects.js). PHP single-quoted
+	// strings only honour \\ and \', so those are the only two to escape — and
+	// the UTF-8 slugs pass through literally, which is what the decoded
+	// REQUEST_URI is compared against.
+	const phpStr = (/** @type {string} */ s) => `'${s.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`;
+	const REDIRECT_MAP_PHP = `array(\n${Object.entries(LEGACY_REDIRECTS)
+		.map(([from, to]) => `        ${phpStr(from)} => ${phpStr(to)},`)
+		.join('\n')}\n    )`;
+	const POST_PREFIX = POST_PREFIX_FALLBACK.prefix;
+	const POST_TARGET = POST_PREFIX_FALLBACK.target;
+	const BLOG_BASE = THEME.blogBase;
+
 	return `${BANNER}
 if (!defined('ABSPATH')) exit;
 
@@ -377,6 +396,77 @@ function ${P}_set_defaults() {
     }
 }
 add_action('after_switch_theme', '${P}_set_defaults');
+
+/**
+ * Make /blog/ and /blog/<slug>/ resolve natively in WordPress.
+ *
+ * The SPA owns the rendering, but WordPress still owns ROUTING: it has to
+ * answer 200 at these URLs, or index.php never runs and the Svelte router never
+ * gets a chance. Three settings do that, and all three matter:
+ *
+ *   1. permalink_structure = /blog/%postname%/  → a post published in the
+ *      dashboard lives at exactly the URL src/routes/blog/[slug] expects.
+ *      Without it WordPress serves posts at /%postname%/ and every /blog/<slug>/
+ *      is a 404 that only renders because 404.php happens to boot the SPA too.
+ *   2. page_for_posts = the Blog page → /blog/ is the posts index rather than an
+ *      empty page, so the SPA index and WordPress agree about what lives there.
+ *   3. flush_rewrite_rules() → rewrite rules are cached in the DB; changing the
+ *      structure without flushing leaves the OLD routing live and looks exactly
+ *      like the change did nothing.
+ *
+ * Only ever runs on theme activation, and only fills settings that are unset or
+ * still WordPress's plain default — it must not stamp on a permalink structure
+ * someone chose deliberately.
+ */
+function ${P}_configure_blog() {
+    $structure = get_option('permalink_structure');
+    if (!$structure || strpos($structure, '%postname%') === false) {
+        global $wp_rewrite;
+        $target = '/${BLOG_BASE}/%postname%/';
+        if ($wp_rewrite) {
+            $wp_rewrite->set_permalink_structure($target);
+        } else {
+            update_option('permalink_structure', $target);
+        }
+    }
+
+    $blog = get_page_by_path('${BLOG_BASE}');
+    if ($blog && get_post_status($blog->ID) === 'publish' && !get_option('page_for_posts')) {
+        update_option('show_on_front', 'page');
+        update_option('page_for_posts', $blog->ID);
+    }
+
+    flush_rewrite_rules();
+}
+// Priority 20: ${P}_ensure_required_pages() creates the Blog page at the default
+// priority, and page_for_posts cannot point at a page that does not exist yet.
+add_action('after_switch_theme', '${P}_configure_blog', 20);
+
+/**
+ * ⚠️ Run first-time setup after a REDEPLOY, not only after an activation.
+ *
+ * The three routines above are hooked to after_switch_theme, which fires when
+ * someone activates the theme in wp-admin. But this theme is deployed by
+ * "make build-and-push", which is an **rsync over an already-active theme** —
+ * so after_switch_theme never fires again for the life of the install.
+ *
+ * That is silent and it bites exactly when the theme gains a route: shipping
+ * /blog this way created no Blog page and set no permalink base, so /blog/
+ * 404'd on the live site and looked precisely like "the blog feature does not
+ * work". Nothing in the deploy would have told anyone.
+ *
+ * Gate on the build version so this is one option read per request in the
+ * steady state, and a single full setup pass on the first request after each
+ * deploy. Every routine it calls is idempotent.
+ */
+function ${P}_maybe_run_setup() {
+    if (get_option('${P}_setup_version') === ${P.toUpperCase()}_THEME_VERSION) return;
+    ${P}_ensure_required_pages();
+    ${P}_set_defaults();
+    ${P}_configure_blog();
+    update_option('${P}_setup_version', ${P.toUpperCase()}_THEME_VERSION);
+}
+add_action('init', '${P}_maybe_run_setup', 5);
 
 /** Multi-line option (address, hours) flattened for single-line contexts. */
 function ${P}_one_line($value) {
@@ -654,6 +744,55 @@ function ${P}_print_meta_description() {
 add_action('wp_head', '${P}_print_meta_description', 6);
 
 /* =============================================================================
+   5b. Legacy Wix URLs — 301s for the retired blog (plan §5 Q4)
+   ============================================================================= */
+
+/**
+ * The old site's blog is retired, but its 12 posts — 11 of them Chinese-language
+ * Flushing local-SEO articles — were still ranking when it was switched off, so
+ * every one of them 301s to the page that covers its topic rather than 404ing.
+ * The map is generated from scripts/redirects.js; edit it there.
+ *
+ * Runs on template_redirect, and ONLY for requests WordPress could not resolve
+ * itself — real content at one of these paths always wins.
+ *
+ * ⚠️ The is_404() guard is load-bearing, not defensive. Without it this function
+ * would hijack a path even after someone created real content there, and the
+ * /post/ prefix rule below would then 301 EVERY post of a future blog to
+ * /menu/ — permanently, and looking exactly like "WordPress is broken". The
+ * legacy URLs all 404 today (nothing on this site claims them), so gating on
+ * is_404() costs the redirects nothing and makes them self-retiring.
+ */
+function ${P}_legacy_redirects() {
+    if (is_admin() || wp_doing_ajax() || (defined('REST_REQUEST') && REST_REQUEST)) return;
+    if (!is_404()) return;
+
+    $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+    if (!is_string($path)) return;
+    // Wix sent these slugs as UTF-8, so an inbound link arrives percent-encoded.
+    $path = trim(rawurldecode($path), '/');
+    if ($path === '') return;
+
+    $map = ${REDIRECT_MAP_PHP};
+
+    if (isset($map[$path])) {
+        wp_redirect(home_url($map[$path]), 301);
+        exit;
+    }
+
+    // Encoding safety net + anything published after the map was captured. Those
+    // slugs carry Han characters, a fullwidth colon, a fullwidth '!' and an
+    // accented 'o', so an exact match is one Unicode normalisation away from
+    // silently missing. Anything else under /post/ is a phở article by
+    // construction, so the menu is the right home for it.
+    if (strpos($path, '${POST_PREFIX}') === 0) {
+        wp_redirect(home_url('${POST_TARGET}'), 301);
+        exit;
+    }
+}
+add_action('template_redirect', '${P}_legacy_redirects', 1);
+
+/* =============================================================================
    6. REST — bootstrap, save-page-data, leads
    ============================================================================= */
 
@@ -677,7 +816,94 @@ add_action('rest_api_init', function () {
         'callback'            => '${P}_rest_handle_lead',
         'permission_callback' => '__return_true',   // public form
     ));
+
+    // Blog posts for the SPA's /blog routes. Our own endpoint rather than
+    // wp/v2/posts for two reasons: the list response stays small (no
+    // content.rendered per item, no _embed round-trip for the image), and it
+    // keeps working on installs where a security plugin has locked down the
+    // default wp/v2 namespace for logged-out visitors.
+    register_rest_route('${NS}', '/posts', array(
+        'methods'             => 'GET',
+        'callback'            => '${P}_rest_posts',
+        'permission_callback' => '__return_true',   // a public blog
+    ));
 });
+
+/**
+ * GET /wp-json/${NS}/posts
+ *   ?slug=<slug>   one post, WITH rendered content
+ *   ?page= &per_page=   otherwise a page of the index, WITHOUT content
+ *
+ * Everything is passed through the same filters the theme layer would apply, so
+ * shortcodes and blocks render the way they do in WordPress rather than arriving
+ * as raw block comments.
+ */
+function ${P}_rest_posts($request) {
+    $slug = sanitize_title((string) $request->get_param('slug'));
+
+    if ($slug !== '') {
+        $found = get_posts(array(
+            'name'        => $slug,
+            'post_type'   => 'post',
+            'post_status' => 'publish',
+            'numberposts' => 1,
+        ));
+        if (!$found) {
+            return new WP_Error('not_found', 'No such post.', array('status' => 404));
+        }
+        return rest_ensure_response(array('post' => ${P}_post_payload($found[0], true)));
+    }
+
+    $per_page = max(1, min(50, (int) ($request->get_param('per_page') ?: 12)));
+    $paged    = max(1, (int) ($request->get_param('page') ?: 1));
+
+    $query = new WP_Query(array(
+        'post_type'      => 'post',
+        'post_status'    => 'publish',
+        'posts_per_page' => $per_page,
+        'paged'          => $paged,
+        'orderby'        => 'date',
+        'order'          => 'DESC',
+        // The SPA needs no pagination links, and skipping the found-rows count
+        // would break the "pages" figure below, so leave counting on.
+        'ignore_sticky_posts' => true,
+    ));
+
+    $posts = array_map(function ($p) { return ${P}_post_payload($p, false); }, $query->posts);
+
+    return rest_ensure_response(array(
+        'posts' => $posts,
+        'total' => (int) $query->found_posts,
+        'pages' => (int) $query->max_num_pages,
+        'page'  => $paged,
+    ));
+}
+
+/** One post, shaped for the SPA. $full adds the rendered content. */
+function ${P}_post_payload($post, $full = false) {
+    $thumb = get_post_thumbnail_id($post);
+    $out = array(
+        'id'      => (int) $post->ID,
+        'slug'    => $post->post_name,
+        // Titles can carry entities (&amp;, curly quotes) — decode once here so
+        // the SPA can render them as TEXT and never needs to trust post titles
+        // as HTML.
+        'title'   => html_entity_decode(get_the_title($post), ENT_QUOTES, 'UTF-8'),
+        'date'    => get_the_date('F j, Y', $post),
+        'dateISO' => get_the_date('c', $post),
+        'url'     => '/${BLOG_BASE}/' . $post->post_name . '/',
+        'image'   => $thumb ? wp_get_attachment_image_url($thumb, 'large') : '',
+        'imageAlt'=> $thumb ? (string) get_post_meta($thumb, '_wp_attachment_image_alt', true) : '',
+        'excerpt' => html_entity_decode(
+            wp_strip_all_tags(get_the_excerpt($post)), ENT_QUOTES, 'UTF-8'),
+    );
+    if ($full) {
+        // apply_the_content, not raw post_content: blocks and shortcodes are
+        // stored unrendered and would otherwise reach the page as markup soup.
+        $out['content'] = apply_filters('the_content', $post->post_content);
+    }
+    return $out;
+}
 
 function ${P}_rest_bootstrap($request) {
     $url   = (string) $request->get_param('url');

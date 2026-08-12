@@ -60,6 +60,11 @@ class Chrome:
         self.proc = subprocess.Popen(
             [CHROME, "--headless=new", f"--remote-debugging-port={PORT}", "--disable-gpu",
              "--hide-scrollbars", "--no-first-run", f"--window-size={width},{height}",
+             # Headless blocks autoplay by default, which made the hero capture a
+             # still frame and — worse — made "the video pauses under
+             # prefers-reduced-motion" untestable: it read paused in BOTH
+             # conditions, so the check could not fail and proved nothing.
+             "--autoplay-policy=no-user-gesture-required",
              "--user-data-dir=/tmp/cdp-profile", "about:blank"],
             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         for _ in range(80):
@@ -94,6 +99,20 @@ class Chrome:
                 if "error" in msg:
                     raise RuntimeError(f"{method}: {msg['error']}")
                 return msg.get("result", {})
+
+    def emulate_media(self, **features):
+        """Force CSS media features, e.g. emulate_media(prefers_reduced_motion="reduce").
+
+        Underscores become hyphens, so `prefers_reduced_motion` is
+        `prefers-reduced-motion`. Call this BEFORE goto(): components read
+        `matchMedia('(prefers-reduced-motion: reduce)')` in onMount and decide
+        there whether to start the rAF carousel and whether to pause the hero
+        video, so a flag set after navigation would leave that JS half-tested.
+        Pass no arguments to clear the override.
+        """
+        self.cmd("Emulation.setEmulatedMedia",
+                 features=[{"name": k.replace("_", "-"), "value": v}
+                           for k, v in features.items()])
 
     def goto(self, url, wait=12):
         self.cmd("Page.enable")

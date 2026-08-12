@@ -162,6 +162,8 @@ Both are monochrome and carry `currentColor`, so they take the surface's `--fg` 
 
 - **Current platform: Wix** (confirmed — `generator: Wix.com Website Builder`). Get Wix account access or at least admin export; domain registrar & who controls DNS: [Needs confirmation].
 - **Existing URLs for 301 redirects** (from sitemap, 2026-08-06): `/` · `/menu` · `/company` · `/blog` · `/press` · `/privacy-policy` · `/terms-and-conditions` · `/accessibility-statement` · `/tracker-page` · plus **12 blog posts** under `/post/…` — mostly Chinese-language Flushing-SEO articles (法拉盛 pho guides) + "best-pho-in-flushing-queens". Full list in sitemap; preserve or redirect these — they're doing local-SEO work.
+  - ✅ **DONE 2026-08-12.** The sitemap was re-read live and the exact URL list is now **committed to `scripts/redirects.js`** rather than referenced — it stops being fetchable at DNS cutover. Nine of the pages above needed nothing: they are the same paths on the new site, which is what the routes were named for. The other **14** (`/blog`, `/tracker-page`, the 12 posts) 301 by topic — the phở/noodle guides to `/menu/`, the general pieces to `/` — compiled into the WordPress theme's `functions.php`. Plan §2.9. ⚠️ Server-side PHP, so **WordPress only**; GitHub Pages has no redirects.
+  - Worth knowing for the §6 #14 language question: the blog was **not dormant** — two posts were updated **2026-07-29**, and 11 of the 12 are Chinese-language.
 - **Legal pages already exist** (privacy, terms, accessibility) — carry content over or regenerate.
 - **Press page** exists with 3 dated entries (2024-12-01, 2024-12-11, 2025-01-24) but titles/outlets are images — ask client for links/details.
 - **Newsletter signup** on current site ("promos, new menu drops, store openings") — decide: keep? Which provider replaces Wix's? Where do signups go?
@@ -175,6 +177,28 @@ Both are monochrome and carry `currentColor`, so they take the surface's `--fg` 
 ## 6. Open Questions Summary
 
 Intake was closed by Mike on 2026-08-06 — these are **parked, non-blocking**. Confirm opportunistically (ideally before launch); the build proceeds on §7's assumptions meanwhile.
+
+> **Status 2026-08-12 (Phase F — the build is done).** The redesign is
+> structurally complete and both live targets are current, so this list is no
+> longer "things to confirm while we build" — it is **the launch checklist**.
+> The design/technical questions have moved to **redesign-plan.md §5**, which is
+> the authoritative list and now carries measured costs for each; several
+> overlap the items below and the plan's version is the one to work from:
+>
+> | Plan §5 | Overlaps §6 below | Measured cost of the decision |
+> | --- | --- | --- |
+> | ✅ Q4 BLOG vs PRESS | #5 (DNS), #14 (site language), #17 (press details) | **SETTLED — BLOG.** /press retired (it could never be updated); /blog renders real WordPress posts, so #17 is moot and Chinese posts are supported (plan §2.10–2.11) |
+> | Q3 hero video weight | — | hero is **17.86MB of a 17.90MB homepage** |
+> | Q9 Chinese webfont | #14 (site language EN vs EN+中文) | `/menu/` pulls **767KB**; a frozen subset is **25.1KB** |
+> | Q5 menu prices | #7 (which menu is current) | five labels + three extras; one line to hide |
+> | Q6 Burger section | #7 (⚠ Burgers — printed only) | it is the one section with **no photography** |
+> | Q2 TT Nooks license | #3/#4 (source materials) | Playfair 900 is ~9% wider; already bent the type scale |
+> | Q7 Maname diacritics | #14 | tone marks float on ơ/ư — the original has the same flaw |
+>
+> Still genuinely open here and **not** covered by the plan: **#5 (DNS/registrar
+> access — needed at cutover), #8 (hours), #12 (where form + newsletter
+> submissions go — the form is display-only today), #17 (press entry details for
+> the three /press slots)**. Those four are the ones to chase.
 
 **Source requests — both hard needs are now closed; nothing here blocks launch:**
 1. ~~High-res food photography~~ — **resolved**: originals pulled from Wix media library into `docs/assets/`.

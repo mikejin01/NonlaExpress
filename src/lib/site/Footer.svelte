@@ -117,7 +117,7 @@
 				<span class="footer-label">Company</span>
 				<ul>
 					<li><a href="{base}/company/">About</a></li>
-					<li><a href="{base}/press/">Press</a></li>
+					<li><a href="{base}/blog/">Blog</a></li>
 					<li><a href={PHONE.tel}>{PHONE.display}</a></li>
 				</ul>
 			</div>

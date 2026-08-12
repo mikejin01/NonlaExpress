@@ -33,6 +33,12 @@
 	onMount(() => wpEdit.init());
 </script>
 
+<!-- First focusable thing in the document on every route, by construction —
+     it has to precede <Navbar />, whose five links are the block being
+     bypassed. Every route's <main> carries id="main" and tabindex="-1" so the
+     jump actually moves focus and not just the scroll position. -->
+<a class="skip-link" href="#main">Skip to content</a>
+
 <Navbar />
 
 {@render children()}

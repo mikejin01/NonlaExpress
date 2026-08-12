@@ -63,7 +63,7 @@
 	/>
 </svelte:head>
 
-<main>
+<main id="main" tabindex="-1">
 	<!-- ============================== 1 · THE SPLIT ==============================
 	     The original's whole hero: story left on cream, kitchen video right,
 	     full-bleed and edge to edge, the two halves the same height. The video

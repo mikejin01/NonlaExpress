@@ -156,7 +156,7 @@
 	<meta name="description" content={META_DESCRIPTION} />
 </svelte:head>
 
-<main>
+<main id="main" tabindex="-1">
 	<!-- ============================== 1 · VIDEO HERO ==============================
 	     OURS, kept on client direction (plan §2.4). Carries the page's ONLY h1
 	     since 2026-08-07: the intro section that used to hold the SEO line was
@@ -539,7 +539,15 @@
 	}
 	.hero-sub {
 		font-size: var(--fs-lead);
-		color: var(--fg-muted);
+		/* --fg, not --fg-muted, and this is a contrast fix rather than a style
+		   preference. On .on-media --fg-muted is cream at 0.9 ALPHA, so over the
+		   video it composites toward whatever frame is behind it. Re-sampling the
+		   real video across 8 timestamps (Phase F) put 0.29% of the pixels behind
+		   this line under 4.5:1 at 1440 and 0.37% at 540, worst 3.94:1. Opaque
+		   cream takes that to 0.01% / 0.00%, worst 4.44:1 / 4.54:1 — and that
+		   measurement ignores the text-shadow below, so the real margin is wider.
+		   The 0.9 muting was invisible against a dark video anyway. */
+		color: var(--fg);
 		max-width: 52ch;
 		margin: 0 auto 0.5rem;
 		text-shadow: 0 1px 14px rgba(26, 22, 19, 0.6);

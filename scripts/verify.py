@@ -11,22 +11,28 @@ Walks every route at 1440 and 540 wide, and for each one:
 
 Run after every phase:  pnpm build && pnpm preview  then  python3 scripts/verify.py
 
-Two known blind spots, both deliberate:
+One known blind spot, deliberate:
   · `.on-media` subtrees (content over the hero video) report against the page
     background, not the video — they are listed separately as `on_media` and
-    are verified instead by sampling the video itself (see plan §2.1).
-  · The webfont check cannot detect a CJK swap, because CJK glyphs are
-    full-width in every font. Noto Serif SC was confirmed once via
-    CSS.getPlatformFontsForNode; a `notoSC: false` here is not a real failure.
-    Likewise a face the page never renders is never fetched — `playfair900i`
-    reads false on pages with no italic display type. That is correct lazy
-    loading, not a bug.
+    are verified instead by sampling the video itself (see plan §2.1). Phase F
+    re-sampled it across 8 timestamps and moved `.hero-sub` off `--fg-muted`
+    (0.9 alpha) as a result; the numbers are in plan §2.8.
+
+⚠️ The second "blind spot" documented here until Phase F was not one. It said a
+`notoSC: false` was expected because a width probe cannot see a CJK face, and
+that `playfair900i` reads false wherever no italic display type renders. The
+first half was a real limitation of the probe's INPUT, fixed in Phase E by
+probing every face on Latin text and awaiting the lazy per-subset loads; the
+second was an artefact of the same synchronous-probe bug. Both faces have
+reported true on all 7 routes since. The lesson is in plan §2.7: this file
+carried a written excuse for a red check, which is what kept anyone from
+reading it as a real failure for five phases.
 """
 import json, sys, time, pathlib
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from cdp import Chrome
 
-OUT_TAG = "phaseE"  # bump per phase — this dir is overwritten unconditionally,
+OUT_TAG = "phaseF"  # bump per phase — this dir is overwritten unconditionally,
 # so leaving it stale silently relabels the previous phase's captures as this
 # one's. (Phase A's cream captures survive only in git at a4bc657; the ones
 # now in screenshots/phaseA/ are the 2026-08-07 green-ground re-skin.
@@ -36,7 +42,10 @@ REPO = pathlib.Path(__file__).resolve().parent.parent
 OUT = REPO / "docs/assets/original-site/screenshots" / OUT_TAG
 OUT.mkdir(parents=True, exist_ok=True)
 
-ROUTES = ["/", "/menu/", "/company/", "/press/", "/privacy-policy/",
+# /press became /blog on 2026-08-12 (it now renders WordPress posts). /press
+# still exists as a redirect stub and is deliberately NOT audited: it bounces to
+# /blog/ on mount, so a run against it would just measure /blog twice.
+ROUTES = ["/", "/menu/", "/company/", "/blog/", "/privacy-policy/",
           "/terms-and-conditions/", "/accessibility-statement/"]
 
 AUDIT = r"""

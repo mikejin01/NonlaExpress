@@ -275,10 +275,15 @@ export const PHO_FAVORITES = {
 	]
 };
 
-/* ============================== PRESS ============================== */
-// Outlets/links pending from client (brief §6 #17) — dates from the old site's press page.
-export const PRESS = [
-	{ date: 'January 24, 2025', title: 'Featured story', note: 'Details coming soon' },
-	{ date: 'December 11, 2024', title: 'Featured story', note: 'Details coming soon' },
-	{ date: 'December 1, 2024', title: 'Featured story', note: 'Details coming soon' }
-];
+/* ============================== PRESS — REMOVED 2026-08-12 ==============================
+   /press is retired in favour of /blog, whose posts come from the WordPress
+   database at runtime rather than from this file (src/lib/wp/posts.js).
+
+   What was here: three placeholder entries — all titled "Featured story", all
+   noted "Details coming soon" — carrying only the dates harvested from the old
+   Wix press page, because brief §6 #17 (outlets and links) never came back.
+   They were not even wrapped in InlineEdit, so they could not be edited live
+   either. That inertness is precisely what prompted the switch to a real blog.
+
+   If dated press mentions are ever wanted back, they are ordinary blog posts
+   now — write them in the dashboard, no code change. */

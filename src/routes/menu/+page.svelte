@@ -67,13 +67,20 @@
 
 <svelte:head>
 	<title>Menu — Nón Lá Express | Pho, Rice Plates & Signature Drinks, Flushing NY</title>
+	<!-- Kept under the ~160 that Google truncates at. Two things came out on
+	     purpose in Phase F, and both are about not committing to an answer we
+	     don't have yet: the "$17"/"$6" prices are §5 Q5 (show prices at all?)
+	     and "burgers" is §5 Q6 (is that section still on the menu?). This
+	     wording is correct whichever way the client answers either one.
+	     Measured 142 chars / 151 effective width — Google truncates on PIXELS
+	     and the CJK run is double-width, so the raw count understates it. -->
 	<meta
 		name="description"
-		content="Full menu at Nón Lá Express, Tangram Food Hall, Flushing: pho ($17), rice plates, appetizers, burgers, and $6 signature drinks. 法拉盛越南河粉菜单 — lunch special {LUNCH_WINDOW}."
+		content="Full menu at Nón Lá Express, Tangram Food Hall, Flushing: phở, rice plates and signature drinks. 法拉盛越南河粉菜单 — lunch special {LUNCH_WINDOW}."
 	/>
 </svelte:head>
 
-<main class="menu-page">
+<main id="main" tabindex="-1" class="menu-page">
 	<!-- ============================== HEADER ==============================
 	     The original's three-part header: green lime bleeding off the LEFT edge,
 	     the red "ăn nào!" script centred over its kicker and intro, and the white

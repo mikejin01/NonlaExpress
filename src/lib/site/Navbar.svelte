@@ -4,12 +4,20 @@
 	import Logo from './Logo.svelte';
 	import { ORDER_URL } from '$lib/content.js';
 
-	// Uppercase in the copy, not via text-transform (plan §1.1). Final labels
-	// land in Phase C once §5 Q4 (BLOG vs PRESS) comes back from the client.
+	// Uppercase in the copy, not via text-transform (plan §1.1).
+	//
+	// ✅ §5 Q4 SETTLED 2026-08-12 (answered "keep PRESS", then REVERSED the same
+	// day once it was established that /press could never be written from the
+	// WordPress dashboard — it rendered a hard-coded array). BLOG is a real
+	// route backed by real WordPress posts, so the nav now matches the
+	// original's own OUR MENU · OUR COMPANY · BLOG, plus the FIND US the
+	// original had no equivalent for (plan §1.3, gap G8; §2.10).
+	//
+	// /press is retired and 301s to /blog/ — see scripts/redirects.js.
 	const LINKS = [
 		{ label: 'OUR MENU', href: `${base}/menu/` },
 		{ label: 'OUR COMPANY', href: `${base}/company/` },
-		{ label: 'PRESS', href: `${base}/press/` },
+		{ label: 'BLOG', href: `${base}/blog/` },
 		{ label: 'FIND US', href: `${base}/#find-us` }
 	];
 

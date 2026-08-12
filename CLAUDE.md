@@ -56,11 +56,49 @@ photos directly on cream with NO cards** (plan §2.6). **Phase E SHIPPED
 2026-08-12** — /company as the original's 50/50 split (cream story column ·
 full-bleed kitchen video · three value blocks each led by its own illustrated
 dish), /press + the three legal routes confirmed correct with no edits, and the
-dead-CSS sweep (plan §2.7). **Next: Phase F — QA + launch prep.**
+dead-CSS sweep (plan §2.7). **Phase F SHIPPED 2026-08-12** — QA + launch prep,
+and with it **the redesign is structurally complete: everything still
+outstanding is a client answer, not work** (plan §2.8). `verify.py` at
+`OUT_TAG="phaseF"` reports **PASS** (0 contrast failures, `fonts=ALL`,
+`hscroll=no`, 7 routes × 2 widths) and both build shapes are clean.
 
-⛔ **One Phase E task is deliberately unfinished: the nav labels, blocked on §5
-Q4 (BLOG vs PRESS).** It is the only thing left in the redesign waiting on the
-client rather than on us. Don't "tidy" the header without that answer.
+✅ **§5 Q4 SETTLED 2026-08-12 — BLOG, and it is a real WordPress-backed blog.**
+Nav is `OUR MENU · OUR COMPANY · BLOG · FIND US`. **Nothing in the redesign is
+blocked on the client any more.**
+
+⚠️ **Q4 was answered "keep PRESS" first and REVERSED the same day, because the
+first answer rested on a false premise.** The question was framed as a nav
+*label*; it was really about a *capability*. `/press` rendered a hard-coded
+array in `content.js` and the theme's `index.php` **never ran the WordPress
+loop**, so a post written in the dashboard could never have appeared there.
+**/press is now retired** (301 → `/blog/`, plus a `noindex` client-side stub for
+GitHub Pages) and `/blog` renders live posts. Plan §2.10 / §2.11.
+
+**How the blog works, in one line each:** `xo_configure_blog()` sets the
+permalink base to `/blog/` so WordPress answers **200** at `/blog/<slug>/` (skip
+it and the URL 404s but still *renders*, because 404.php boots the SPA too —
+invisible in a browser, fatal to crawlers); posts come over our own
+`xo/v1/posts` endpoint; `src/routes/blog/[slug]` must keep
+`prerender = false` because a slug only exists in the WP database.
+
+⚠️ **`--display-intl` / `--body-intl` exist because the obvious composition is
+broken.** Blog text is user-authored and may be Chinese, and `--display` /
+`--body-font` both END in a generic `serif` — which matches Han glyphs before
+Noto Serif SC is ever reached. So `var(--display), var(--zh-font)` does **not**
+work; those two tokens put the CJK webfont ahead of the generic. Use them for
+any user-authored text, not for copy whose language we know (that keeps `.zh`).
+
+The old blog's 12 URLs still 301 by topic rather than 404 —
+`scripts/redirects.js` is the canonical map, compiled into the theme's
+`functions.php` (plan §2.9). ⚠️ **`/blog` is deliberately NOT in that map** now
+that it is a live route.
+
+⚠️ **Those 301s only exist on the WordPress target** — `template_redirect` is
+PHP, and GitHub Pages cannot do server-side redirects at all. Correct while
+WordPress is production; **silently wrong the day nonlaexpress.com is pointed at
+Pages instead.** ⚠️ And **don't hand-edit the redirect list in
+`wordpress-theme/functions.php`** — everything under `wordpress-theme/` is
+generated. Edit `scripts/redirects.js`.
 
 ⚠️ **The dish photos ship on a `#F1EAD7` studio backdrop**, one step off
 `--cream`. That is why /menu needs no cards — and it is a constraint, not just a
@@ -117,13 +155,16 @@ stays wider than the viewport + the row's 14vw offset** (measured 3288/3822px at
 1440, 1338px at 540) — re-measure if `MQ`'s repeat count or `.mq-word`'s size
 changes.
 
-Open client questions are redesign-plan.md §5 (8 of them). **Q4** (BLOG vs
-PRESS in the nav) is the only one still blocking anything shipped. **Q2** (TT
-Nooks license) now has a measured cost: Playfair 900 is ~9% wider than the real
-face, which already forced the drinks headline off the measured type scale
-(§2.3). **Q3** (hero video) is a design question again — the video is back as
-section 1, so its **33MB of a 37MB deploy** is load-bearing; the open part is
-whether a lighter rendition is acceptable.
+Open client questions are redesign-plan.md §5 — **7 of them (Q1 and Q4 are
+answered), and none blocks any shipped work**. **Q2** (TT Nooks license) now has a measured cost: Playfair 900 is ~9%
+wider than the real face, which already forced the drinks headline off the
+measured type scale (§2.3). **Q3** (hero video) is a design question again — the
+video is back as section 1, and Phase F made the number precise: "33MB" is the
+**deploy** figure counting both renditions, but a visitor downloads exactly one,
+so the hero is **17.86MB of a 17.90MB homepage — 99% of it**. **Q9** (new,
+Phase F) is the Chinese webfont: `/menu/` pulls **767KB** of Noto Serif SC
+subsets, a one-line `&text=` fix measures **25.1KB**, and the catch is that it
+freezes the glyph set against live WordPress editing.
 
 **Two live deploys, both current as of 2026-08-11 (Phase C2).** ~~The Pages site
 is stale~~ — that was true through Phase A and is **fixed**: pushes trigger
@@ -146,7 +187,15 @@ Three tools, all stdlib-only, all in `scripts/`:
   full-width in *every* font (measured 224px with the webfont and 224px
   without). Fixed — all faces are probed on Latin text now, and the lazy
   per-subset loads are awaited. **A check that has never passed is not a check;**
-  don't read a persistent red as noise.
+  don't read a persistent red as noise. ⚠️ Its **one remaining** blind spot is
+  `.on-media` (text over the hero video), which it reports separately as
+  `on_media` rather than auditing. That is not "fine" — Phase F sampled the real
+  video and found `.hero-sub` at 3.94:1. **Re-sample it whenever the hero
+  changes** (plan §2.8).
+- ⚠️ **`getBoundingClientRect()` cannot tell you an element is visible.** Phase
+  F's skip link tested perfect on geometry — first tab stop, `top === 0` — while
+  being painted entirely underneath the `z-index: 8000` navbar. Only
+  `document.elementFromPoint()` at the element's own centre catches that.
 - `cdp.py` — Chrome DevTools driver. Use it for anything scroll-driven: a plain
   full-page `--screenshot` renders those effects in their end state and shows
   nothing. The original's motion system is measured in redesign-plan.md §1.5.
@@ -230,6 +279,12 @@ Constraints that are easy to violate — full table in redesign-plan.md §2.1:
 - **Check the weight before the size when terracotta is text.** WCAG large text
   is `≥24px OR ≥18.66px at 700+` — an *or*. A 22.5px **regular** line is normal
   text needing 4.5:1, so it takes `--warm-ink`, not `--warm`.
+- ⚠️ **Don't use `--fg-muted` on `.on-media`.** On every painted surface the
+  muted tokens are safe, but on `.on-media` `--fg-muted` is cream at **0.9
+  alpha** and `--fg-dim` at 0.75 — over a video they composite toward whatever
+  frame is behind them instead of toward a known ground. That is exactly how
+  `.hero-sub` sat at 3.94:1 until Phase F. Over media, use opaque `--fg`
+  (plan §2.8).
 
 ## Client
 Nón Lá Express — fast-casual Vietnamese Kitchen, stall FH17 inside Tangram food

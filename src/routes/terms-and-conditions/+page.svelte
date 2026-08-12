@@ -7,7 +7,7 @@
 	<meta name="robots" content="noindex" />
 </svelte:head>
 
-<main class="section padding-md legal-page">
+<main id="main" tabindex="-1" class="section padding-md legal-page">
 	<div class="container container--md prose prose-panel on-cream">
 		<h1 class="display display-lg">Terms & Conditions</h1>
 		<p><em>Effective date: August 6, 2026</em></p>
