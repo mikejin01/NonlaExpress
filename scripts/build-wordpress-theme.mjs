@@ -63,7 +63,13 @@ const THEME = {
 	},
 	// Posts live under this base so the SPA route /blog/[slug] and WordPress's
 	// own permalink agree. Changing it means changing src/routes/blog/ too.
-	blogBase: 'blog'
+	blogBase: 'blog',
+	// Slugs this theme USED to create and no longer wants. Removing a slug from
+	// `pages` above is not enough: the WordPress page it already created stays
+	// published, so the URL keeps resolving 200 and **shadows its own 301** —
+	// the redirect in scripts/redirects.js is gated on is_404() and correctly
+	// stands aside for real content. Observed live on /press. See xo_retire_pages().
+	retiredPages: ['press']
 };
 
 const BANNER = `<?php
@@ -151,6 +157,12 @@ fs.rmSync(path.join(THEME_DIR, 'index.html'), { force: true });
 
 log('🐘 Generating theme PHP…');
 const today = new Date().toISOString().slice(0, 10);
+// ⚠️ Setup gating needs a token that changes on EVERY build, which `today` does
+// not. Deploying twice in one day left ${P}_setup_version unchanged, so
+// ${P}_maybe_run_setup() returned early and never ran the new routine — caught
+// live when /press stayed 200 after the retire-pages fix shipped. The theme
+// Version header stays a date (WordPress shows it to humans); this is separate.
+const setupToken = new Date().toISOString();
 const P = THEME.prefix;
 
 const write = (/** @type {string} */ file, /** @type {string} */ contents) =>
@@ -270,11 +282,13 @@ function functionsPhp() {
 	const POST_PREFIX = POST_PREFIX_FALLBACK.prefix;
 	const POST_TARGET = POST_PREFIX_FALLBACK.target;
 	const BLOG_BASE = THEME.blogBase;
+	const RETIRED_PAGES_PHP = `array(${THEME.retiredPages.map(phpStr).join(', ')})`;
 
 	return `${BANNER}
 if (!defined('ABSPATH')) exit;
 
 define('${P.toUpperCase()}_THEME_VERSION', '${today}');
+define('${P.toUpperCase()}_SETUP_TOKEN', '${setupToken}');
 define('${P.toUpperCase()}_REST_NS', '${NS}');
 
 /* =============================================================================
@@ -414,19 +428,24 @@ add_action('after_switch_theme', '${P}_set_defaults');
  *      structure without flushing leaves the OLD routing live and looks exactly
  *      like the change did nothing.
  *
- * Only ever runs on theme activation, and only fills settings that are unset or
- * still WordPress's plain default — it must not stamp on a permalink structure
- * someone chose deliberately.
+ * ⚠️ The theme OWNS permalink_structure and must enforce it exactly, which an
+ * earlier version got wrong by trying to be polite. It only set the structure
+ * when the existing one lacked %postname% — but WordPress's common default,
+ * /%postname%/, already contains it, so the check passed and the base was never
+ * applied. Caught on the live site: the REST payload was perfect and
+ * /blog/<slug>/ **301'd away** to /<slug>/, where the SPA router has no route,
+ * so every card click bounced to a 404. src/routes/blog/[slug] is a
+ * SINGLE-SEGMENT route, so nothing but /blog/%postname%/ works — this is a
+ * routing contract, not a preference.
  */
 function ${P}_configure_blog() {
-    $structure = get_option('permalink_structure');
-    if (!$structure || strpos($structure, '%postname%') === false) {
+    $want = '/${BLOG_BASE}/%postname%/';
+    if (get_option('permalink_structure') !== $want) {
         global $wp_rewrite;
-        $target = '/${BLOG_BASE}/%postname%/';
         if ($wp_rewrite) {
-            $wp_rewrite->set_permalink_structure($target);
+            $wp_rewrite->set_permalink_structure($want);
         } else {
-            update_option('permalink_structure', $target);
+            update_option('permalink_structure', $want);
         }
     }
 
@@ -460,13 +479,37 @@ add_action('after_switch_theme', '${P}_configure_blog', 20);
  * deploy. Every routine it calls is idempotent.
  */
 function ${P}_maybe_run_setup() {
-    if (get_option('${P}_setup_version') === ${P.toUpperCase()}_THEME_VERSION) return;
+    if (get_option('${P}_setup_version') === ${P.toUpperCase()}_SETUP_TOKEN) return;
     ${P}_ensure_required_pages();
+    ${P}_retire_pages();
     ${P}_set_defaults();
     ${P}_configure_blog();
-    update_option('${P}_setup_version', ${P.toUpperCase()}_THEME_VERSION);
+    update_option('${P}_setup_version', ${P.toUpperCase()}_SETUP_TOKEN);
 }
 add_action('init', '${P}_maybe_run_setup', 5);
+
+/**
+ * Unpublish route stubs this theme created and no longer declares.
+ *
+ * ⚠️ Dropping a slug from THEME.pages does NOT retire the URL. The page this
+ * installer already created stays published, WordPress keeps answering 200, and
+ * because the legacy redirect is gated on is_404() it politely stands aside —
+ * so the route **shadows its own 301**. Caught on the live site: /press kept
+ * returning 200 after /blog shipped, and the 301 to /blog/ never fired.
+ *
+ * Draft, never delete, and only ever an EMPTY page. These stubs exist purely so
+ * a URL resolves — the SPA draws the content — so empty body is a reliable
+ * signature of "ours". Anything a human typed into is left completely alone,
+ * and drafting is reversible from the dashboard in one click.
+ */
+function ${P}_retire_pages() {
+    foreach (${RETIRED_PAGES_PHP} as $slug) {
+        $page = get_page_by_path($slug);
+        if (!$page || $page->post_status !== 'publish') continue;
+        if (trim(wp_strip_all_tags((string) $page->post_content)) !== '') continue;
+        wp_update_post(array('ID' => $page->ID, 'post_status' => 'draft'));
+    }
+}
 
 /** Multi-line option (address, hours) flattened for single-line contexts. */
 function ${P}_one_line($value) {

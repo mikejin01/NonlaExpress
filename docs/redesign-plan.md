@@ -1545,6 +1545,50 @@ full setup pass on the first request after each deploy. **Any future route added
 to `THEME.pages` depends on this too**; before this fix, adding a page to an
 already-live install silently did nothing.
 
+#### 2.12 ⚠️ Four things only the real deploy could find (2026-08-12)
+
+Everything in §2.11 passed locally and against a stubbed WordPress. **Four
+separate faults appeared the moment it met the real thing**, and none was
+detectable from this repo. Worth reading before the next deploy of anything.
+
+1. **The Pages build FAILED on a URL that is fine locally.** The /press stub had
+   `<link rel="canonical" href="/blog/">`. Locally `BASE_PATH` is empty so that
+   resolves; in CI `paths.base` is `/NonlaExpress`, the prerenderer follows the
+   href, and the build dies with *"/blog/ does not begin with `base`"*. The
+   deploy went red while `pnpm build` had been green all day. **Every internal
+   URL needs `{base}`** — and `BASE_PATH=/NonlaExpress pnpm build` reproduces CI
+   in one command, which is now the thing to run before pushing.
+2. **Setup never ran on the second deploy of the day.** `xo_maybe_run_setup()`
+   was gated on `XO_THEME_VERSION`, which is a **date**. Two deploys on
+   2026-08-12 shared it, so the guard returned early and the new routine never
+   executed — a fix that silently did nothing. Now gated on `XO_SETUP_TOKEN`, a
+   per-build ISO timestamp. **A version that changes daily cannot gate work that
+   happens hourly.**
+3. **A retired route shadowed its own 301.** `/press` kept answering **200**
+   after the blog shipped, because `xo_ensure_required_pages()` had created a
+   `press` page back when the theme declared one. Dropping the slug from
+   `THEME.pages` does not remove the page, so WordPress resolved it, `is_404()`
+   was false, and the redirect correctly stood aside. `xo_retire_pages()` now
+   drafts such stubs — **draft, never delete, and only when the body is empty**,
+   which is the signature of a page this installer made rather than one a human
+   wrote in.
+4. ⚠️ **The permalink guard was too polite and broke every post link.** It only
+   set the base when the existing structure lacked `%postname%` — but
+   WordPress's common default `/%postname%/` already contains it, so the check
+   passed and `/blog/` was never applied. The symptom was subtle and would have
+   read as "the blog is broken": the REST payload was **perfect**, the index
+   rendered, and every card click **301'd from `/blog/<slug>/` to `/<slug>/`**,
+   where the SPA has no route. `src/routes/blog/[slug]` is a single-segment
+   route, so `/blog/%postname%/` is a **routing contract, not a preference** —
+   the theme now enforces it exactly.
+
+**Verified live afterwards**, not inferred: `/blog/` 200 with the post listed;
+`/blog/<slug>/` 200 rendering title, date, both paragraphs and the `<strong>`
+from `the_content`, with `document.title` set; `/press/` **301 → /blog/**;
+`/post/best-pho-in-flushing-queens` **301 → /menu/**; `/tracker-page/` **301 →
+/**; `permalink_structure = /blog/%postname%/`; `page_for_posts` set. The test
+post was deleted afterwards — the site is public.
+
 **`/press` is kept as a redirect, not deleted.** It was a real URL on the old
 Wix site *and* live on our own Pages deploy for six phases, so links exist. It
 301s server-side via the map on WordPress; the route itself is a `noindex` stub

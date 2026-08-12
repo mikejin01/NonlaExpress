@@ -21,6 +21,13 @@ longer matches production.
   still win over the new defaults. Clearing a stale override means deleting it
   (`wp option delete` / route override), not just redeploying.
 
+⚠️ **`pnpm build` does NOT reproduce the Pages CI build.** Locally `BASE_PATH`
+is empty, so a root-absolute internal URL like `href="/blog/"` resolves fine and
+**fails the deploy** — in CI `paths.base` is `/NonlaExpress` and the prerenderer
+errors with "does not begin with `base`". It happened on 2026-08-12. Every
+internal URL needs `{base}`, and **`BASE_PATH=/NonlaExpress pnpm build` before
+pushing** catches it in one command (plan §2.12).
+
 ⚠️ **Two build shapes, one codebase.** `pnpm build` prerenders for GitHub Pages;
 `WP_BUILD=1 pnpm build` emits the client-only SPA the theme needs. `make build`
 runs the WordPress one. Anything that bakes content into HTML at build time

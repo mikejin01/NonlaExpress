@@ -21,9 +21,14 @@
 
 <svelte:head>
 	<title>Press — Nón Lá Express</title>
-	<!-- Retired URL: keep it out of the index and point crawlers at the successor. -->
+	<!-- Retired URL: keep it out of the index and point crawlers at the successor.
+	     ⚠️ {base}, not a root-absolute "/blog/". The GitHub Pages build sets
+	     paths.base to /NonlaExpress, and the prerenderer follows this href — a
+	     bare "/blog/" made it crawl a path outside the base and FAILED the
+	     deploy, while building clean locally where BASE_PATH is empty. Any
+	     internal URL in this codebase needs {base}. -->
 	<meta name="robots" content="noindex" />
-	<link rel="canonical" href="/blog/" />
+	<link rel="canonical" href="{base}/blog/" />
 </svelte:head>
 
 <main id="main" tabindex="-1" class="section padding-md">
