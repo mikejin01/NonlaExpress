@@ -787,13 +787,15 @@ function ${P}_print_meta_description() {
 add_action('wp_head', '${P}_print_meta_description', 6);
 
 /* =============================================================================
-   5b. Legacy Wix URLs — 301s for the retired blog (plan §5 Q4)
+   5b. Legacy Wix URLs — 301s for the migrated blog (plan §5 Q4)
    ============================================================================= */
 
 /**
- * The old site's blog is retired, but its 12 posts — 11 of them Chinese-language
- * Flushing local-SEO articles — were still ranking when it was switched off, so
- * every one of them 301s to the page that covers its topic rather than 404ing.
+ * The old site's 12 blog posts — 11 of them Chinese-language Flushing local-SEO
+ * articles — were migrated into WordPress on 2026-08-12 with their original
+ * slugs, so each legacy /post/ URL 301s 1:1 to its own imported post under
+ * /blog/. (Two slugs differ slightly where sanitize_title() intervened — see
+ * scripts/redirects.js for which and why.)
  * The map is generated from scripts/redirects.js; edit it there.
  *
  * Runs on template_redirect, and ONLY for requests WordPress could not resolve
@@ -801,8 +803,8 @@ add_action('wp_head', '${P}_print_meta_description', 6);
  *
  * ⚠️ The is_404() guard is load-bearing, not defensive. Without it this function
  * would hijack a path even after someone created real content there, and the
- * /post/ prefix rule below would then 301 EVERY post of a future blog to
- * /menu/ — permanently, and looking exactly like "WordPress is broken". The
+ * /post/ prefix rule below would then 301 EVERY unresolved /post/ URL to the
+ * blog index — permanently, and looking exactly like "WordPress is broken". The
  * legacy URLs all 404 today (nothing on this site claims them), so gating on
  * is_404() costs the redirects nothing and makes them self-retiring.
  */
@@ -826,8 +828,8 @@ function ${P}_legacy_redirects() {
     // Encoding safety net + anything published after the map was captured. Those
     // slugs carry Han characters, a fullwidth colon, a fullwidth '!' and an
     // accented 'o', so an exact match is one Unicode normalisation away from
-    // silently missing. Anything else under /post/ is a phở article by
-    // construction, so the menu is the right home for it.
+    // silently missing. With the posts migrated, the blog index — which lists
+    // every one of them — is the honest home for a /post/ URL we missed.
     if (strpos($path, '${POST_PREFIX}') === 0) {
         wp_redirect(home_url('${POST_TARGET}'), 301);
         exit;

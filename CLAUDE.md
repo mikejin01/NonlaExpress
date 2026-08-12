@@ -95,10 +95,15 @@ Noto Serif SC is ever reached. So `var(--display), var(--zh-font)` does **not**
 work; those two tokens put the CJK webfont ahead of the generic. Use them for
 any user-authored text, not for copy whose language we know (that keeps `.zh`).
 
-The old blog's 12 URLs still 301 by topic rather than 404 —
-`scripts/redirects.js` is the canonical map, compiled into the theme's
-`functions.php` (plan §2.9). ⚠️ **`/blog` is deliberately NOT in that map** now
-that it is a live route.
+**The 12 old Wix posts were MIGRATED into WordPress on 2026-08-12** — original
+slugs, dates, featured images, and per-post Yoast SEO title/description synced
+from the Wix head — so each old `/post/` URL now 301s **1:1 to its own imported
+post** under `/blog/`, not by topic. `scripts/redirects.js` is the canonical
+map, compiled into the theme's `functions.php` (plan §2.9). ⚠️ **`/blog` is
+deliberately NOT in that map** now that it is a live route. ⚠️ Two WP slugs
+differ from their Wix originals (sanitize_title folded `ó`→`o`, and one
+percent-encoded slug overflowed post_name's 200 bytes and lost its final 馆) —
+redirects.js documents both.
 
 ⚠️ **Those 301s only exist on the WordPress target** — `template_redirect` is
 PHP, and GitHub Pages cannot do server-side redirects at all. Correct while
