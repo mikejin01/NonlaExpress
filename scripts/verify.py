@@ -26,7 +26,7 @@ import json, sys, time, pathlib
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from cdp import Chrome
 
-OUT_TAG = "phaseD"  # bump per phase — this dir is overwritten unconditionally,
+OUT_TAG = "phaseE"  # bump per phase — this dir is overwritten unconditionally,
 # so leaving it stale silently relabels the previous phase's captures as this
 # one's. (Phase A's cream captures survive only in git at a4bc657; the ones
 # now in screenshots/phaseA/ are the 2026-08-07 green-ground re-skin.
@@ -121,13 +121,50 @@ AUDIT = r"""
 """
 
 PROBE = r"""
-(() => {
+(async () => {
   const cs = getComputedStyle(document.body);
   const root = getComputedStyle(document.documentElement);
   const pick = s => { const e = document.querySelector(s); return e ? getComputedStyle(e) : null; };
   const nav = pick('.nav-link'), disp = pick('.display'), btn = pick('.btn-primary');
   return {
-    fontsLoaded: (() => {
+    fontsLoaded: await (async () => {
+      /* Two things this got wrong before Phase E, both of which reported a
+         perfectly healthy font as MISSING on all 7 routes:
+
+         1. ⚠️ WIDTH PROBING CANNOT SEE A CJK FACE. Han glyphs are full-width in
+            every font, so '越南河粉法拉盛' measures 7 × font-size in Noto Serif
+            SC and in the monospace fallback alike — measured 224px vs 224px.
+            The comparison is structurally incapable of discriminating, and it
+            had been quietly failing notoSC since the probe was written. The
+            same test on Latin text in that face separates cleanly (228.6 vs
+            250.5), so the technique is fine — its INPUT was wrong.
+         2. These faces load LAZILY, per unicode-range subset, and the width
+            probe is synchronous: a subset the page hasn't painted yet hasn't
+            been fetched, so the probe measures the fallback. Ask for each face
+            over its own probe text first, then measure.
+
+         So: every face is width-probed on LATIN text (all five carry Latin
+         glyphs), after an explicit load. notoSC additionally reports whether
+         the CJK subset itself resolved, via the purpose-built API. */
+      const FACES = [
+        ['maname',       'font-weight:400;font-size:48px;font-family:Maname', 'Phở Express'],
+        ['playfair900',  'font-weight:900;font-size:96px;font-family:"Playfair Display"', 'NATURAL'],
+        ['playfair900i', 'font-style:italic;font-weight:900;font-size:96px;font-family:"Playfair Display"', 'nón lá'],
+        ['overpass700',  'font-weight:700;font-size:32px;font-family:Overpass', 'ORDER ONLINE'],
+        ['notoSC',       'font-weight:600;font-size:32px;font-family:"Noto Serif SC"', 'Nonla Express']
+      ];
+      const CJK = '越南河粉法拉盛';
+      const shorthand = css => {
+        const g = k => (css.match(new RegExp(k + ':([^;]*)')) || [, ''])[1].trim();
+        return [g('font-style'), g('font-weight'), g('font-size')].filter(Boolean).join(' ')
+               + ' ' + g('font-family');
+      };
+      await Promise.all([
+        ...FACES.map(([, css, text]) => document.fonts.load(shorthand(css), text).catch(() => {})),
+        document.fonts.load(shorthand(FACES[4][1]), CJK).catch(() => {})
+      ]);
+      await document.fonts.ready;
+
       const probe = (css, text, fallback) => {
         const mk = f => { const s = document.createElement('span');
           s.style.cssText = 'position:absolute;left:-9999px;white-space:nowrap;' + css
@@ -136,13 +173,10 @@ PROBE = r"""
           const w = s.getBoundingClientRect().width; s.remove(); return w; };
         return mk(css.match(/font-family:([^;]*)/)[1] + ',' + fallback) !== mk(fallback);
       };
-      return {
-        maname: probe('font-weight:400;font-size:48px;font-family:Maname', 'Phở Express', 'monospace'),
-        playfair900: probe('font-weight:900;font-size:96px;font-family:"Playfair Display"', 'NATURAL', 'monospace'),
-        playfair900i: probe('font-style:italic;font-weight:900;font-size:96px;font-family:"Playfair Display"', 'nón lá', 'monospace'),
-        overpass700: probe('font-weight:700;font-size:32px;font-family:Overpass', 'ORDER ONLINE', 'monospace'),
-        notoSC: probe('font-weight:600;font-size:32px;font-family:"Noto Serif SC"', '越南河粉法拉盛', 'monospace')
-      };
+      const out = Object.fromEntries(
+        FACES.map(([name, css, text]) => [name, probe(css, text, 'monospace')]));
+      out.notoSC = out.notoSC && document.fonts.check(shorthand(FACES[4][1]), CJK);
+      return out;
     })(),
     body: { bg: cs.backgroundColor, color: cs.color, family: cs.fontFamily.split(',')[0], size: cs.fontSize },
     nav: nav && { family: nav.fontFamily.split(',')[0], size: nav.fontSize, color: nav.color },

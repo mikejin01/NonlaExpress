@@ -52,8 +52,15 @@ panel and **the arc** (plan §2.3). **Phase C2 SHIPPED 2026-08-11** — the moti
 layer (M4 and M6 died with the intro section, so it was M1/M2/M3/M5). **Phase D
 SHIPPED 2026-08-11** — the /menu re-skin: the red "ăn nào!" header with lime +
 noodle art bleeding off both edges, ruled section heads, and **cut-out dish
-photos directly on cream with NO cards** (plan §2.6).
-**Next: Phase E — /company + the remaining pages.**
+photos directly on cream with NO cards** (plan §2.6). **Phase E SHIPPED
+2026-08-12** — /company as the original's 50/50 split (cream story column ·
+full-bleed kitchen video · three value blocks each led by its own illustrated
+dish), /press + the three legal routes confirmed correct with no edits, and the
+dead-CSS sweep (plan §2.7). **Next: Phase F — QA + launch prep.**
+
+⛔ **One Phase E task is deliberately unfinished: the nav labels, blocked on §5
+Q4 (BLOG vs PRESS).** It is the only thing left in the redesign waiting on the
+client rather than on us. Don't "tidy" the header without that answer.
 
 ⚠️ **The dish photos ship on a `#F1EAD7` studio backdrop**, one step off
 `--cream`. That is why /menu needs no cards — and it is a constraint, not just a
@@ -134,6 +141,12 @@ Three tools, all stdlib-only, all in `scripts/`:
   element over its actual background) + webfont + overflow checks across all 7
   routes at 1440 and 540. Needs `pnpm build && pnpm preview` first. **Bump
   `OUT_TAG` each phase** or it relabels the previous phase's captures.
+  ⚠️ Its webfont check **had never passed for Noto Serif SC** and nobody chased
+  it until Phase E: a width probe can't see a CJK face, because Han glyphs are
+  full-width in *every* font (measured 224px with the webfont and 224px
+  without). Fixed — all faces are probed on Latin text now, and the lazy
+  per-subset loads are awaited. **A check that has never passed is not a check;**
+  don't read a persistent red as noise.
 - `cdp.py` — Chrome DevTools driver. Use it for anything scroll-driven: a plain
   full-page `--screenshot` renders those effects in their end state and shows
   nothing. The original's motion system is measured in redesign-plan.md §1.5.
@@ -180,7 +193,7 @@ print goes here). Plus `--cream #F0EAD6` (**the page**, the `:root` default),
 (`--label`) · Noto Serif SC (中文).
 
 **Never hard-code a text color.** Sections carry `.on-cream` / `.on-green` /
-`.on-green-deep` / `.on-green-lift` / `.on-charcoal` / `.on-terracotta` /
+`.on-green-deep` / `.on-charcoal` / `.on-terracotta` /
 `.on-media`, which paint `--surface` and re-point `--fg` / `--fg-muted` /
 `--fg-dim` / `--rule` / `--accent` / `--accent-ink` / `--warm` / `--warm-ink` /
 `--mark` / `--btn-*`. Write `color: var(--fg)` and it reads correctly on every
@@ -206,6 +219,17 @@ Constraints that are easy to violate — full table in redesign-plan.md §2.1:
   decorative fills only, never text or behind text.
 - `.on-terracotta` is **defined but deliberately unused** — it is the statement
   hero's option if the client wants more orange. Don't sweep it as dead CSS.
+  (`.on-green-lift` was the other unused surface and it **was** swept, in Phase
+  E — nothing had adopted it. The `--green` token is untouched.)
+- ⚠️ **The three `/company` dish illustrations are the one exception to all of
+  this.** `dish-pho` / `dish-plate` / `dish-rolls` are multi-colour source art
+  (pale blue, yellow, mint, near-white), marked `"no recolor"` in svgclean.py's
+  MANIFEST, and they ignore `--art-fill` / `--art-detail` entirely — so they do
+  **not** adapt to their surface and belong on cream. §2.2's "the folk art
+  recolors itself" is about the **animals**, not these. Plan §2.7.
+- **Check the weight before the size when terracotta is text.** WCAG large text
+  is `≥24px OR ≥18.66px at 700+` — an *or*. A 22.5px **regular** line is normal
+  text needing 4.5:1, so it takes `--warm-ink`, not `--warm`.
 
 ## Client
 Nón Lá Express — fast-casual Vietnamese Kitchen, stall FH17 inside Tangram food

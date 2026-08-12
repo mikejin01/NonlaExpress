@@ -352,9 +352,17 @@ consequences for our footer are in §2.6.
 
 **Company** (`/company`): 50/50 split. Left cream: "About NónLá Express" label,
 red script heading "Serving Fresh Healthy Pho, with Modern Convenience", red
-serif pull-quote «"phở, the new era"», two story paragraphs, interior photo.
-Right: full-bleed kitchen video (Wix-hosted). More terracotta/cream blocks
-below the fold (illustrated dishes company-29/30/31 likely used there).
+serif pull-quote «"phở, the new era"», two story paragraphs, interior photo
+(`…interior-mural.jpg`). Right: full-bleed kitchen video (Wix-hosted), starting
+flush under the nav and running the height of the story column.
+
+⚠️ ~~More terracotta/cream blocks below the fold (illustrated dishes
+company-29/30/31 likely used there).~~ **Corrected Phase E from the source
+HTML.** Below the fold there is exactly one thing: **three value blocks on
+cream**, each structured **two-line heading → dish SVG → body paragraph**, so
+the three illustrated dishes are one per value rather than a row of their own.
+There are no terracotta blocks on this page at all. The page then goes straight
+to the footer. §2.7 has what that meant for our build.
 
 **Blog** (`/blog`): Wix blog card grid, 4-col, mostly Chinese-language SEO
 posts (法拉盛/Flushing pho keywords) + a couple EN. Feeds the footer band.
@@ -485,10 +493,10 @@ the site's motion budget goes entirely into M1–M4 and M6. Don't add fade-ins.
 | G1 | ~~Palette: dark-green site vs a light site~~ — **closed, re-opened and closed three times.** Phase A went cream-dominant (§1.2a); 2026-08-07 put green back as the ground (§1.2c); the client then swapped them again and added terracotta as a third colour (**§1.2d**, current). Net result: a light cream page like the original, in the brand's own green, with the original's red back as a real accent. | resolved |
 | G2 | Fonts: Fraunces/Montserrat/Bitter/Chewy vs **TT Nooks Bold (display) + Maname (everything else)** — see §1.1 | big |
 | G3 | ~~Logo: interim redraw vs real vector~~ — **CLOSED Phase B.** Both real lockups ship, `currentColor`-themed; favicon redrawn from the real mark. | resolved |
-| G4 | Zero illustration language — original leans on folk-art SVGs everywhere. Phase B shipped the assets; **Phase C placed the homepage set** (2 animals in the marquee, phin/cup/beans in the drinks collage) and **Phase D the menu set** (lime + noodles bleeding off the header's two edges, shrimp on Appetizer, herb on Noodle). **Phase E owes only the three `/company` dish illustrations** — plus shrimp/herb again, which the original repeats there. | home + menu done, E open |
+| G4 | ~~Zero illustration language~~ — **CLOSED Phase E 2026-08-12.** Phase B shipped the assets, C placed the homepage set (2 animals in the marquee, phin/cup/beans in the drinks collage), D the menu set (lime + noodles off the header's two edges, shrimp on Appetizer, herb on Noodle), and **E the three `/company` dish illustrations, one per value block** — which is where the source HTML puts them (§1.3, corrected). Every harvested piece `svgclean.py` emits is now placed. ⚠️ The dishes are the one set that does **not** obey the colour contract — §2.7. | resolved |
 | G5 | ~~Home structure: video hero + template sections~~ — **CLOSED Phase C**, but *not* by wholesale replacement: the original's section order ships **around** five of our own sections, video hero included (**§2.4** — the keep list). | resolved |
 | G6 | ~~Menu: dark w/ price ovals + text lists vs cream w/ cut-out dish photos, script headers, no prices~~ — **CLOSED Phase D 2026-08-11.** Card-less cut-outs on cream, ruled section heads, the red "ăn nào!" header with lime + noodles. Prices *stay* by the §5 Q5 default but as a small green label, not an oval. | resolved |
-| G7 | Company: single column vs 50/50 split with story + media | medium |
+| G7 | ~~Company: single column vs 50/50 split with story + media~~ — **CLOSED Phase E 2026-08-12.** The split measures on the original's own geometry (720/720 panes, 76px inset, the same two-line heading break), with the harvested kitchen video in the right pane at 1.12MB. §2.7. | resolved |
 | G8 | Nav labels: MENU·ABOUT·PRESS·FIND US vs OUR MENU·OUR COMPANY·BLOG | small — **blocked on §5 Q4**, everything else about the header shipped in Phase C |
 | G9 | ~~Newsletter: plain section vs cream panel on terracotta footer~~ — **CLOSED Phase C**, and it is now in the footer on every route. | resolved |
 | G10 | ~~Marquee: our photo-card marquee vs giant type marquee w/ animals~~ — **CLOSED Phase C, and it was never an either/or.** The type band ships (static; C2 animates) **and** the photo carousel stays as its own section (§2.4). | resolved |
@@ -1049,12 +1057,123 @@ here). Wiring it is a real piece of work, not a sweep: `MENU` is a nested data
 structure and each string needs a stable key, so it wants its own pass rather
 than being smuggled into a re-skin.
 
-### Phase E — company page + remaining pages
-- [ ] /company: 50/50 split — left story column (label, script heading, «phở, the new era» pull-quote, story paragraphs from `content.js`, mural photo), right full-bleed media (hero video from Phase C, else `pho-near-me-…-dining-area.jpg`). Below-fold: illustrated-dish SVG row + values band on `.on-green-deep` (values cards are already `.on-cream` + `--cream-lift`). The red script pull-quote is a `--warm` candidate (§1.2d) — check the rendered size clears 18.66px at weight 700+.
-- [ ] /press, legal pages, accessibility: already on the cream ground with `--cream-lift` cards / `.prose-panel`; check prose contrast and that nothing re-introduces a hard-coded color.
-- [ ] Nav labels + footer links aligned with §5 Q4 outcome (BLOG vs PRESS).
-- [ ] Remove dead CSS: ~~`.price-oval` if unused~~ (**it is used** — Phase D retired it from /menu's section headings and it now lives only on `LunchSpecial`, which is deliberate: it is a printed-menu signature and one price deserves it. Don't sweep it), hero-video styles if dropped, `.on-green-lift` if nothing ends up using it. ⚠️ **Do NOT sweep `.on-terracotta`** — it is deliberately unused and kept AA-correct as the statement hero's option if the client wants more of the third colour (§1.2d). (The old dark-green-era vars are already gone — Phase A removed them outright.)
-- Verify all 7 routes, both widths.
+### Phase E — company page + remaining pages ✅ DONE 2026-08-12 (one task blocked)
+- [x] /company: 50/50 split — left story column (label, script heading, «phở, the new era» pull-quote, story paragraphs from `content.js`, mural photo), right full-bleed media (hero video from Phase C, else `pho-near-me-…-dining-area.jpg`). Below-fold: illustrated-dish SVG row + values band on `.on-green-deep` (values cards are already `.on-cream` + `--cream-lift`). The red script pull-quote is a `--warm` candidate (§1.2d) — check the rendered size clears 18.66px at weight 700+. → Split shipped and it measures on the original's own geometry (720/720 panes, 76px content inset, the same two-line heading break). Three deviations, all deliberate and all in §2.7: the media is the **harvested kitchen video**, re-encoded 7.9MB → **1.12MB**; the dish illustrations are **one per value block**, which is where the source HTML actually puts them, not a row; and the values stay **on cream, card-less** rather than on `.on-green-deep` — the dishes are the site's only multi-colour art and do not adapt to a surface. The pull-quote check **failed as posed and that decided it**: it is weight 400, so 22.5px is normal text, so it takes `--warm-ink` not `--warm`.
+- [x] /press, legal pages, accessibility: already on the cream ground with `--cream-lift` cards / `.prose-panel`; check prose contrast and that nothing re-introduces a hard-coded color. → Confirmed correct as-is, no edits needed. `.press-card` carries both `--cream-lift` **and** the `--rule` hairline the §1.2d trap requires; all three legal routes are `.prose.prose-panel.on-cream`. The only hard-coded colours left in `src/` are `src/lib/inline-edit/*` (the WordPress editor chrome, deliberately un-themed — it is not the site) and `.polaroid { background: #fff }`, which is photo paper on the charcoal band, carries no text, and is a physical object rather than a surface.
+- [ ] ⛔ **BLOCKED on §5 Q4** — nav labels + footer links (BLOG vs PRESS). Untouched on purpose; the header still ships OUR MENU · OUR COMPANY · PRESS · FIND US. This is the last thing in the redesign waiting on the client rather than on us.
+- [x] Remove dead CSS: ~~`.price-oval` if unused~~ (**it is used** — Phase D retired it from /menu's section headings and it now lives only on `LunchSpecial`, which is deliberate: it is a printed-menu signature and one price deserves it. Don't sweep it), hero-video styles if dropped, `.on-green-lift` if nothing ends up using it. ⚠️ **Do NOT sweep `.on-terracotta`** — it is deliberately unused and kept AA-correct as the statement hero's option if the client wants more of the third colour (§1.2d). (The old dark-green-era vars are already gone — Phase A removed them outright.) → Swept by **measurement, not by eye**: a script cross-referenced every class defined in `app.css` against all of `src/`, and the entire dead list was three names — `.on-green-lift` (removed, with a note in place saying why), `.on-terracotta` (kept, protected above) and a regex artifact. The hero-video styles stay because the video stayed. `--green` itself is untouched.
+- [x] Verify all 7 routes, both widths. → `verify.py` at `OUT_TAG="phaseE"`: **`RESULT: PASS` — 0 contrast failures, `fonts=ALL`, `hscroll=no` across 7 routes × 2 widths**, plus both build shapes clean and every /company measurement re-taken at a real viewport with `cdp.py`. ⚠️ This is the **first phase to report PASS on the fonts line**, and not because anything about the fonts changed — see §2.7, the checker was wrong.
+
+#### 2.7 What Phase E actually shipped (read before F)
+
+**The split is measured, not approximated.** Every number below was read off
+`screenshots/orig-company-hero.png` at 1440 and then re-read off our own build
+with `cdp.py`, and the two agree to the pixel where it matters:
+
+| | Original | Ours |
+| --- | --- | --- |
+| story pane / media pane | 719 / 721 | **720 / 720** |
+| content inset, left column | x=76, width 570 | **x=76, width 568** |
+| script heading | ~44px, breaks at 2 lines | **44px, 2 lines** |
+| pull-quote | ~21px | 22.5px (`--fs-lead`) |
+| story paragraphs | ~18px, line pitch ~29.6 | **18px** (`--fs-nav`), pitch 30.6 |
+
+**`--fs-nav` is the site's running-copy step now, on two pages independently.**
+Phase D measured the original's menu descriptions at 18px and noted the scale had
+only ever used that step for nav links. The company story column measures 18px
+too, by two independent methods (character-advance 18.2px, line-pitch 18.5px).
+That is no longer a one-page curiosity — **18px is what this design sets long
+prose at**, and 24px (`--fs-body`) is for short marketing blocks like the
+statement hero. The page it replaced ran the story at `--fs-lead`.
+
+**The pull-quote is the third colour's clearest lesson so far.** The task list
+said it was "a `--warm` candidate — check the rendered size clears 18.66px at
+weight 700+". It doesn't, and the reason is instructive: it clears the *size*
+easily at 22.5px but it is **weight 400**, and WCAG's large-text rule is
+`≥24px, OR ≥18.66px at weight 700+` — an "or", so a 22.5px regular is plain
+normal text needing 4.5:1, where terracotta has 3.88:1. Bumping it to `--fs-md`
+would technically qualify at 24px, but `--fs-md` is a clamp that resolves to
+20px on a phone and would silently drop back under the wire. **`--warm-ink`
+(rust, 4.66:1) is the answer at every viewport** — which is exactly the job that
+token was created for. Generalisable: **when the third colour is being used as
+text, check the weight before the size.**
+
+⚠️ **The three dish illustrations are the ONLY multi-colour art on the site, and
+they do not obey the colour contract.** `dish-pho` / `dish-plate` / `dish-rolls`
+carry literal fills — pale blue `#DCEFF0`, yellow `#F9E044`, mint `#86B68E`,
+near-white `#FAFAFB` — and `svgclean.py`'s MANIFEST marks all three
+`"no recolor"`. They ignore `--art-fill` / `--art-detail` entirely, so unlike
+every other piece **they do not adapt to the surface they land on**. This was
+verified against the original rather than assumed: `original-company.html`
+contains **zero** scoped `[data-color]` fill rules, so Wix applied no override
+and the source-art colours *are* what the original displayed. Two consequences:
+
+- It is why the values band is **cream and card-less** rather than the
+  `.on-green-deep` the task list called for. Those pastels on a dark band read as
+  glowing blobs; on cream they sit exactly as the original has them. Green still
+  gets a band on this route — the mission statement, which is ours.
+- Anyone reaching for "the folk art recolors itself, so this will be fine" is
+  half right. That claim (§2.2) is about the **animals**, which are drawn cream-
+  body-plus-terracotta-line-work. The dishes are a different kind of asset that
+  happens to live in the same directory.
+
+**§1.3 guessed where the dish illustrations go and the source HTML settled it.**
+It said they were "likely used there" somewhere below the fold. Extracting the
+page's ordered text/media stream shows the real structure: each value block is
+**heading → dish SVG → body**, one dish per value. Corrected in place. This is
+the third time in three phases that reading `source-html.tar.gz` beat reading a
+sentence written from a screenshot — **it is now the cheapest first move on any
+page-structure question**, and it stops being possible at DNS cutover.
+
+**Size illustration by height — the trap Phase D flagged was waiting here.**
+`dish-pho` is 1.11:1 but `dish-plate` and `dish-rolls` are ~1.60:1. A shared
+width would have made the bowl half again as tall as its neighbours; a shared
+height of 128px renders them 142 / 205 / 203px wide and they read as one set.
+A second alignment fix was needed for the same reason at the type level: two of
+the three value titles set on one line and one on two, so the bodies started on
+different baselines. `min-height: 2.1em` on the title, desktop only.
+
+**The kitchen video is a 1.12MB rendition of a 7.9MB original, and that is a
+data point for §5 Q3.** 1920×1080 → 1280×720, CRF 30, audio dropped (it is a
+muted decorative loop), `+faststart`: **an 86% cut with no visible loss at a
+~720px pane.** No `.mov` twin — unlike the hero pair this one is H.264 only,
+which every target decodes. The hero videos are 33MB of the deploy and have never
+been through this treatment; **this is what the answer to Q3 would look like if
+the client says a lighter rendition is acceptable.** It also pauses under
+`prefers-reduced-motion`, the same three-line `onMount` the homepage hero uses.
+
+⚠️ **`verify.py` was reporting a healthy font as MISSING, on every route, and had
+been since the probe was written.** `fonts=MISSING:notoSC` appeared on all 7
+routes at both widths while `document.fonts.check()` said the face was fine. Two
+independent bugs, and the first one is the interesting one:
+
+1. **A width probe cannot see a CJK face.** The check renders a string in the
+   candidate font and again in a fallback and calls them different if the widths
+   differ. **Han glyphs are full-width in every font**: `越南河粉法拉盛` measured
+   **224px with Noto Serif SC and 224px without**. The same probe on Latin text
+   in that same face separates cleanly (228.6 vs 250.5). The technique was never
+   broken — its *input* was. Every face is now probed on Latin text, and notoSC
+   additionally reports whether the CJK subset resolved, via `fonts.check()`.
+2. **The faces load lazily, per unicode-range subset**, and the probe was
+   synchronous — so a subset the page had not painted yet had not been fetched
+   and the probe measured the fallback. It now `await`s `document.fonts.load()`
+   for each face over its own probe text first. (`cdp.py`'s `js()` already passes
+   `awaitPromise`, so the probe just became an `async` IIFE.)
+
+**Generalisable, and worth more than the fix: a green check and a red check are
+not equally trustworthy.** Four faces passed this probe for five phases, which
+made the tool look healthy, and the one persistent red was read as noise rather
+than investigated — it is not mentioned in any prior session log. A check that
+has never passed is not a check. **Phase F should assume the same of anything
+still flagged.**
+
+**What did NOT change:** the mission band, the gallery and the Find Us block on
+/company are ours and stayed (§2.4's rule); /press and all three legal routes
+needed no edits at all; the nav is untouched pending Q4. Three images are now
+unreferenced — `squid-game.jpg` (the 2026-08-11 removal), `lemongrass-beef-bowl.jpg`
+and `pho-ga-tall.jpg` — and all three are **left on disk deliberately**, on the
+same reasoning as the squid-game entry: deleting client photography is not ours
+to decide. Sweep in Phase F if confirmed.
 
 ### Phase F — QA + launch prep
 - [ ] Cross-page consistency pass at 1440 + 540 (memory: headless Chrome clamps <~540px; judge narrower via CSS).
@@ -1191,8 +1310,13 @@ Same failure shape as the stale `vite preview` on 4173.
    again, at **33MB of a 37MB deploy**. The remaining question is only about
    weight, not about whether to use it: is a shorter / smaller-bitrate rendition
    acceptable? (The `.mov` + `.mp4` pair exists for Safari HEVC vs everything
-   else, so both are needed.) Separately, Phase E's /company pane can use the
-   harvested kitchen video (7.6MB, 720×1062) rather than this one.
+   else, so both are needed.) ✅ **Phase E gave this question a worked example
+   instead of an estimate:** the /company pane now runs the harvested kitchen
+   video re-encoded 1920×1080/7.9MB → **1280×720 / 1.12MB** (CRF 30, audio
+   dropped, `+faststart`) with no visible loss at its display size — an **86%
+   cut**. Ask the client to look at that pane; if they accept it, the same
+   treatment on the hero pair is the answer here, and it is the single largest
+   win available on page weight.
 4. **BLOG vs PRESS in nav:** original has an active (Chinese-SEO) Wix blog; our static site has /press instead. Blog content strategy + the parked `/blog`, `/post/*` redirect map are one decision.
 5. **Menu prices on the website:** original shows none; we currently show prices. Keep or hide? — **Phase D shipped the stated default (keep), and the question is now cheap to answer either way:** prices are per-section, so they are five `.section-price` labels plus the three drink extras, and hiding them is a one-line `display:none`. Worth asking with a screenshot of each.
 6. **Burger section:** our menu data has it, the live site's menu doesn't (Phase D). Still on the menu, or discontinued? — **Phase D kept it** on the stated default, and it is the only section with no dish photography, so it reads visibly thinner than the other four. If it stays, it wants photos; if it goes, delete the block in `content.js`. **Ask before Phase F.**
@@ -1757,6 +1881,60 @@ Same failure shape as the stale `vite preview` on 4173.
      merely hidden.
   Re-verified: build clean, **0 contrast failures across 7 routes × 2 widths, no
   horizontal scroll**. Content-drift check clean before the edit.
+
+- **2026-08-12 — PHASE E SHIPPED: /company, the remaining pages, and the dead-CSS
+  sweep.** /company is now the original's 50/50 split — cream story column left,
+  the harvested kitchen video full-bleed right, three value blocks below, each
+  led by its own illustrated dish. Build clean in **both** shapes, and
+  `verify.py` at `OUT_TAG="phaseE"` returns **`RESULT: PASS` — 0 contrast
+  failures, `fonts=ALL`, `hscroll=no` across 7 routes × 2 widths**. Content-drift
+  check ran clean before any of it (`make check-content-drift`, 9 keys). Full
+  detail in **§2.7**; six things worth carrying forward:
+  1. **The source HTML settled a third plan guess.** §1.3 said the three dish
+     illustrations were "likely used" somewhere below the fold; the page's
+     ordered text/media stream shows each value block is heading → dish SVG →
+     body, one dish per value. Reading `source-html.tar.gz` has now beaten
+     reading a sentence-written-from-a-screenshot in three consecutive phases —
+     treat it as the cheapest first move, and remember it stops being possible
+     at DNS cutover.
+  2. **The dish illustrations are the only art on the site that ignores the
+     colour contract.** Multi-colour source art, marked `"no recolor"` in
+     svgclean.py's MANIFEST, verified faithful against the original (zero scoped
+     `[data-color]` rules on that page). They do not adapt to their surface,
+     which is why the values band is cream and card-less rather than the
+     `.on-green-deep` the task list called for. §2.2's "the folk art recolors
+     itself" is about the **animals**, not these.
+  3. **Check the weight before the size when the third colour is text.** The
+     pull-quote clears 18.66px comfortably but is weight 400, and WCAG's large-
+     text rule is an *or* — so 22.5px regular is normal text at 4.5:1, where
+     terracotta has 3.88:1. `--warm-ink` (rust, 4.66:1), which is precisely the
+     token's job. The task list's own check is what decided this.
+  4. ⚠️ **`verify.py` had been reporting a healthy font as MISSING on every
+     route since the probe was written, and no session log mentions it.** A
+     width probe cannot see a CJK face: Han glyphs are full-width in every font,
+     so the test string measured **224px with Noto Serif SC and 224px without**.
+     Fixed by probing all faces on Latin text (plus `fonts.check()` for the CJK
+     subset) and by awaiting the lazy per-subset loads. **The lesson is bigger
+     than the bug: a check that has never passed is not a check.** Four green
+     faces made the tool look healthy and the one persistent red got read as
+     noise. Phase F should assume the same of anything still flagged.
+  5. **The dead-CSS sweep was done by cross-referencing every `app.css` class
+     against all of `src/`, not by eye**, and the entire dead list was one name:
+     `.on-green-lift`, now removed with a note in its place. `.price-oval` and
+     `.on-terracotta` were confirmed live/protected as the task list required.
+  6. **Q3 has a worked example now instead of an estimate.** The kitchen video
+     went 7.9MB → **1.12MB** (86%) with no visible loss at its pane size. That
+     is the shape of the answer for the 33MB hero pair if the client accepts it.
+  Also: /press and all three legal routes needed **no edits at all** — they were
+  already correct, which is what the task list predicted; three images are now
+  unreferenced and left on disk deliberately (client photography); and `--fs-nav`
+  (18px) is confirmed as this design's running-prose step on a second page,
+  independently measured.
+  **Next: Phase F — QA + launch prep.** ⛔ **Q4 (BLOG vs PRESS) is the only piece
+  of Phase E left undone and the only thing in the redesign still blocked on the
+  client** — the nav was deliberately not touched. §5 still has 8 open questions;
+  Q2 (TT Nooks), Q3 (video weight, now with a demo), Q5/Q6 (menu prices, the
+  Burger section) all want answers before launch.
 
 ## 7. Deploy state — ✅ RESOLVED 2026-08-07, both targets current 2026-08-11
 

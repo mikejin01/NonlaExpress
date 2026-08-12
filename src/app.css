@@ -234,27 +234,15 @@
 	--art-detail: var(--terracotta);
 }
 
-/* Raised green panel — the vivid step, for a block that must read as brand
-   green rather than as a dark band. 5.13:1 exactly, so there is NO muted ramp
-   here: every level is full cream and hierarchy comes from size and weight.
-   Don't put fine print on it. */
-.on-green-lift {
-	--surface: var(--green);
-	--fg: var(--cream);
-	--fg-muted: var(--cream);
-	--fg-dim: var(--cream);
-	--rule: rgba(240, 234, 214, 0.34);
-	--accent: var(--cream);
-	--accent-ink: var(--cream);
-	--warm: var(--cream);
-	--warm-ink: var(--cream);
-	--mark: var(--cream);
-	--btn-bg: var(--cream);
-	--btn-bg-hover: #fffbf0;
-	--btn-fg: var(--green-deep);
-	--art-fill: var(--cream);
-	--art-detail: var(--terracotta);
-}
+/* REMOVED in Phase E: `.on-green-lift`, the raised --green panel. It was the
+   third step of the green ladder as a *surface* and nothing ever adopted it —
+   the feature row took .on-green, the bands took .on-green-deep. Deleted on the
+   Phase E task list's own terms ("`.on-green-lift` if nothing ends up using
+   it"), and unlike .on-terracotta below it had no reserved job. The token it
+   painted, --green, is untouched and still carries every accent and button fill
+   on the site; only the surface class went. Bring it back from git if a block
+   ever needs to read as brand green rather than as a dark band — but note it has
+   NO muted ramp (5.13:1 exactly), so fine print never belonged on it. */
 
 /* The third colour as a full BLOCK. Nothing uses this today — the swap keeps
    terracotta in the "draws" role (see the file header) rather than giving it a
@@ -325,8 +313,7 @@
 .on-terracotta,
 .on-charcoal,
 .on-green,
-.on-green-deep,
-.on-green-lift {
+.on-green-deep {
 	background-color: var(--surface);
 	color: var(--fg);
 }
