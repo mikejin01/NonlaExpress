@@ -167,13 +167,19 @@ stays wider than the viewport + the row's 14vw offset** (measured 3288/3822px at
 1440, 1338px at 540) — re-measure if `MQ`'s repeat count or `.mq-word`'s size
 changes.
 
-Open client questions are redesign-plan.md §5 — **7 of them (Q1 and Q4 are
+Open client questions are redesign-plan.md §5 — **6 of them (Q1, Q3 and Q4 are
 answered), and none blocks any shipped work**. **Q2** (TT Nooks license) now has a measured cost: Playfair 900 is ~9%
 wider than the real face, which already forced the drinks headline off the
-measured type scale (§2.3). **Q3** (hero video) is a design question again — the
-video is back as section 1, and Phase F made the number precise: "33MB" is the
-**deploy** figure counting both renditions, but a visitor downloads exactly one,
-so the hero is **17.86MB of a 17.90MB homepage — 99% of it**. **Q9** (new,
+measured type scale (§2.3). ✅ **Q3 (hero video) SETTLED 2026-08-14**: the
+client delivered new 4K footage, transcoded to the 1080p
+`Nonla-Express-Hero-v2` pair (**2.3MB** HEVC `.mov` / **4.2MB** H.264 `.mp4`,
+audio stripped) — a visitor now downloads 2.3–4.2MB where the old pair cost
+15.5–17.86MB (99% of the homepage). The 40MB master lives in
+`docs/assets/video-source/` (gitignored). ⚠️ The new footage is much
+**brighter** than the old clip, so the §2.8 re-sample rule fired for real: the
+hero scrim moved **0.55 → 0.65, measured** (16 timestamps × both widths, every
+hero element 0.00% under threshold, worst 4.63:1) — the scrim is per-video, so
+re-transcode AND re-sample if footage ever changes again. **Q9** (new,
 Phase F) is the Chinese webfont: `/menu/` pulls **767KB** of Noto Serif SC
 subsets, a one-line `&text=` fix measures **25.1KB**, and the catch is that it
 freezes the glyph set against live WordPress editing.

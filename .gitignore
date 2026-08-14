@@ -14,6 +14,10 @@ vite.config.ts.timestamp-*
 # Reference only — web renditions live in static/assets/images/.
 docs/assets/original-site/photos/
 
+# Client-delivered video masters (e.g. the 39MB 4K hero). Reference only —
+# the shipped renditions are transcoded into static/assets/videos/.
+docs/assets/video-source/
+
 # Generated WordPress theme — rebuilt by `pnpm run build:wordpress` every time.
 /wordpress-theme
 /*.zip

@@ -164,10 +164,12 @@
 	     <h1> instead of the <p> it was while the intro existed. -->
 	<section class="section hero">
 		<div class="hero-bg">
-			<!-- HEVC .mov first for Safari; H.264 .mp4 for browsers without HEVC decode -->
+			<!-- HEVC .mov first for Safari; H.264 .mp4 for browsers without HEVC decode.
+			     v2 (2026-08-14): new footage, 1080p from the client's 4K master
+			     (docs/assets/video-source/), ~2.3MB/4.2MB vs the 15/17MB originals. -->
 			<video bind:this={heroVideo} autoplay muted loop playsinline aria-hidden="true">
-				<source src="{VID}/Nonla-Express-Hero.mov" type="video/quicktime" />
-				<source src="{VID}/Nonla-Express-Hero.mp4" type="video/mp4" />
+				<source src="{VID}/Nonla-Express-Hero-v2.mov" type="video/quicktime" />
+				<source src="{VID}/Nonla-Express-Hero-v2.mp4" type="video/mp4" />
 			</video>
 			<div class="hero-overlay"></div>
 		</div>
@@ -481,14 +483,17 @@
 	.hero-overlay {
 		position: absolute;
 		inset: 0;
-		/* Neutral scrim only — the arc divider owns the bottom edge. 0.55 is
-		   measured, not guessed: sampling the actual video across 7 timestamps,
-		   it leaves 0.17% of the pixels behind the hero text below 4.5:1
-		   (0.46 left 2.7%, 0.30 left 8.0%). The video is dark to begin with, so
-		   this costs little. */
+		/* Neutral scrim only — the arc divider owns the bottom edge. 0.65 is
+		   measured, not guessed, and is RE-measured per video: the v2 footage
+		   (2026-08-14) is far brighter than the old clip (white bowl, pale
+		   noodles), and the 0.55 tuned on that dark footage left .hero-sub at
+		   3.35:1 worst with 6.6% of its pixels under 4.5:1. Sampling v2 across
+		   16 timestamps at both widths, 0.65 is the least scrim that leaves
+		   every hero element at 0.00% under threshold (worst 4.63:1, before
+		   text-shadow). Re-run the sample if the video changes again. */
 		background:
 			linear-gradient(to top, rgba(45, 41, 38, 0.5), rgba(45, 41, 38, 0) 22%),
-			linear-gradient(rgba(26, 22, 19, 0.55), rgba(26, 22, 19, 0.55));
+			linear-gradient(rgba(26, 22, 19, 0.65), rgba(26, 22, 19, 0.65));
 	}
 	.hero-curve {
 		position: absolute;

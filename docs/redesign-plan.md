@@ -31,9 +31,10 @@ settled**, so nothing in the redesign is blocked on the client.
    injecting the exact `xo_post_payload()` shape before boot, which exercises
    every part that lives in this repo — but PHP actually producing that payload
    is read, not run. **Smoke-test `/blog/` first after deploying.**
-4. **7 open client questions in §5** (Q1 and Q4 are answered). Q3 (hero video,
-   ~15 MB) and Q9 (CJK webfont, 0.75 MB) carry measured price tags. None blocks
-   anything.
+4. **6 open client questions in §5** (Q1, Q3 and Q4 are answered — Q3 closed
+   2026-08-14 when the client delivered new 4K hero footage and it shipped as a
+   compressed 2.3/4.2 MB pair). Q9 (CJK webfont, 0.75 MB) still carries a
+   measured price tag. None blocks anything.
 
 ⚠️ **Reading order for Q4:** §2.9 was written before the reversal and its nav
 conclusion is superseded — **read §2.10 and §2.11 first**. §2.9's sitemap
@@ -637,7 +638,12 @@ a sibling that paints — when a shape is the surface, tell the checker.**
 **Hero video scrim** is 0.55, chosen by sampling the actual video at 7
 timestamps: it leaves 0.17% of the pixels behind the hero text below 4.5:1,
 where 0.46 left 2.7% and 0.30 left 8.0%. If Phase C drops the video (§5 Q3),
-this goes with it.
+this goes with it. ⚠️ **Re-measured to 0.65 on 2026-08-14** for the v2 footage:
+the new clip is far brighter (white bowl, pale noodles), and at 0.55 `.hero-sub`
+fell to 3.35:1 worst with 6.6% of pixels under 4.5:1. Sampled across 16
+timestamps at both widths, 0.65 is the least scrim that leaves every hero
+element at 0.00% under threshold (worst 4.63:1). **The scrim is per-video —
+re-run the sample whenever the footage changes.**
 
 ### Phase B — brand assets ✅ DONE 2026-08-07
 
@@ -646,7 +652,7 @@ this goes with it.
 - [x] ⚠️ Diff the harvest against the 31 existing photos rather than bulk-importing. → Done by perceptual hash, and **the answer inverts the plan's assumption: there is nothing to import.** All 31 existing files already *are* these photographs (dHash distance ≤4 on every one), including the 18 cut-out dish shots and the pho cut-outs this bullet expected to gain. The harvest's 32nd file is a byte-identical rename of another. **No filenames changed, no `content.js` edits needed.** Numbers in §2.2.
 - [x] Web renditions (max ~1600px, ~80% quality). → Already satisfied, with two exceptions that broke the rule: `interior-hat-wide.jpg` and `interior-murals-wide.jpg` were 2560px/~660KB each. Resampled to 1600px q82 — **4.3MB → 3.6MB**, filenames unchanged.
 - [x] Originals stay out of git — `.gitignore` line left in place, verified still effective.
-- [—] ⚠️ **Hero video: NOT A TASK — it is client question §5 Q3, parked here deliberately.** The box stays unticked because the decision is the client's and has never been made; **no build work is outstanding.** (It is the only unticked box in this file, so: this is why.) Measured at the time: `build/` **38MB, of which 33MB (87%) is the two hero videos**, tracked in git and wired into the homepage hero, so deleting them would break the page and pre-empt Q3. ✅ **Phase F made the number precise and smaller than it looks:** 33MB is the DEPLOY figure counting both renditions — a visitor downloads exactly one, **17.86MB** (`.mp4`) or ~15.5MB (`.mov`, Safari), against a **17.90MB** homepage, so the hero is **99% of it**. /company's own harvested video went 7.9MB → **1.12MB** with no visible loss (§2.7), which is the worked example of what the answer looks like.
+- [x] ⚠️ **Hero video: was NOT A TASK — it was client question §5 Q3, parked here deliberately** until 2026-08-14, when the client delivered new 4K footage and the compressed v2 pair shipped (2.3 MB `.mov` + 4.2 MB `.mp4` — see §5 Q3). Historical framing below, kept because the numbers explain the ticket: (It is the only unticked box in this file, so: this is why.) Measured at the time: `build/` **38MB, of which 33MB (87%) is the two hero videos**, tracked in git and wired into the homepage hero, so deleting them would break the page and pre-empt Q3. ✅ **Phase F made the number precise and smaller than it looks:** 33MB is the DEPLOY figure counting both renditions — a visitor downloads exactly one, **17.86MB** (`.mp4`) or ~15.5MB (`.mov`, Safari), against a **17.90MB** homepage, so the hero is **99% of it**. /company's own harvested video went 7.9MB → **1.12MB** with no visible loss (§2.7), which is the worked example of what the answer looks like.
 - [x] Update `docs/website-brief.md` §6: logo-vector question RESOLVED. → Updated in three places (§4 Logo, §6 #2, §7 assumption 8). The brief said "no vector found" because the media-library sweep only saw the 48px favicon — **the real lockups were inline SVG in the page markup all along.**
 - [x] Verify: favicon + navbar logo render at both sizes; page weight sane. → `verify.py` (now `OUT_TAG="phaseB"`): **0 contrast failures across 7 routes × 2 widths, no horizontal scroll.** Logo confirmed rendering cream-on-green in navbar and footer at 1440 and 540.
 
@@ -807,7 +813,7 @@ section:
 
 | Section | Status | What it is | Notes for future phases |
 | --- | --- | --- | --- |
-| **Video hero** | ✅ in | Full-bleed `Nonla-Express-Hero` video, `.on-media`, tagline "phở, the new era", two CTAs, scroll arrow, and the curve divider into the page | The scrim is **0.55, measured** — see §2.1, don't retune by eye. The curve fills `var(--surface)` so it always matches the ground, and its hairline is **terracotta** since §1.2d, rhyming with the footer arc's ring. This also **re-opens §5 Q3**: the video is wired into the page again. |
+| **Video hero** | ✅ in | Full-bleed `Nonla-Express-Hero-v2` video (new client footage since 2026-08-14), `.on-media`, tagline "phở, the new era", two CTAs, scroll arrow, and the curve divider into the page | The scrim is **measured, not guessed — 0.55 for the original dark clip, 0.65 since the brighter v2 footage** (§2.1), don't retune by eye. The curve fills `var(--surface)` so it always matches the ground, and its hairline is **terracotta** since §1.2d, rhyming with the footer arc's ring. This also **re-opens §5 Q3**: the video is wired into the page again. |
 | **Sliding dish cards** | ✅ in | rAF photo marquee, **5** dishes ×2, prev / next / play-pause | ⚠️ **Not the same thing as §1.5 M1.** M1 is the original's giant *type* band (now section 6) and gets pure-CSS tracks in C2. This one is ours, has real controls, and **C2 must not delete it.** The drinks-trio photo was removed 2026-08-07 (client) — it is **food only** now. One copy of the set must stay wider than the viewport or the wrap shows a gap; at 25vw+20px per card that holds down to 4. |
 | **Feature row: phở** | ✅ in | One 24px-radius panel+photo row — `.on-green` panel, `--sand` media half | The surviving feature row. `.feature--reverse` was removed with the drinks row; re-add its two `order` rules if a second row ever returns (one row alone shouldn't alternate). See §2.3 for the multiply trick that gives the media half a real surface. |
 | **Find Us** | ✅ in | Hours / address / transit / order strip | The original buries this in the footer. Must stay **above** the drinks collage (§2.3). |
@@ -877,6 +883,8 @@ full 157.5px.
 live design question again rather than a repo cleanup: 33MB of a 37MB deploy,
 now genuinely load-bearing on the homepage. The `.on-media` scrim, the arc
 divider and the reduced-motion `pause()` all came back with it unchanged.
+(✅ The weight resolved on 2026-08-14: new client footage, transcoded to a
+2.3/4.2 MB pair — §5 Q3.)
 
 **Motion is minimal but no longer zero.** Two moving parts ship in Phase C: the
 rAF card marquee and the scroll-arrow bob. **Both already bail out under
@@ -1737,6 +1745,17 @@ Same failure shape as the stale `vite preview` on 4173.
    cold, the homepage totals **17.90 MB**, so the hero is **99%** of it against
    0.12–2.76 MB for every other route. Re-encoding the pair the way /company's
    was would take the homepage to roughly 2.5 MB.
+   ✅ **SETTLED 2026-08-14 — the client delivered new footage and it shipped
+   compressed.** The 4K master (`docs/assets/video-source/Nonal-Hero-4k.mp4`,
+   40 MB, gitignored) was transcoded to a 1080p pair:
+   `Nonla-Express-Hero-v2.mov` (HEVC, CRF 26, **2.3 MB**) +
+   `Nonla-Express-Hero-v2.mp4` (H.264, CRF 23, **4.2 MB**), audio stripped,
+   `+faststart` — the /company treatment, applied. A visitor now downloads
+   **2.3–4.2 MB instead of 15.5–17.86 MB**, and the deploy pair is 6.5 MB
+   instead of 33 MB. ⚠️ The new footage is much *brighter* than the old clip,
+   which tripped the §2.8 re-sample rule: the scrim moved **0.55 → 0.65**
+   (measured — see §2.1/§2.8 and the comment in `+page.svelte`). If the client
+   ever swaps footage again, both halves recur: re-transcode AND re-sample.
 4. ~~**BLOG vs PRESS in nav**~~ — ✅ **SETTLED 2026-08-12, after a same-day
    reversal. Final answer: BLOG, and it is a real WordPress-backed blog.**
    ⚠️ The first answer below ("keep PRESS") was given against a **false
