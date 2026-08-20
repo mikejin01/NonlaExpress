@@ -33,7 +33,11 @@
 	import { IMG, AN_NAO, BRAND, MENU, ORDER_URL, LUNCH_WINDOW } from '$lib/content.js';
 	import LunchSpecial from '$lib/site/LunchSpecial.svelte';
 
-	// dot colors for the burger sauce row (menu signature)
+	/* Dot colours for the burger sauce row (menu signature). FALLBACK ONLY since
+	   2026-08-20 — all four sauces now carry a real photo and the row renders
+	   circular crops of those instead. Kept because it is what a fifth sauce
+	   added without a photo would land on, and because the order here is
+	   positional: it matches content.js's `sauces` array index for index. */
 	const SAUCE_COLORS = ['#c0392b', '#f4efe4', '#e8a444', '#7fae6a'];
 
 	/* Two of the four harvested menu-page vectors land here (gap G4); the lime
@@ -194,7 +198,14 @@
 						<span class="sauces-label">Sauces</span>
 						{#each section.sauces as s, i}
 							<span class="sauce">
-								<span class="sauce-dot" style="background:{SAUCE_COLORS[i]}"></span>
+								{#if s.img}
+									<!-- alt="" on purpose: the sauce's name is the very next
+									     thing in the same line, so a filled alt would make a
+									     screen reader say it twice. -->
+									<img class="sauce-photo" src="{IMG}/{s.img}" alt="" loading="lazy" />
+								{:else}
+									<span class="sauce-dot" style="background:{SAUCE_COLORS[i]}"></span>
+								{/if}
 								{s.en} <span class="zh sauce-zh">{s.zh}</span> <span class="vi">({s.vi})</span>
 							</span>
 						{/each}
@@ -474,6 +485,21 @@
 		height: 13px;
 		border-radius: 50%;
 		display: inline-block;
+		border: 1px solid var(--rule);
+	}
+	/* The real thing, in the dot's place. The four sauce photos are square and
+	   shot straight down with the bowl centred (content.js), so a 50% radius
+	   lands on the rim and crops nothing — but that ALSO means these are the one
+	   set of dish photos on the page with a wood-table background rather than the
+	   #F1EAD7 studio backdrop, so unlike the cut-outs they need the --rule
+	   hairline to sit on cream without looking like a floating swatch. */
+	.sauce-photo {
+		width: 34px;
+		height: 34px;
+		border-radius: 50%;
+		object-fit: cover;
+		display: inline-block;
+		flex: none;
 		border: 1px solid var(--rule);
 	}
 	.sauce-zh {

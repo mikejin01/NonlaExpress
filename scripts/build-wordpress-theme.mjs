@@ -724,7 +724,7 @@ function ${P}_restaurant_schema($standalone = true) {
     $schema['image'] = array(
         $theme . 'interior-entrance.jpg',   // 1600×1067, landscape
         $theme . 'drinks-trio.jpg',         // 1080×1350, portrait
-        $theme . 'pho-special.jpg',         // 800×600
+        $theme . 'menu-pho-special.jpg',    // 800×600
     );
 
     // This node is a Restaurant, which IS an Organization subtype, and the

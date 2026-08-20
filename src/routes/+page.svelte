@@ -84,13 +84,21 @@
 	   client direction. The track renders the set twice and wraps at
 	   scrollWidth/2, so one copy must stay wider than the viewport or the wrap
 	   shows a gap: at 25vw + 20px per card that holds down to 4 cards. Don't
-	   drop below that without re-checking. */
+	   drop below that without re-checking.
+
+	   ⚠️ `spring-roll.jpg` and `wings.jpg` are the ONLY two cards that keep the
+	   un-prefixed names: /menu moved those two dishes to the in-situ photos shot
+	   2026-08-20 (`menu-spring-roll.avif`, `menu-lemongrass-chicken-wings.avif`)
+	   and this carousel deliberately did NOT follow, because all five cards here
+	   sit on cream with no frame and only a cut-out reads right there. So these
+	   two files are homepage-only cut-outs now, not menu item images, and that
+	   is why the `menu-` convention does not apply to them. */
 	const mediaCards = [
-		{ src: `${IMG}/pho-special.jpg`, alt: 'Phở Special — rare beef, brisket, tendon, and tripe' },
+		{ src: `${IMG}/menu-pho-special.jpg`, alt: 'Phở Special — rare beef, brisket, tendon, and tripe' },
 		{ src: `${IMG}/spring-roll.jpg`, alt: 'Crispy spring rolls with nuoc cham' },
-		{ src: `${IMG}/vermicelli.jpg`, alt: 'Rice vermicelli bowl with fresh herbs' },
+		{ src: `${IMG}/menu-rice-vermicelli-bowl.jpg`, alt: 'Rice vermicelli bowl with fresh herbs' },
 		{ src: `${IMG}/wings.jpg`, alt: 'Lemongrass chicken wings' },
-		{ src: `${IMG}/shaking-beef.jpg`, alt: 'Shaking beef rice' }
+		{ src: `${IMG}/menu-shaking-beef-rice.jpg`, alt: 'Shaking beef rice' }
 	];
 	let trackEl = $state(null);
 	let heroVideo = $state(null);

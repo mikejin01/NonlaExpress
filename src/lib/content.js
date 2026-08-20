@@ -125,22 +125,22 @@ export const MENU = [
 			{
 				en: 'Spring Roll (4)', vi: 'Chả Giò', zh: '越南春卷',
 				desc: 'Crispy golden rolls with seasoned pork, shrimp, mushrooms, and vermicelli, served with nuoc cham.',
-				img: `spring-roll.jpg`
+				img: `menu-spring-roll.avif`
 			},
 			{
 				en: 'Summer Roll (2)', vi: 'Gỏi Cuốn', zh: '夏日虾卷',
 				desc: 'Fresh rice-paper rolls with shrimp, vermicelli, lettuce, and herbs, served with peanut dip.',
-				img: `summer-roll.jpg`
+				img: `menu-summer-roll.avif`
 			},
 			{
 				en: 'Lemongrass Chicken Wings (4)', vi: 'Cánh Gà Sả', zh: '香茅鸡翅',
 				desc: 'Crispy fried wings in a lemongrass-garlic marinade with a tangy dip.',
-				img: `wings.jpg`
+				img: `menu-lemongrass-chicken-wings.avif`
 			},
 			{
 				en: 'Viet Salad w. Ginger Sauce', vi: 'Gỏi', zh: '越式沙拉',
 				desc: 'Shredded greens with ginger dressing and your choice of pork, chicken, or ribeye.',
-				img: `viet-salad.jpg`
+				img: `menu-viet-salad-with-ginger-sauce.avif`
 			}
 		]
 	},
@@ -149,26 +149,32 @@ export const MENU = [
 		title: 'Burger',
 		price: '$12',
 		note: 'Served with french fries.',
+		// Shot top-down in the same in-situ session as the burgers and appetizers
+		// (client-supplied 2026-08-20). ⚠️ These replace the hand-coded
+		// SAUCE_COLORS dots in /menu's sauce row, which crops them to CIRCLES —
+		// so the renditions are square and centred on the bowl, and a re-crop
+		// that moves the bowl off centre will show as a lopsided dot.
 		sauces: [
-			{ en: 'Ketchup', zh: '番茄酱', vi: 'Tương Cà' },
-			{ en: 'Mayonnaise', zh: '美乃滋', vi: 'Mayo' },
-			{ en: 'Spicy Mayo', zh: '辣美乃滋', vi: 'Mayo Cay' },
-			{ en: 'Cilantro Cream', zh: '香菜奶油酱', vi: 'Sốt Kem Ngò' }
+			{ en: 'Ketchup', zh: '番茄酱', vi: 'Tương Cà', img: `menu-sauce-ketchup.avif` },
+			{ en: 'Mayonnaise', zh: '美乃滋', vi: 'Mayo', img: `menu-sauce-mayonnaise.avif` },
+			{ en: 'Spicy Mayo', zh: '辣美乃滋', vi: 'Mayo Cay', img: `menu-sauce-spicy-mayo.avif` },
+			{ en: 'Cilantro Cream', zh: '香菜奶油酱', vi: 'Sốt Kem Ngò', img: `menu-sauce-cilantro-cream.avif` }
 		],
 		// Client-supplied 2026-08-20 — the answer to plan §5 Q6's "if it stays, it
-		// wants photos". ⚠️ These two are the ONLY dish photos NOT shot as
-		// cut-outs on the #F1EAD7 studio backdrop: they are in-situ plates on the
-		// stall's wood table against the red banquette. On /menu they therefore
-		// read as photographic rectangles next to four sections of floating
-		// cut-outs. Masters in docs/assets/image-source/ (gitignored).
+		// wants photos". ⚠️ These are in-situ plates on the stall's wood table
+		// against the red banquette, NOT cut-outs on the #F1EAD7 studio backdrop.
+		// The four appetizers and the four sauces above were reshot the same way
+		// on 2026-08-20, so /menu now runs in-situ rectangles for Appetizer +
+		// Burger and floating cut-outs for Noodle, Main and Drinks. Masters in
+		// docs/assets/image-source/ (gitignored).
 		items: [
 			{
 				en: 'Smoked Paprika Chicken Burger', vi: 'Burger Gà Paprika', zh: '烟熏红椒鸡肉堡',
-				img: `chicken-burger.avif`
+				img: `menu-smoked-paprika-chicken-burger.avif`
 			},
 			{
 				en: 'Lemongrass Pork Tenderloin Burger', vi: 'Burger Heo Sả', zh: '香茅猪肉汉堡',
-				img: `pork-burger.avif`
+				img: `menu-lemongrass-pork-tenderloin-burger.avif`
 			}
 		]
 	},
@@ -183,27 +189,27 @@ export const MENU = [
 			{
 				num: 1, en: 'Fresh Phoenix Chicken Pho', vi: 'Phở Gà', zh: '凤凰鸡河粉',
 				desc: 'Tender poached chicken over silky rice noodles in a clear, aromatic broth.',
-				img: `pho-ga.jpg`
+				img: `menu-fresh-phoenix-chicken-pho.jpg`
 			},
 			{
 				num: 2, en: 'Rare Eye Round Beef Pho', vi: 'Phở Tái', zh: '生牛眼肉河粉',
 				desc: 'Paper-thin rare eye round, gently cooked by rich, slow-simmered beef broth.',
-				img: `pho-tai.jpg`
+				img: `menu-rare-eye-round-beef-pho.jpg`
 			},
 			{
 				num: 3, en: 'Phở Special', vi: 'Phở Đặc Biệt', zh: '火车头',
 				desc: 'Rare sliced beef, well-done brisket, beef flank, tendon, tripe, and beef meatballs.',
-				img: `pho-special.jpg`
+				img: `menu-pho-special.jpg`
 			},
 			{
 				num: 4, en: 'Pho & Grilled', vi: 'Phở & Nướng', zh: '烤肉河粉',
 				desc: 'Phở topped straight off the grill.', choice: 'Choice: pork / chicken / ribeye',
-				img: `pho-grilled.jpg`
+				img: `menu-pho-and-grilled.jpg`
 			},
 			{
 				num: 5, en: 'Spicy Pho', vi: 'Phở Cay', zh: '辣河粉', spicy: true,
 				desc: 'A chili-forward broth that brings the heat.', choice: 'Choice: chicken / eye round',
-				img: `spicy-pho.jpg`
+				img: `menu-spicy-pho.jpg`
 			}
 		]
 	},
@@ -216,28 +222,28 @@ export const MENU = [
 			{
 				num: 6, en: 'Shaking Beef Rice', vi: 'Bò Lúc Lắc', zh: '牛丁饭',
 				desc: 'Wok-seared beef tossed with garlic, onions, and peppers.',
-				img: `shaking-beef.jpg`
+				img: `menu-shaking-beef-rice.jpg`
 			},
 			{
 				num: 7, en: 'Smoked Paprika Chicken Rice', vi: 'Cơm Gà Paprika', zh: '烟熏红椒鸡饭',
 				desc: 'Grilled chicken glazed with smoked paprika.',
-				img: `paprika-chicken-rice.jpg`
+				img: `menu-smoked-paprika-chicken-rice.jpg`
 			},
 			{
 				num: 8, en: 'Pork Chop Rice', vi: 'Cơm Sườn Nướng', zh: '猪扒饭',
 				desc: 'Grilled lemongrass-marinated pork chop.',
-				img: `pork-chop-rice.jpg`
+				img: `menu-pork-chop-rice.jpg`
 			},
 			{
 				num: 9, en: 'Lemongrass Beef Rice', vi: 'Bò Nướng Sả', zh: '香茅肋眼牛排饭',
 				desc: 'Grilled ribeye in a fragrant lemongrass marinade.',
-				img: `lemongrass-beef-rice.jpg`
+				img: `menu-lemongrass-beef-rice.jpg`
 			},
 			{
 				num: 10, en: 'Rice Vermicelli Bowl', vi: 'Bún Thịt Nướng', zh: '越式檬粉',
 				desc: 'Cool rice vermicelli with fresh herbs and pickles.',
 				choice: 'Choice: spring rolls / pork / chicken / ribeye',
-				img: `vermicelli.jpg`
+				img: `menu-rice-vermicelli-bowl.jpg`
 			}
 		]
 	},
@@ -251,17 +257,17 @@ export const MENU = [
 			{
 				en: 'Vietnamese Iced Coffee', vi: 'Cà Phê Sữa Đá', zh: '越南咖啡',
 				desc: 'Phin-brewed — hot or iced, with condensed milk or black.',
-				img: `iced-coffee.jpg`
+				img: `menu-vietnamese-iced-coffee.jpg`
 			},
 			{ en: 'Thai Green Milk Tea', vi: 'Trà Sữa Thái Xanh', zh: '泰式奶绿' },
 			{
 				en: 'Salted Limeade', vi: 'Chanh Muối', zh: '盐渍青柠水',
-				img: `limeade.jpg`
+				img: `menu-salted-limeade.jpg`
 			},
 			{
 				en: 'Sugarcane Juice', vi: 'Nước Mía', zh: '甘蔗汁',
 				desc: 'Pressed fresh at the drink station.',
-				img: `sugarcane.jpg`
+				img: `menu-sugarcane-juice.jpg`
 			}
 		],
 		extras: [

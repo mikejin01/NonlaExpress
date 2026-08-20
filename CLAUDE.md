@@ -112,11 +112,29 @@ Pages instead.** ⚠️ And **don't hand-edit the redirect list in
 `wordpress-theme/functions.php`** — everything under `wordpress-theme/` is
 generated. Edit `scripts/redirects.js`.
 
-⚠️ **The dish photos ship on a `#F1EAD7` studio backdrop**, one step off
-`--cream`. That is why /menu needs no cards — and it is a constraint, not just a
-convenience: **those photos cannot sit on a non-cream surface** without
+⚠️ **The HARVESTED dish photos ship on a `#F1EAD7` studio backdrop**, one step
+off `--cream`. That is why /menu needs no cards — and it is a constraint, not
+just a convenience: **those photos cannot sit on a non-cream surface** without
 `mix-blend-mode: multiply` over the fill (the trick the homepage feature row
 uses, plan §2.3).
+
+⚠️ **The CLIENT-SHOT photos are the exception and there are now ten of them.**
+The two burgers (2026-08-20), then the four appetizers and four burger sauces
+the same day, are **in-situ plates on the stall's wood table**, not cut-outs —
+so /menu runs photographic rectangles for Appetizer + Burger and floating
+cut-outs for Noodle, Main and Drinks. That split is client-supplied material,
+not a design choice, and it is why the "no cards" treatment still holds:
+a rectangle needs no card either. Masters in `docs/assets/image-source/`
+(gitignored). The sauces are square and centred because /menu crops them to
+circles in place of its hand-coded `SAUCE_COLORS` dots.
+
+⚠️ **Menu item images are named `menu-<dish-name-kebab-cased>`** after the
+item's English name in `content.js` (`menu-sauce-<name>` for the sauces) —
+renamed wholesale 2026-08-20. Images used anywhere else keep descriptive names
+and take no prefix, which is why `spring-roll.jpg` and `wings.jpg` still exist
+un-prefixed: the homepage carousel deliberately kept the **cut-out** versions of
+those two dishes when /menu moved to the in-situ ones. Full table in
+docs/asset-map.md.
 
 ⚠️ **Plan §1.3's claim that the original's /menu ends on a charcoal drinks band
 is WRONG**, and is corrected in place. Its drinks are on cream; the dark band in
