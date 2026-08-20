@@ -155,9 +155,21 @@ export const MENU = [
 			{ en: 'Spicy Mayo', zh: '辣美乃滋', vi: 'Mayo Cay' },
 			{ en: 'Cilantro Cream', zh: '香菜奶油酱', vi: 'Sốt Kem Ngò' }
 		],
+		// Client-supplied 2026-08-20 — the answer to plan §5 Q6's "if it stays, it
+		// wants photos". ⚠️ These two are the ONLY dish photos NOT shot as
+		// cut-outs on the #F1EAD7 studio backdrop: they are in-situ plates on the
+		// stall's wood table against the red banquette. On /menu they therefore
+		// read as photographic rectangles next to four sections of floating
+		// cut-outs. Masters in docs/assets/image-source/ (gitignored).
 		items: [
-			{ en: 'Smoked Paprika Chicken Burger', vi: 'Burger Gà Paprika', zh: '烟熏红椒鸡肉堡' },
-			{ en: 'Lemongrass Pork Tenderloin Burger', vi: 'Burger Heo Sả', zh: '香茅猪肉汉堡' }
+			{
+				en: 'Smoked Paprika Chicken Burger', vi: 'Burger Gà Paprika', zh: '烟熏红椒鸡肉堡',
+				img: `chicken-burger.avif`
+			},
+			{
+				en: 'Lemongrass Pork Tenderloin Burger', vi: 'Burger Heo Sả', zh: '香茅猪肉汉堡',
+				img: `pork-burger.avif`
+			}
 		]
 	},
 	{

@@ -18,6 +18,10 @@ docs/assets/original-site/photos/
 # the shipped renditions are transcoded into static/assets/videos/.
 docs/assets/video-source/
 
+# Client-delivered photo masters (e.g. the 5.8MB burger AVIFs). Reference only —
+# the shipped renditions are cropped/resized into static/assets/images/.
+docs/assets/image-source/
+
 # Generated WordPress theme — rebuilt by `pnpm run build:wordpress` every time.
 /wordpress-theme
 /*.zip
