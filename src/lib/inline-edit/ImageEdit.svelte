@@ -5,8 +5,9 @@
 	 *   <ImageEdit k="hero_photo" src={HERO.photo} altKey="hero_photo_alt"
 	 *              alt={HERO.photoAlt} width="1800" height="1200" />
 	 *
-	 * In edit mode a hover overlay opens the WordPress Media Library
-	 * (`window.wp.media`, available because functions.php calls
+	 * In edit mode, hovering the image (or tabbing into it) grays it out under
+	 * a scrim with a centred "Replace image" button, which opens the WordPress
+	 * Media Library (`window.wp.media`, available because functions.php calls
 	 * wp_enqueue_media() for editors on the front end). The chosen URL is
 	 * normalised to a root-relative /wp-content/uploads/… path so it survives a
 	 * domain or protocol change.
@@ -74,9 +75,9 @@
 </script>
 
 {#if editing}
-	<span class="xo-img-wrap">
+	<span class="xo-img-wrap" class:xo-img-wrap--open={picking}>
 		<img src={resolvedSrc} alt={resolvedAlt} {...rest} />
-		<span class="xo-img-tools">
+		<span class="xo-img-overlay">
 			<button type="button" class="xo-img-btn" onclick={choose}>Replace image</button>
 			{#if altKey}
 				<input
@@ -104,28 +105,61 @@
 {/if}
 
 <style>
-	/* `display: contents` keeps the <img> in its original grid/flex slot, so
-	   entering edit mode never reflows the bento layout. The tools then anchor
-	   to the enclosing tile, which is always `position: relative`. */
+	/* The wrapper takes the image's layout slot as a real positioned box, so
+	   the overlay can anchor to the image itself — the only box guaranteed to
+	   be where the image is. (A previous version used `display: contents` and
+	   absolutely positioned the tools against "the enclosing tile", assuming it
+	   was `position: relative`; on this site most image tiles aren't — .fav-card,
+	   .feature-media — so the tools escaped to a distant ancestor and rendered
+	   nowhere near the image.)
+	   Every ImageEdit site sizes the <img> itself via descendant selectors
+	   (width: 100% + aspect-ratio, or height: 100%), so the wrapper only has to
+	   pass that sizing through: `height: 100%` matters where the slot is
+	   height-constrained (.feature-media's stretched grid half) and computes to
+	   auto everywhere the parent is content-sized. */
 	.xo-img-wrap {
-		display: contents;
+		position: relative;
+		display: block;
+		height: 100%;
 	}
 	.xo-img-wrap img {
 		outline: 2px dashed rgba(37, 99, 235, 0.85);
 		outline-offset: -2px;
 	}
-	.xo-img-tools {
+	/* Hidden until the image is hovered or the controls hold focus; the scrim
+	   grays the photo out and centres the controls over it. Also forced open
+	   (--open) while the manual-URL fallback is up, so it can't vanish mid-type.
+	   opacity keeps the hidden button tabbable, unlike display/visibility. */
+	.xo-img-overlay {
 		position: absolute;
+		inset: 0;
 		z-index: 60;
-		inset: auto 8px 8px 8px;
 		display: flex;
-		flex-wrap: wrap;
-		gap: 6px;
+		flex-direction: column;
 		align-items: center;
-		padding: 8px;
-		border-radius: 10px;
-		background: rgba(11, 22, 34, 0.86);
-		backdrop-filter: blur(6px);
+		justify-content: center;
+		gap: 8px;
+		padding: 10px;
+		background: rgba(11, 22, 34, 0.55);
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity 0.15s ease;
+	}
+	.xo-img-wrap:hover .xo-img-overlay,
+	.xo-img-wrap:focus-within .xo-img-overlay,
+	.xo-img-wrap--open .xo-img-overlay {
+		opacity: 1;
+		pointer-events: auto;
+	}
+	/* No hover on touch: keep the controls visible instead, but drop the scrim
+	   so edit mode doesn't permanently gray every photo on a tablet. */
+	@media (hover: none) {
+		.xo-img-overlay {
+			opacity: 1;
+			pointer-events: auto;
+			justify-content: flex-end;
+			background: none;
+		}
 	}
 	.xo-img-btn {
 		flex: none;
@@ -141,8 +175,8 @@
 		background: #1d4ed8;
 	}
 	.xo-img-alt {
-		flex: 1 1 160px;
-		min-width: 0;
+		flex: none;
+		width: min(100%, 260px);
 		padding: 6px 10px;
 		border-radius: 8px;
 		border: 1px solid rgba(255, 255, 255, 0.25);
@@ -152,7 +186,12 @@
 	}
 	.xo-img-manual {
 		display: flex;
-		flex: 1 1 100%;
+		width: min(100%, 320px);
 		gap: 6px;
+	}
+	.xo-img-manual .xo-img-alt {
+		flex: 1 1 auto;
+		width: auto;
+		min-width: 0;
 	}
 </style>
