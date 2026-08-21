@@ -86,19 +86,19 @@
 	   shows a gap: at 25vw + 20px per card that holds down to 4 cards. Don't
 	   drop below that without re-checking.
 
-	   ⚠️ `spring-roll.jpg` and `wings.jpg` are the ONLY two cards that keep the
-	   un-prefixed names: /menu moved those two dishes to the in-situ photos shot
-	   2026-08-20 (`menu-spring-roll.avif`, `menu-lemongrass-chicken-wings.avif`)
-	   and this carousel deliberately did NOT follow, because all five cards here
-	   sit on cream with no frame and only a cut-out reads right there. So these
-	   two files are homepage-only cut-outs now, not menu item images, and that
-	   is why the `menu-` convention does not apply to them. */
+	   ⚠️ ALL FIVE cards are homepage-only harvested cut-outs with un-prefixed
+	   names: /menu moved every dish here to the owner's in-situ photos
+	   (spring roll + wings on 2026-08-20, the other three on 2026-08-21) and
+	   this carousel deliberately did NOT follow, because all five cards sit on
+	   cream with no frame and only a cut-out reads right there. These files are
+	   not menu item images any more, which is why the `menu-` convention does
+	   not apply to them. */
 	const mediaCards = [
-		{ src: `${IMG}/menu-pho-special.jpg`, alt: 'Phở Special — rare beef, brisket, tendon, and tripe' },
+		{ src: `${IMG}/pho-special.jpg`, alt: 'Phở Special — rare beef, brisket, tendon, and tripe' },
 		{ src: `${IMG}/spring-roll.jpg`, alt: 'Crispy spring rolls with nuoc cham' },
-		{ src: `${IMG}/menu-rice-vermicelli-bowl.jpg`, alt: 'Rice vermicelli bowl with fresh herbs' },
+		{ src: `${IMG}/rice-vermicelli-bowl.jpg`, alt: 'Rice vermicelli bowl with fresh herbs' },
 		{ src: `${IMG}/wings.jpg`, alt: 'Lemongrass chicken wings' },
-		{ src: `${IMG}/menu-shaking-beef-rice.jpg`, alt: 'Shaking beef rice' }
+		{ src: `${IMG}/shaking-beef-rice.jpg`, alt: 'Shaking beef rice' }
 	];
 	let trackEl = $state(null);
 	let heroVideo = $state(null);

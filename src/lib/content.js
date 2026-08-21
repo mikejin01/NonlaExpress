@@ -98,7 +98,14 @@ export const DRINKS_BLURB = {
 	zh: '我们的饮品为清凉而生，也为温暖回忆而来。从浓郁的越南咖啡，到清甜的甘蔗汁与清爽的咸柠水，每一口都让你感受轻松惬意，也与我们的地道越南美食完美搭配。'
 };
 
-/* ============================== MENU ============================== */
+/* ============================== MENU ==============================
+
+   ⚠️ **The `price` fields below are DATA ONLY — /menu renders none of them**
+   (client answer to plan §5 Q5, 2026-08-21, which is also what the original
+   site did). They are kept because they were verified against UberEats and
+   Snackpass in the 2026-08-21 sync and are the repo's record of what the
+   kitchen charges — but nothing displays them, so **they can go stale
+   silently.** Re-verify before ever putting a price back on the page. */
 
 export const LUNCH_SPECIAL = {
 	title: 'Lunch Special',
@@ -125,22 +132,52 @@ export const MENU = [
 			{
 				en: 'Spring Roll (4)', vi: 'Chả Giò', zh: '越南春卷',
 				desc: 'Crispy golden rolls with seasoned pork, shrimp, mushrooms, and vermicelli, served with nuoc cham.',
-				img: `menu-spring-roll.avif`
+				img: `menu-appetizer-spring-roll.avif`
 			},
 			{
 				en: 'Summer Roll (2)', vi: 'Gỏi Cuốn', zh: '夏日虾卷',
 				desc: 'Fresh rice-paper rolls with shrimp, vermicelli, lettuce, and herbs, served with peanut dip.',
-				img: `menu-summer-roll.avif`
+				img: `menu-appetizer-summer-roll.avif`
 			},
 			{
 				en: 'Lemongrass Chicken Wings (4)', vi: 'Cánh Gà Sả', zh: '香茅鸡翅',
 				desc: 'Crispy fried wings in a lemongrass-garlic marinade with a tangy dip.',
-				img: `menu-lemongrass-chicken-wings.avif`
+				img: `menu-appetizer-lemongrass-chicken-wings.avif`
 			},
 			{
+				// Both ordering platforms say "No proteins included" — the proteins
+				// are the Extra Protein add-ons below (menu sync 2026-08-21).
 				en: 'Viet Salad w. Ginger Sauce', vi: 'Gỏi', zh: '越式沙拉',
-				desc: 'Shredded greens with ginger dressing and your choice of pork, chicken, or ribeye.',
-				img: `menu-viet-salad-with-ginger-sauce.avif`
+				desc: 'Shredded greens with ginger dressing. Add an extra protein to make it a meal.',
+				img: `menu-appetizer-viet-salad-with-ginger-sauce.avif`
+			},
+			{
+				en: 'Fries', vi: 'Khoai Tây Chiên', zh: '炸薯条',
+				desc: 'Crisp golden fries, fresh out of the fryer.',
+				price: '$6',
+				img: `menu-fries.jpg`
+			},
+			{
+				en: 'Frozen Spring Rolls (15)', vi: 'Chả Giò Đông Lạnh', zh: '冷冻春卷',
+				desc: 'Our house-made spring rolls, batch-frozen to fry at home.',
+				price: '$20',
+				img: `menu-frozen-spring-rolls.jpg`
+			},
+			// The two add-ons. They were an `extras` text list until 2026-08-21;
+			// with photos in hand they are ordinary items, last in the section so
+			// the dishes still lead. Client photos, multiplied to --cream offline
+			// because they arrived on pure white (docs/asset-map.md).
+			{
+				en: 'Extra Protein · Lemongrass Chicken', vi: 'Gà Nướng Sả', zh: '香茅鸡扒',
+				desc: 'Add grilled lemongrass chicken to any dish.',
+				price: '$8',
+				img: `menu-extra-protein-lemongrass-chicken.avif`
+			},
+			{
+				en: 'Extra Protein · Lemongrass Pork Chop', vi: 'Sườn Nướng Sả', zh: '香茅猪扒',
+				desc: 'Add a grilled lemongrass pork chop to any dish.',
+				price: '$8',
+				img: `menu-extra-protein-lemongrass-pork-chop.avif`
 			}
 		]
 	},
@@ -148,7 +185,9 @@ export const MENU = [
 		id: 'burgers',
 		title: 'Burger',
 		price: '$12',
-		note: 'Served with french fries.',
+		// "Served with french fries." removed 2026-08-21: on both ordering
+		// platforms the burger is $12, fries are $6, and the Burger + Fries
+		// combo is exactly $18 — fries are NOT included at $12.
 		// Shot top-down in the same in-situ session as the burgers and appetizers
 		// (client-supplied 2026-08-20). ⚠️ These replace the hand-coded
 		// SAUCE_COLORS dots in /menu's sauce row, which crops them to CIRCLES —
@@ -170,11 +209,11 @@ export const MENU = [
 		items: [
 			{
 				en: 'Smoked Paprika Chicken Burger', vi: 'Burger Gà Paprika', zh: '烟熏红椒鸡肉堡',
-				img: `menu-smoked-paprika-chicken-burger.avif`
+				img: `menu-burger-smoked-paprika-chicken-burger.avif`
 			},
 			{
 				en: 'Lemongrass Pork Tenderloin Burger', vi: 'Burger Heo Sả', zh: '香茅猪肉汉堡',
-				img: `menu-lemongrass-pork-tenderloin-burger.avif`
+				img: `menu-burger-lemongrass-pork-tenderloin-burger.avif`
 			}
 		]
 	},
@@ -189,27 +228,34 @@ export const MENU = [
 			{
 				num: 1, en: 'Fresh Phoenix Chicken Pho', vi: 'Phở Gà', zh: '凤凰鸡河粉',
 				desc: 'Tender poached chicken over silky rice noodles in a clear, aromatic broth.',
-				img: `menu-fresh-phoenix-chicken-pho.jpg`
+				img: `menu-noodle-fresh-phoenix-chicken-pho.avif`
 			},
 			{
 				num: 2, en: 'Rare Eye Round Beef Pho', vi: 'Phở Tái', zh: '生牛眼肉河粉',
 				desc: 'Paper-thin rare eye round, gently cooked by rich, slow-simmered beef broth.',
-				img: `menu-rare-eye-round-beef-pho.jpg`
+				img: `menu-noodle-rare-eye-round-beef-pho.avif`
 			},
 			{
 				num: 3, en: 'Phở Special', vi: 'Phở Đặc Biệt', zh: '火车头',
 				desc: 'Rare sliced beef, well-done brisket, beef flank, tendon, tripe, and beef meatballs.',
-				img: `menu-pho-special.jpg`
+				img: `menu-noodle-pho-special.avif`
 			},
 			{
 				num: 4, en: 'Pho & Grilled', vi: 'Phở & Nướng', zh: '烤肉河粉',
 				desc: 'Phở topped straight off the grill.', choice: 'Choice: pork / chicken / ribeye',
-				img: `menu-pho-and-grilled.jpg`
+				img: `menu-noodle-pho-and-grilled.avif`
 			},
 			{
 				num: 5, en: 'Spicy Pho', vi: 'Phở Cay', zh: '辣河粉', spicy: true,
 				desc: 'A chili-forward broth that brings the heat.', choice: 'Choice: chicken / eye round',
-				img: `menu-spicy-pho.jpg`
+				img: `menu-noodle-spicy-pho.avif`
+			},
+			{
+				// Unnumbered on the live menus — the kitchen's 1–5 numbering stops
+				// at the phở, so no `num` here (menu sync 2026-08-21).
+				en: 'Bún Bò Huế', zh: '传统顺化牛肉猪脚粉', spicy: true,
+				desc: 'Huế-style spicy beef noodle soup — thick round noodles in a lemongrass-chili broth.',
+				img: `menu-bun-bo-hue.jpg`
 			}
 		]
 	},
@@ -222,28 +268,37 @@ export const MENU = [
 			{
 				num: 6, en: 'Shaking Beef Rice', vi: 'Bò Lúc Lắc', zh: '牛丁饭',
 				desc: 'Wok-seared beef tossed with garlic, onions, and peppers.',
-				img: `menu-shaking-beef-rice.jpg`
+				img: `menu-main-shaking-beef-rice.avif`
 			},
 			{
 				num: 7, en: 'Smoked Paprika Chicken Rice', vi: 'Cơm Gà Paprika', zh: '烟熏红椒鸡饭',
 				desc: 'Grilled chicken glazed with smoked paprika.',
-				img: `menu-smoked-paprika-chicken-rice.jpg`
+				img: `menu-main-smoked-paprika-chicken-rice.avif`
 			},
 			{
 				num: 8, en: 'Pork Chop Rice', vi: 'Cơm Sườn Nướng', zh: '猪扒饭',
 				desc: 'Grilled lemongrass-marinated pork chop.',
-				img: `menu-pork-chop-rice.jpg`
+				img: `menu-main-pork-chop-rice.avif`
 			},
 			{
+				// $19 on both live menus while the section runs $17 — the one
+				// exception, so it carries its own price label.
 				num: 9, en: 'Lemongrass Beef Rice', vi: 'Bò Nướng Sả', zh: '香茅肋眼牛排饭',
 				desc: 'Grilled ribeye in a fragrant lemongrass marinade.',
-				img: `menu-lemongrass-beef-rice.jpg`
+				price: '$19',
+				img: `menu-main-lemongrass-beef-rice.avif`
 			},
 			{
 				num: 10, en: 'Rice Vermicelli Bowl', vi: 'Bún Thịt Nướng', zh: '越式檬粉',
 				desc: 'Cool rice vermicelli with fresh herbs and pickles.',
 				choice: 'Choice: spring rolls / pork / chicken / ribeye',
-				img: `menu-rice-vermicelli-bowl.jpg`
+				img: `menu-main-rice-vermicelli-bowl.avif`
+			},
+			{
+				// Unnumbered on the live menus, like Bún Bò Huế (menu sync 2026-08-21).
+				en: 'Lemongrass Chicken Rice', vi: 'Cơm Gà Nướng Sả', zh: '香茅鸡饭',
+				desc: 'Grilled chicken in a fragrant lemongrass marinade.',
+				img: `menu-lemongrass-chicken-rice.jpg`
 			}
 		]
 	},
@@ -259,7 +314,7 @@ export const MENU = [
 				desc: 'Phin-brewed — hot or iced, with condensed milk or black.',
 				img: `menu-vietnamese-iced-coffee.jpg`
 			},
-			{ en: 'Thai Green Milk Tea', vi: 'Trà Sữa Thái Xanh', zh: '泰式奶绿' },
+			{ en: 'Thai Green Milk Tea', vi: 'Trà Sữa Thái Xanh', zh: '泰式奶绿', img: `menu-thai-green-milk-tea.jpg` },
 			{
 				en: 'Salted Limeade', vi: 'Chanh Muối', zh: '盐渍青柠水',
 				img: `menu-salted-limeade.jpg`
@@ -268,12 +323,95 @@ export const MENU = [
 				en: 'Sugarcane Juice', vi: 'Nước Mía', zh: '甘蔗汁',
 				desc: 'Pressed fresh at the drink station.',
 				img: `menu-sugarcane-juice.jpg`
+			},
+			// The bottled/canned drinks. An `extras` text list until 2026-08-21;
+			// now ordinary items, last so the signature drinks still lead.
+			// ⚠️ Client photos, and they are PRODUCT shots at ~220px — an order of
+			// magnitude smaller than the dish photography. They were upscaled 2×
+			// (lanczos + unsharp) so the browser downscales rather than upscales
+			// them, but the detail ceiling is still the 220px original: these are
+			// the softest images on the site. **Ask for larger files.**
+			{
+				en: 'Soda', vi: 'Nước Ngọt', zh: '汽水',
+				choice: 'Choice: Coke / Diet Coke / Sprite / Fanta / Ginger Ale',
+				price: '$2.25',
+				img: `menu-soda.avif`
+			},
+			{
+				en: 'Bottled Water', vi: 'Nước Đóng Chai', zh: '瓶装水',
+				price: '$2',
+				img: `menu-bottled-water.avif`
+			},
+			{
+				en: 'Sparkling Water', vi: 'Nước Có Gas', zh: '苏打水',
+				price: '$4.50',
+				img: `menu-sparkling-water.avif`
 			}
-		],
-		extras: [
-			{ en: 'Soda', zh: '汽水', vi: 'Nước Ngọt', price: '$2', detail: 'Coke · Diet Coke · Sprite · Fanta · Ginger Ale' },
-			{ en: 'Bottled Water', zh: '瓶装水', vi: 'Nước Đóng Chai', price: '$2' },
-			{ en: 'Sparkling Water', zh: '苏打水', vi: 'Nước Có Gas', price: '$4.50' }
+		]
+	},
+	/* The two sections below were added in the 2026-08-21 menu sync (UberEats +
+	   Snackpass are the sources; Snackpass carries the store's own prices, so
+	   its numbers win). Platform-exclusive combos (the Fantuan-only one
+	   especially) are deliberately NOT here — client call.
+	   ⚠️ Their photos are PLATFORM pulls, not client deliveries — several are
+	   crops out of the client's own poster art (docs/asset-map.md lists each
+	   source), so treat them as placeholders the client may re-shoot. The Phở
+	   Special Combo has no photo on either platform. */
+	{
+		id: 'combos',
+		title: 'All Day Combo',
+		items: [
+			{
+				en: 'Combo for 1', zh: '单人套餐',
+				desc: 'Any appetizer (half portion), any noodle or main, and any drink.',
+				price: '$25',
+				img: `menu-combo-for-1.jpg`
+			},
+			{
+				en: 'All Day Combo for 2', zh: '特惠双人套餐',
+				desc: 'A full-size appetizer, two noodles or mains, and two drinks — the no-tax, no-tips deal.',
+				price: '$48.90',
+				img: `menu-all-day-combo-for-2.jpg`
+			},
+			{
+				en: 'Vietnamese Burger + Fries Combo', zh: '越南汉堡套餐',
+				desc: 'Either burger with a side of fries.',
+				price: '$18',
+				img: `menu-vietnamese-burger-fries-combo.jpg`
+			},
+			{
+				// ⚠️ Deliberately REUSES the Combo for 2 photo (client direction
+				// 2026-08-21) — neither platform has a shot of this combo. So the
+				// same image appears twice in this section; swap it the moment a
+				// real one exists rather than treating the repeat as intended.
+				en: 'Phở Special Combo', zh: '火车头套餐',
+				desc: 'Built around our #3 Phở Special.',
+				price: '$26',
+				img: `menu-all-day-combo-for-2.jpg`
+			}
+		]
+	},
+	{
+		id: 'retail',
+		title: 'Retail & Gifts',
+		items: [
+			{
+				en: 'NonLa Tote Bag',
+				desc: 'The stall’s canvas tote — as seen on the bar shelf.',
+				price: '$25',
+				img: `menu-nonla-tote-bag.jpg`
+			},
+			{
+				en: 'Cafe Du Monde Coffee (15 oz)', zh: '罐装越南咖啡',
+				desc: 'The classic chicory-blend tin for Vietnamese-style coffee at home.',
+				price: '$15',
+				img: `menu-cafe-du-monde-coffee.jpg`
+			},
+			{
+				en: 'Digital Gift Card', zh: '电子礼品卡',
+				desc: 'Any amount, delivered digitally — purchase through Snackpass.',
+				img: `menu-digital-gift-card.png`
+			}
 		]
 	}
 ];

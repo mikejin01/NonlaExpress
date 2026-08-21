@@ -1,6 +1,12 @@
 <script>
 	// The printed menu's hot-orange promo panel (brief §4 layout signatures):
-	// window badge, bilingual set steps, big $25 price oval.
+	// window badge and bilingual set steps.
+	//
+	// ⚠️ The big $25 price oval — the panel's other printed-menu signature —
+	// was REMOVED 2026-08-21 when the client answered §5 Q5 "no prices on
+	// /menu". `LS.price` still carries 25 and is deliberately unrendered.
+	// That leaves `.price-oval` in app.css with no caller anywhere; it is kept
+	// on purpose, see the note there.
 	import { LUNCH_SPECIAL as LS } from '$lib/content.js';
 </script>
 
@@ -21,9 +27,6 @@
 				</li>
 			{/each}
 		</ul>
-	</div>
-	<div class="promo-price">
-		<span class="price-oval big">$25</span>
 	</div>
 </div>
 
@@ -68,18 +71,29 @@
 		font-size: 1.0625rem;
 		color: var(--fg-muted);
 	}
+	/* The steps run as a ROW since 2026-08-21. They were a stacked column beside
+	   the $25 oval; with the oval gone (§5 Q5) that column left the panel's
+	   right half empty, and three short steps read naturally as a ①→②→③
+	   sequence across the width they inherited. Back to a column under 760px,
+	   where a row would break each step mid-phrase. */
 	.steps {
 		list-style: none;
 		margin: 0;
 		padding: 0;
 		display: flex;
-		flex-direction: column;
-		gap: 0.7rem;
+		flex-wrap: wrap;
+		gap: 0.9rem 2.6rem;
 	}
 	.steps li {
 		display: flex;
 		gap: 0.7rem;
 		align-items: baseline;
+	}
+	@media (max-width: 760px) {
+		.steps {
+			flex-direction: column;
+			gap: 0.7rem;
+		}
 	}
 	.step-n {
 		font-size: 19px;
@@ -107,15 +121,5 @@
 		font-size: var(--fs-fine);
 		font-style: italic;
 		color: var(--fg-dim);
-	}
-	.promo-price {
-		flex: 0 0 auto;
-		margin: 0 auto;
-	}
-	.price-oval.big {
-		color: var(--accent-ink); /* --green on the cream panel, 5.13:1 */
-		font-size: clamp(2.6rem, 5vw, 3.6rem);
-		border-width: 3px;
-		padding: 0.28em 0.5em 0.34em;
 	}
 </style>

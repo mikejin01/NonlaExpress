@@ -586,7 +586,12 @@ h4 {
 
 /* ---------- menu-signature pieces ---------- */
 /* price-in-oval badge, bisecting line behind the number (printed-menu
-   signature; the original website shows no prices at all — plan §5 Q5) */
+   signature; the original website shows no prices at all — plan §5 Q5)
+   ⚠️ UNREFERENCED since 2026-08-21 and kept ON PURPOSE, like `.on-terracotta`:
+   §5 Q5 was answered "no prices on /menu", which retired its last caller
+   (LunchSpecial's $25 oval). It is one client decision from returning and it
+   is a brand signature off the printed menu, not leftover scaffolding —
+   **don't sweep it as dead CSS.** */
 .price-oval {
 	position: relative;
 	display: inline-flex;

@@ -113,28 +113,35 @@ Pages instead.** ⚠️ And **don't hand-edit the redirect list in
 generated. Edit `scripts/redirects.js`.
 
 ⚠️ **The HARVESTED dish photos ship on a `#F1EAD7` studio backdrop**, one step
-off `--cream`. That is why /menu needs no cards — and it is a constraint, not
-just a convenience: **those photos cannot sit on a non-cream surface** without
+off `--cream` — since 2026-08-21 only the **Drinks** section (and the homepage
+carousel/feature images) still uses them. It remains a constraint, not just a
+convenience: **those photos cannot sit on a non-cream surface** without
 `mix-blend-mode: multiply` over the fill (the trick the homepage feature row
 uses, plan §2.3).
 
-⚠️ **The CLIENT-SHOT photos are the exception and there are now ten of them.**
-The two burgers (2026-08-20), then the four appetizers and four burger sauces
-the same day, are **in-situ plates on the stall's wood table**, not cut-outs —
-so /menu runs photographic rectangles for Appetizer + Burger and floating
-cut-outs for Noodle, Main and Drinks. That split is client-supplied material,
-not a design choice, and it is why the "no cards" treatment still holds:
-a rectangle needs no card either. Masters in `docs/assets/image-source/`
-(gitignored). The sauces are square and centred because /menu crops them to
-circles in place of its hand-coded `SAUCE_COLORS` dots.
+⚠️ **The CLIENT-SHOT photos are now the RULE on /menu, not the exception.**
+2026-08-20 delivered burgers, appetizers and sauces; **2026-08-21 delivered all
+five noodles and all five mains** (same drop re-sent the 08-20 files
+byte-identical — only the ten dishes were new). All are **in-situ plates on the
+stall's wood table**, so /menu runs photographic rectangles for Appetizer,
+Burger, Noodle and Main, and floating cut-outs only for Drinks. The "no cards"
+treatment still holds: a rectangle needs no card either. Masters in
+`docs/assets/image-source/` (gitignored). The sauces are square and centred
+because /menu crops them to circles in place of its hand-coded `SAUCE_COLORS`
+dots. The 2026-08-21 menu-sync additions (combos, retail, fries, Bún Bò Huế…)
+carry **ordering-platform pulls as placeholder photos** — asset-map.md lists
+each source.
 
-⚠️ **Menu item images are named `menu-<dish-name-kebab-cased>`** after the
-item's English name in `content.js` (`menu-sauce-<name>` for the sauces) —
-renamed wholesale 2026-08-20. Images used anywhere else keep descriptive names
-and take no prefix, which is why `spring-roll.jpg` and `wings.jpg` still exist
-un-prefixed: the homepage carousel deliberately kept the **cut-out** versions of
-those two dishes when /menu moved to the in-situ ones. Full table in
-docs/asset-map.md.
+⚠️ **Owner-shot menu images are named `menu-<category>-<item-kebab-cased>`**
+(category = menu section: `appetizer`/`burger`/`noodle`/`main`, plus the older
+`menu-sauce-<name>`) after the item's English name in `content.js` — category
+scheme adopted 2026-08-21. Drinks and the platform-pull placeholders keep the
+older flat `menu-<item>` names. Images used anywhere else keep descriptive
+names and take no prefix — the homepage carousel's five cards (`spring-roll`,
+`wings`, `pho-special`, `rice-vermicelli-bowl`, `shaking-beef-rice`, all .jpg)
+are ALL harvested **cut-outs** kept un-prefixed on purpose: the carousel sits
+on bare cream where only a cut-out reads right, so it did not follow /menu to
+the in-situ photos. Full table in docs/asset-map.md.
 
 ⚠️ **Plan §1.3's claim that the original's /menu ends on a charcoal drinks band
 is WRONG**, and is corrected in place. Its drinks are on cream; the dark band in
@@ -185,8 +192,14 @@ stays wider than the viewport + the row's 14vw offset** (measured 3288/3822px at
 1440, 1338px at 540) — re-measure if `MQ`'s repeat count or `.mq-word`'s size
 changes.
 
-Open client questions are redesign-plan.md §5 — **6 of them (Q1, Q3 and Q4 are
-answered), and none blocks any shipped work**. **Q2** (TT Nooks license) now has a measured cost: Playfair 900 is ~9%
+Open client questions are redesign-plan.md §5 — **5 of them (Q1, Q3, Q4 and Q5
+are answered), and none blocks any shipped work**. ✅ **Q5 (menu prices) SETTLED
+2026-08-21: HIDE.** /menu shows no prices anywhere — section labels, per-item
+labels, drink extras and LunchSpecial's $25 oval all removed, which matches the
+original site. ⚠️ Two traps that follow: `content.js`'s `price` fields are
+**data-only now and can go stale silently**, and `.price-oval` in app.css has
+**no caller left but is kept on purpose** (like `.on-terracotta`) — don't sweep
+it. **Q2** (TT Nooks license) now has a measured cost: Playfair 900 is ~9%
 wider than the real face, which already forced the drinks headline off the
 measured type scale (§2.3). ✅ **Q3 (hero video) SETTLED 2026-08-14**: the
 client delivered new 4K footage, transcoded to the 1080p

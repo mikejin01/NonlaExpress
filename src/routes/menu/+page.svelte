@@ -46,27 +46,30 @@
 	   of herbs — rather than sprinkled section by section. */
 	const ORNAMENT = { appetizers: 'shrimp', noodle: 'herb' };
 
-	/* Photos first. Only one item on the menu has no photograph (Thai Green Milk
-	   Tea) and in source order it lands mid-row, leaving a hole between two cups
-	   that reads as a broken image rather than as a dish we have no shot of.
-	   Sorted to the tail it becomes a short text run after the photo rows. The
-	   numbered sections are unaffected — every item there has a photo, so the
-	   order the kitchen numbers them in is preserved. */
+	/* Photos first. A photo-less item that lands mid-row leaves a hole between
+	   two photos that reads as a broken image rather than as a dish we have no
+	   shot of; sorted to the tail it becomes a short text run after the photo
+	   rows. As of 2026-08-21 **every menu item has a photo**, so this sort is
+	   currently a no-op standing guard for the next photo-less item. The
+	   numbered sections keep the kitchen's own order. */
 	const ordered = (/** @type {any[]} */ items) => [
 		...items.filter((i) => i.img),
 		...items.filter((i) => !i.img)
 	];
 
-	/* The original stacks the protein options as a short list under the
-	   description ("Spring Rolls / Pork / Chicken / Ribeye", one per line); our
-	   data carries them as one "Choice: a / b / c" string. Split for display
-	   only — content.js keeps the readable single line. */
+	/* Options render as ONE comma-separated line — "Spring Rolls, Pork, Chicken,
+	   Ribeye" (client direction 2026-08-21). They were stacked one per line, as
+	   the original site does it, which made a four-option dish four rows tall
+	   and out-weighed its own description. content.js carries them as a single
+	   "Choice: a / b / c" string; this only normalizes the separator, so the
+	   data stays readable on its own. */
 	const choicesOf = (/** @type {string} */ choice) =>
 		choice
 			.replace(/^\s*choice:\s*/i, '')
 			.split('/')
 			.map((c) => c.trim())
-			.filter(Boolean);
+			.filter(Boolean)
+			.join(', ');
 </script>
 
 <svelte:head>
@@ -119,17 +122,6 @@
 		</div>
 	</header>
 
-	<!-- ============================== LUNCH SPECIAL ==============================
-	     Removed from the homepage 2026-08-07 (plan §2.4) and kept here, which is
-	     arguably where a menu offer belongs. It is the one panel on the page: the
-	     densest small text on the site, so it keeps its --cream-lift + --rule
-	     lift rather than joining the card-less treatment below. -->
-	<section class="section padding-sm">
-		<div class="container container--lg">
-			<LunchSpecial />
-		</div>
-	</section>
-
 	<!-- ============================== SECTIONS ============================== -->
 	{#each MENU as section}
 		{@const hasPhotos = section.items.some((i) => i.img)}
@@ -141,7 +133,6 @@
 				<header class="section-head">
 					<div class="section-head-row">
 						<h2 class="display display-lg section-title">{section.title}</h2>
-						{#if section.price}<span class="section-price">{section.price}</span>{/if}
 						{#if section.zh}
 							<span class="section-caption">
 								<span class="zh">{section.zh}</span> <span class="vi">({section.vi})</span>
@@ -158,9 +149,11 @@
 				</header>
 
 				<!-- No cards. Cut-outs straight on the page, name under the photo,
-				     description under the name (plan §2.6). Sections whose items
-				     carry no photo at all — Burger — drop the media box entirely
-				     and run a wider text grid instead of leaving five holes. -->
+				     description under the name (plan §2.6). A section whose items
+				     carry no photo at all drops the media box entirely and runs a
+				     text grid instead of leaving holes (no section does today);
+				     photo-less items inside a photo section sort to the tail
+				     (see `ordered`). -->
 				<div class="items" class:items--text={!hasPhotos}>
 					{#each ordered(section.items) as item}
 						<article class="item">
@@ -183,11 +176,7 @@
 							{/if}
 							{#if item.desc}<p class="item-desc">{item.desc}</p>{/if}
 							{#if item.choice}
-								<ul class="item-choice">
-									{#each choicesOf(item.choice) as c}
-										<li>{c}</li>
-									{/each}
-								</ul>
+								<p class="item-choice">{choicesOf(item.choice)}</p>
 							{/if}
 						</article>
 					{/each}
@@ -212,24 +201,27 @@
 					</div>
 				{/if}
 
-				{#if section.extras}
-					<ul class="extras">
-						{#each section.extras as x}
-							<li>
-								<span class="extras-name"
-									>{x.en} <span class="zh extras-zh">{x.zh}</span>
-									<span class="vi">({x.vi})</span></span
-								>
-								<span class="extras-dots"></span>
-								<span class="extras-price">{x.price}</span>
-								{#if x.detail}<span class="extras-detail">{x.detail}</span>{/if}
-							</li>
-						{/each}
-					</ul>
-				{/if}
 			</div>
 		</section>
 	{/each}
+
+	<!-- ============================== LUNCH SPECIAL ==============================
+	     Removed from the homepage 2026-08-07 (plan §2.4) and kept here, which is
+	     arguably where a menu offer belongs. It is the one panel on the page: the
+	     densest small text on the site, so it keeps its --cream-lift + --rule
+	     lift rather than joining the card-less treatment above.
+
+	     MOVED to the foot of the menu 2026-08-21 (client) — it used to sit
+	     between the header and Appetizer. ⚠️ "Bottom of the page" stops HERE,
+	     above the order CTA: the CTA is charcoal so the footer arc can rise out
+	     of it (see below / plan §2.3), and a cream panel between the two would
+	     break that seam. It also reads better — you see the menu, then the deal,
+	     then the button. -->
+	<section class="section padding-md">
+		<div class="container container--lg">
+			<LunchSpecial />
+		</div>
+	</section>
 
 	<!-- ============================== ORDER CTA ==============================
 	     CHARCOAL, not --green-deep. The footer arc's wedges show the page ground
@@ -246,7 +238,9 @@
 				target="_blank"
 				rel="noopener">Order on Snackpass</a
 			>
-			<p class="menu-disclaimer">Menu items, prices, and availability are subject to change.</p>
+			<!-- "prices" dropped 2026-08-21: the page no longer shows any, so
+			     disclaiming them read as a leftover. -->
+			<p class="menu-disclaimer">Menu items and availability are subject to change.</p>
 		</div>
 	</section>
 </main>
@@ -321,17 +315,12 @@
 	.section-title {
 		margin: 0;
 	}
-	/* §5 Q5's default: the original shows no prices at all and ours are genuinely
-	   useful, so they stay — but as a small green label, not the printed menu's
-	   outlined oval. The oval survives on LunchSpecial, which is where that
-	   printed-menu signature belongs. */
-	.section-price {
-		font-family: var(--label);
-		font-weight: 700;
-		font-size: var(--fs-label);
-		letter-spacing: 0.12em;
-		color: var(--accent-ink);
-	}
+	/* ⚠️ §5 Q5 is ANSWERED (2026-08-21, client): this page shows NO PRICES at
+	   all — which is what the original site did, so Phase D's "keep ours as a
+	   small green label" default is retired along with `.section-price`,
+	   `.item-price` and `.extras-price`. The price DATA still lives in
+	   content.js and is deliberately unrendered; don't reintroduce a price here
+	   because you found a `price:` field. */
 	.section-caption {
 		font-size: var(--fs-label);
 		color: var(--fg-muted);
@@ -397,18 +386,28 @@
 		display: flex;
 		flex-direction: column;
 	}
-	/* The cut-outs ship on a #F1EAD7 studio backdrop — one step off --cream, so
-	   on this page they composite invisibly and need neither a panel nor a mask
-	   (plan §2.2). 4:3 matches the source files, so `cover` crops nothing. */
+	/* Every photo renders at the same 4:3 height, rounded 18px like the
+	   homepage's photo cards (.card 18 / .fav-card 20). The ratio sits on the
+	   IMG, not the wrapper: a wrapper's `aspect-ratio` is only a preferred
+	   height, so a portrait source (the 570×610 Fries crop) grew the box and
+	   broke its row — an img with its own aspect-ratio + object-fit cannot. */
 	.item-media {
-		aspect-ratio: 4 / 3;
 		margin-bottom: 1rem;
 	}
 	.item-media img {
 		width: 100%;
-		height: 100%;
+		aspect-ratio: 4 / 3;
+		height: auto;
 		object-fit: cover;
+		border-radius: 18px;
 		display: block;
+	}
+	/* Drinks is the one remaining CUT-OUT section (studio backdrop ≈ cream,
+	   plan §2.2) and its cups are portrait — a 4:3 cover crop would behead
+	   them. `contain` keeps each cup whole inside the same-height box; the
+	   near-cream backdrop makes the letterboxing invisible. */
+	#drinks .item-media img {
+		object-fit: contain;
 	}
 	.item-name {
 		display: flex;
@@ -447,12 +446,14 @@
 		color: var(--fg-muted);
 		margin: 0;
 	}
+	/* `capitalize` is load-bearing: content.js writes the options lowercase
+	   ("spring rolls / pork / chicken / ribeye"), so this is what makes the line
+	   read "Spring Rolls, Pork, Chicken, Ribeye". Soda's are already cased and
+	   are unaffected. */
 	.item-choice {
-		list-style: none;
-		margin: 0.7rem 0 0;
-		padding: 0;
+		margin: 0.5rem 0 0;
 		font-size: var(--fs-label);
-		line-height: 1.7;
+		line-height: 1.5;
 		color: var(--fg-dim);
 		text-transform: capitalize;
 	}
@@ -504,49 +505,6 @@
 	}
 	.sauce-zh {
 		font-size: 12.5px;
-	}
-
-	/* ---------- extras (sodas & water) ---------- */
-	.extras {
-		list-style: none;
-		margin: 2.6rem 0 0;
-		padding: 0;
-		max-width: 40rem;
-	}
-	.extras li {
-		display: flex;
-		align-items: baseline;
-		flex-wrap: wrap;
-		gap: 0 0.7rem;
-		padding: 0.55rem 0;
-		border-bottom: 1px dashed var(--rule);
-	}
-	.extras-name {
-		font-family: var(--label);
-		font-weight: 600;
-		font-size: 13.5px;
-		letter-spacing: 0.06em;
-		text-transform: uppercase;
-	}
-	.extras-zh {
-		text-transform: none;
-		letter-spacing: 0;
-	}
-	.extras-dots {
-		flex: 1;
-	}
-	/* green, for the same reason the section price is: a price is small text */
-	.extras-price {
-		font-family: var(--label);
-		font-weight: 700;
-		font-size: 13.5px;
-		letter-spacing: 0.08em;
-		color: var(--accent-ink);
-	}
-	.extras-detail {
-		flex-basis: 100%;
-		font-size: var(--fs-label);
-		color: var(--fg-dim);
 	}
 
 	/* ---------- order CTA ---------- */
