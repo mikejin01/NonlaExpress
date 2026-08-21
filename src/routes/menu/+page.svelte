@@ -227,7 +227,21 @@
 									<span class="zh">{x.zh}</span> <span class="vi">({x.vi})</span>
 								</span>
 								{#if x.desc}<span class="extras-detail">{x.desc}</span>{/if}
-								{#if x.choice}<span class="extras-detail">{choicesOf(x.choice)}</span>{/if}
+								<!-- Options stack ONE PER LINE with their own zh/vi names,
+								     as the client's drinks poster prints them — the
+								     one-comma-line rule (`choicesOf`) is for dish choice
+								     strings, which carry no translations. -->
+								{#if x.options}
+									<ul class="extras-options">
+										{#each x.options as o}
+											<li>
+												{o.en}
+												{#if o.zh}<span class="zh">{o.zh}</span>{/if}
+												{#if o.vi}<span class="vi">({o.vi})</span>{/if}
+											</li>
+										{/each}
+									</ul>
+								{/if}
 							</li>
 						{/each}
 					</ul>
@@ -552,7 +566,11 @@
 		max-width: 40rem;
 		border-top: 1px dashed var(--rule);
 	}
-	.extras li {
+	/* Child combinator on purpose: a bare `.extras li` also catches the NESTED
+	   option lis and hands them this dashed border — which put a hairline under
+	   every soda brand and doubled up under the last one. Entries get rules,
+	   options don't (the poster draws none between options either). */
+	.extras > li {
 		display: flex;
 		align-items: baseline;
 		flex-wrap: wrap;
@@ -571,14 +589,37 @@
 		font-size: var(--fs-label);
 		color: var(--fg-muted);
 	}
-	/* Full-width line under the name — Soda's brand list and Beer's note. The
-	   brands arrive already cased ("Coke / Diet Coke / …"), so unlike
-	   .item-choice this needs no `capitalize`. */
+	/* Full-width line under the name — a free-text note when an entry has one. */
 	.extras-detail {
 		flex-basis: 100%;
 		font-size: var(--fs-label);
 		line-height: 1.5;
 		color: var(--fg-dim);
+	}
+	/* The per-line option stack (Soda's five, Beer's five), set like the poster:
+	   the same label face as the entry name, one step smaller and muted so the
+	   entry still leads. `uppercase` matches the poster's setting and is inert
+	   on the Han glyphs; the vi names keep their diacritics through it. */
+	.extras-options {
+		flex-basis: 100%;
+		list-style: none;
+		margin: 0.35rem 0 0;
+		padding: 0;
+	}
+	.extras-options li {
+		font-family: var(--label);
+		font-weight: 600;
+		font-size: 12px;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--fg-muted);
+		padding: 0.18rem 0;
+	}
+	.extras-options .zh {
+		margin-left: 0.35em;
+	}
+	.extras-options .vi {
+		margin-left: 0.2em;
 	}
 
 	/* ---------- order CTA ---------- */

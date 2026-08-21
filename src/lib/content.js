@@ -350,18 +350,41 @@ export const MENU = [
 		// photo and the set was demoted together). The three product-shot AVIFs
 		// (menu-soda / menu-bottled-water / menu-sparkling-water) are UNREFERENCED
 		// but kept in static/assets/images/ for the next flip — asset-map.md has
-		// the story. `price` here is data-only like everywhere else (§5 Q5).
+		// the story. `price` and `priceNote` are data-only like everywhere else
+		// (§5 Q5) — the drinks-poster photo (client, 2026-08-21) shows them, but
+		// the hide-prices ruling stands until the client reverses it.
+		// ⚠️ Two things here deliberately do NOT match that poster: its Beer
+		// caption reads 汽水 (Nước Ngọt) — Soda's caption, a printing error we
+		// did not copy — and Soda's price, which the poster gives as $2.0 where
+		// Snackpass had $2.25 (poster wins; it is the stall's own sign).
 		extras: [
 			{
 				en: 'Soda', vi: 'Nước Ngọt', zh: '汽水',
-				choice: 'Choice: Coke / Diet Coke / Sprite / Fanta / Ginger Ale',
-				price: '$2.25'
+				price: '$2',
+				options: [
+					{ en: 'Coke', zh: '可口可乐', vi: 'Coca' },
+					{ en: 'Diet Coke', zh: '健怡可乐', vi: 'Coca Diet' },
+					{ en: 'Sprite', zh: '雪碧', vi: 'Sprite' },
+					{ en: 'Fanta', zh: '芬达', vi: 'Fanta' },
+					{ en: 'Ginger Ale', zh: '姜汁汽水', vi: 'Soda Gừng' }
+				]
 			},
 			{ en: 'Bottled Water', vi: 'Nước Đóng Chai', zh: '瓶装水', price: '$2' },
 			{ en: 'Sparkling Water', vi: 'Nước Có Gas', zh: '苏打水', price: '$4.50' },
 			{
 				en: 'Beer', vi: 'Bia', zh: '啤酒',
-				desc: 'Ask at the counter for the current selection.'
+				price: '$6',
+				priceNote: 'per bottle; $2 during happy hour',
+				// "Michelob Extra" is verbatim off the poster — the real-world
+				// brand is Michelob ULTRA, so this may be its second typo.
+				// Flagged to the client 2026-08-21; change only on their answer.
+				options: [
+					{ en: 'Saigon Lager' },
+					{ en: 'Modelo Especial' },
+					{ en: 'Corona Extra' },
+					{ en: 'Michelob Extra' },
+					{ en: 'Asahi' }
+				]
 			}
 		]
 	},
