@@ -107,6 +107,16 @@ export const DRINKS_BLURB = {
    kitchen charges — but nothing displays them, so **they can go stale
    silently.** Re-verify before ever putting a price back on the page. */
 
+/* ⚠️ **`hidden: true` takes an item — or a whole section — OFF /menu without
+   deleting it** (client, 2026-08-21). The data below stays complete and stays
+   the repo's record of the kitchen's real menu; /menu filters on the flag at
+   render time (src/routes/menu/+page.svelte), and a section whose every item is
+   hidden drops out with them rather than rendering an empty heading. Un-hiding
+   is deleting one line. Nothing else in the app reads MENU except PHO_FAVORITES
+   below, which resolves three phở by `num` and is unaffected — but a `hidden`
+   item picked up by a future homepage row WOULD reappear there, because the
+   filter lives on the menu page, not in the data. */
+
 export const LUNCH_SPECIAL = {
 	title: 'Lunch Special',
 	zh: '套餐',
@@ -152,12 +162,14 @@ export const MENU = [
 				img: `menu-appetizer-viet-salad-with-ginger-sauce.avif`
 			},
 			{
+				hidden: true,
 				en: 'Fries', vi: 'Khoai Tây Chiên', zh: '炸薯条',
 				desc: 'Crisp golden fries, fresh out of the fryer.',
 				price: '$6',
 				img: `menu-fries.jpg`
 			},
 			{
+				hidden: true,
 				en: 'Frozen Spring Rolls (15)', vi: 'Chả Giò Đông Lạnh', zh: '冷冻春卷',
 				desc: 'Our house-made spring rolls, batch-frozen to fry at home.',
 				price: '$20',
@@ -166,14 +178,18 @@ export const MENU = [
 			// The two add-ons. They were an `extras` text list until 2026-08-21;
 			// with photos in hand they are ordinary items, last in the section so
 			// the dishes still lead. Client photos, multiplied to --cream offline
-			// because they arrived on pure white (docs/asset-map.md).
+			// because they arrived on pure white (docs/asset-map.md). Both are HIDDEN
+			// since 2026-08-21 (client) — the tail placement stands for the day
+			// they come back.
 			{
+				hidden: true,
 				en: 'Extra Protein · Lemongrass Chicken', vi: 'Gà Nướng Sả', zh: '香茅鸡扒',
 				desc: 'Add grilled lemongrass chicken to any dish.',
 				price: '$8',
 				img: `menu-extra-protein-lemongrass-chicken.avif`
 			},
 			{
+				hidden: true,
 				en: 'Extra Protein · Lemongrass Pork Chop', vi: 'Sườn Nướng Sả', zh: '香茅猪扒',
 				desc: 'Add a grilled lemongrass pork chop to any dish.',
 				price: '$8',
@@ -253,6 +269,7 @@ export const MENU = [
 			{
 				// Unnumbered on the live menus — the kitchen's 1–5 numbering stops
 				// at the phở, so no `num` here (menu sync 2026-08-21).
+				hidden: true,
 				en: 'Bún Bò Huế', zh: '传统顺化牛肉猪脚粉', spicy: true,
 				desc: 'Huế-style spicy beef noodle soup — thick round noodles in a lemongrass-chili broth.',
 				img: `menu-bun-bo-hue.jpg`
@@ -296,6 +313,7 @@ export const MENU = [
 			},
 			{
 				// Unnumbered on the live menus, like Bún Bò Huế (menu sync 2026-08-21).
+				hidden: true,
 				en: 'Lemongrass Chicken Rice', vi: 'Cơm Gà Nướng Sả', zh: '香茅鸡饭',
 				desc: 'Grilled chicken in a fragrant lemongrass marinade.',
 				img: `menu-lemongrass-chicken-rice.jpg`
@@ -360,6 +378,8 @@ export const MENU = [
 	{
 		id: 'combos',
 		title: 'All Day Combo',
+		// Hidden whole (client, 2026-08-21) — all four combos with it.
+		hidden: true,
 		items: [
 			{
 				en: 'Combo for 1', zh: '单人套餐',
@@ -408,6 +428,7 @@ export const MENU = [
 				img: `menu-cafe-du-monde-coffee.jpg`
 			},
 			{
+				hidden: true,
 				en: 'Digital Gift Card', zh: '电子礼品卡',
 				desc: 'Any amount, delivered digitally — purchase through Snackpass.',
 				img: `menu-digital-gift-card.png`

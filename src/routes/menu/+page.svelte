@@ -46,6 +46,16 @@
 	   of herbs — rather than sprinkled section by section. */
 	const ORNAMENT = { appetizers: 'shrimp', noodle: 'herb' };
 
+	/* The client's 2026-08-21 trim. content.js still carries every item and every
+	   section — the kitchen's real menu is the record we keep there — and this is
+	   the one place the page decides what to draw: anything flagged `hidden` is
+	   dropped, and a section left with no visible items goes with them so the
+	   page never shows a ruled heading over nothing. `sauces` rides along on the
+	   spread, so the Burger row is untouched. */
+	const sections = MENU.filter((s) => !s.hidden)
+		.map((s) => ({ ...s, items: s.items.filter((i) => !i.hidden) }))
+		.filter((s) => s.items.length > 0);
+
 	/* Photos first. A photo-less item that lands mid-row leaves a hole between
 	   two photos that reads as a broken image rather than as a dish we have no
 	   shot of; sorted to the tail it becomes a short text run after the photo
@@ -123,7 +133,7 @@
 	</header>
 
 	<!-- ============================== SECTIONS ============================== -->
-	{#each MENU as section}
+	{#each sections as section}
 		{@const hasPhotos = section.items.some((i) => i.img)}
 		<section class="section padding-md menu-section" id={section.id}>
 			<div class="container container--lg">
