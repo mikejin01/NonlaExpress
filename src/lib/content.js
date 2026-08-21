@@ -342,28 +342,26 @@ export const MENU = [
 				desc: 'Pressed fresh at the drink station.',
 				img: `menu-sugarcane-juice.jpg`
 			},
-			// The bottled/canned drinks. An `extras` text list until 2026-08-21;
-			// now ordinary items, last so the signature drinks still lead.
-			// ⚠️ Client photos, and they are PRODUCT shots at ~220px — an order of
-			// magnitude smaller than the dish photography. They were upscaled 2×
-			// (lanczos + unsharp) so the browser downscales rather than upscales
-			// them, but the detail ceiling is still the 220px original: these are
-			// the softest images on the site. **Ask for larger files.**
+		],
+		// The bottled/canned drinks + beer — a deliberate NO-PHOTO sub-list under
+		// the four signature drinks. This concept has now flipped twice on
+		// 2026-08-21 alone: `extras` text list → ordinary photo items (client, AM)
+		// → back to an image-less sub-menu (client, PM, when Beer arrived with no
+		// photo and the set was demoted together). The three product-shot AVIFs
+		// (menu-soda / menu-bottled-water / menu-sparkling-water) are UNREFERENCED
+		// but kept in static/assets/images/ for the next flip — asset-map.md has
+		// the story. `price` here is data-only like everywhere else (§5 Q5).
+		extras: [
 			{
 				en: 'Soda', vi: 'Nước Ngọt', zh: '汽水',
 				choice: 'Choice: Coke / Diet Coke / Sprite / Fanta / Ginger Ale',
-				price: '$2.25',
-				img: `menu-soda.avif`
+				price: '$2.25'
 			},
+			{ en: 'Bottled Water', vi: 'Nước Đóng Chai', zh: '瓶装水', price: '$2' },
+			{ en: 'Sparkling Water', vi: 'Nước Có Gas', zh: '苏打水', price: '$4.50' },
 			{
-				en: 'Bottled Water', vi: 'Nước Đóng Chai', zh: '瓶装水',
-				price: '$2',
-				img: `menu-bottled-water.avif`
-			},
-			{
-				en: 'Sparkling Water', vi: 'Nước Có Gas', zh: '苏打水',
-				price: '$4.50',
-				img: `menu-sparkling-water.avif`
+				en: 'Beer', vi: 'Bia', zh: '啤酒',
+				desc: 'Ask at the counter for the current selection.'
 			}
 		]
 	},

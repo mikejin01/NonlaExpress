@@ -139,18 +139,18 @@ corner pixels now measure `#efead6`, i.e. they composite invisibly on the page.
 The two `.webp` files became `.avif` because this machine's ffmpeg has no
 `libwebp` encoder; AVIF also matches the rest of the owner-shot set.
 
-These five render as **ordinary grid cards**, same as every other menu item
-(client direction 2026-08-21, after an 80px-thumbnail treatment was tried and
-rejected as looking like an afterthought). That retired the `extras` concept
-entirely: `content.js` no longer has an `extras` array and /menu no longer has
-any `.extras-*` markup or CSS — the five are just items, placed last in their
-sections so the dishes still lead.
-
-⚠️ **The three beverages are the softest images on the site and there is no
-fixing that here.** They were ~220px originals against ~1200px dish
-photography. They are pre-upscaled 2× with lanczos + a light unsharp so the
-browser *downscales* into the ~430px cell instead of upscaling, but the detail
-ceiling is still the 220px original. **Ask the client for larger files.**
+⚠️ **The three beverage photos are UNREFERENCED as of later on 2026-08-21 —
+kept on purpose, don't sweep them.** The `extras` concept flipped twice that
+day: text list → ordinary grid cards (client, AM — an 80px-thumbnail treatment
+was tried and rejected as looking like an afterthought) → back to an image-less
+`extras` sub-menu (client, PM, when **Beer** joined the drinks with no photo
+and the whole bottled/canned set was demoted with it). `content.js` carries
+them in the drinks section's restored `extras` array and /menu renders that as
+a compact ruled text list — no photos. The two extra-protein `.avif`s in the
+table are still live items. If the sodas ever get photos again, note the three
+files are the ~220px softest images on the site: pre-upscaled 2× with lanczos +
+light unsharp so the browser downscales, but the detail ceiling is the 220px
+original. **Ask the client for larger files.**
 
 ⚠️ Two encoding traps hit while preparing them, both worth knowing before
 touching these files again:

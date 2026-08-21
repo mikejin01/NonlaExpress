@@ -211,6 +211,28 @@
 					</div>
 				{/if}
 
+				<!-- The image-less sub-menu (today: Drinks' bottled/canned list +
+				     beer). Restored 2026-08-21 after being retired the same morning
+				     — content.js has the flip history. Unlike a photo-less ITEM,
+				     which sorts to the grid's tail while it waits for a shot, an
+				     `extras` entry is deliberately photo-free, so it renders as a
+				     compact ruled list rather than an empty grid cell. No prices,
+				     same as everywhere on this page (§5 Q5). -->
+				{#if section.extras}
+					<ul class="extras">
+						{#each section.extras as x}
+							<li>
+								<span class="extras-name">{x.en}</span>
+								<span class="extras-caption">
+									<span class="zh">{x.zh}</span> <span class="vi">({x.vi})</span>
+								</span>
+								{#if x.desc}<span class="extras-detail">{x.desc}</span>{/if}
+								{#if x.choice}<span class="extras-detail">{choicesOf(x.choice)}</span>{/if}
+							</li>
+						{/each}
+					</ul>
+				{/if}
+
 			</div>
 		</section>
 	{/each}
@@ -515,6 +537,48 @@
 	}
 	.sauce-zh {
 		font-size: 12.5px;
+	}
+
+	/* ---------- extras (the image-less sub-menu) ----------
+	   The pre-2026-08-21 extras list minus its dotted leaders and prices — those
+	   existed to carry a price column, and Q5 removed prices from this page. What
+	   is left is the quiet treatment the sub-menu wants: uppercase label-face
+	   name, caption inline, dashed hairlines, capped at a reading measure so it
+	   never mistakes itself for a fourth grid column. */
+	.extras {
+		list-style: none;
+		margin: 3rem 0 0;
+		padding: 0;
+		max-width: 40rem;
+		border-top: 1px dashed var(--rule);
+	}
+	.extras li {
+		display: flex;
+		align-items: baseline;
+		flex-wrap: wrap;
+		gap: 0.1rem 0.7rem;
+		padding: 0.65rem 0;
+		border-bottom: 1px dashed var(--rule);
+	}
+	.extras-name {
+		font-family: var(--label);
+		font-weight: 600;
+		font-size: 13.5px;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+	}
+	.extras-caption {
+		font-size: var(--fs-label);
+		color: var(--fg-muted);
+	}
+	/* Full-width line under the name — Soda's brand list and Beer's note. The
+	   brands arrive already cased ("Coke / Diet Coke / …"), so unlike
+	   .item-choice this needs no `capitalize`. */
+	.extras-detail {
+		flex-basis: 100%;
+		font-size: var(--fs-label);
+		line-height: 1.5;
+		color: var(--fg-dim);
 	}
 
 	/* ---------- order CTA ---------- */
