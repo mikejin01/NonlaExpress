@@ -236,6 +236,38 @@ CSS bundles, not by eye (plan §7).
   separate manual step, and content edits made live shadow the repo's defaults
   (see the content sync rule at the top).
 
+✅ **DNS cutover EXECUTED 2026-09-04.** The live site is
+**https://www.nonlaexpress.com** — Squarespace nameservers, apex + `www` A →
+35.212.98.26, `MX 1 smtp.google.com` and SPF carried over intact. Runbook and
+its post-mortem in **docs/dns-cutover.md**; live picture via `make dns-status`.
+§C is done: `wp search-replace` ran (132 rows), `home`/`siteurl` are the www
+URL, an apex→www 301 sits above the WordPress block in `.htaccess`, and Let's
+Encrypt covers both names to 2026-12-03. **§D — retiring Wix — is still open
+and must not happen before ~2026-09-11.**
+
+⚠️ **The admin ran §B before we ran §A, and that is what "the site is down"
+looked like.** DNS landed while SiteGround still had no vhost for the domain,
+so the server answered every request from its default vhost — a placeholder
+page under a `c1114776.sgvps.net` certificate, i.e. a browser cert warning
+(`ERR_CERT_COMMON_NAME_INVALID`) in front of a blank page. Neither the code
+nor the DNS was at fault. **Parking the domain in Site Tools is what makes the
+hostname exist**; it takes minutes and creates `~/www/nonlaexpress.com ->
+jeffl248.sg-host.com`. Confirm the vhost by the **absence** of the
+`X-Default-Vhost: 1` response header, not by eye.
+
+⚠️ **A parked domain still 301s to the old host until the DB says otherwise** —
+WordPress compares every request's Host against `home` and bounces mismatches.
+So "it redirects to jeffl248.sg-host.com" after parking is expected, not a
+second bug, and the *only* fix is `wp search-replace`. Run it strictly **after**
+the vhost exists and SSL is issued: doing it while the hostname still serves
+the placeholder locks you out of wp-admin.
+
+⚠️ **`wp yoast index --reindex` cannot be automated over SSH** — it prompts and
+ignores both `--yes` (unknown parameter) and a piped `y`. It was **not needed**
+on 2026-09-04: `search-replace` rewrote the 25 `tns_yoast_indexable.permalink`
+rows itself, and canonical, `og:url` and `/sitemap.xml` were all verified on the
+www URL afterwards. Verify that output rather than assuming the reindex ran.
+
 Three tools, all stdlib-only, all in `scripts/`:
 - `verify.py` — **run after every phase.** Real WCAG audit (composites each
   element over its actual background) + webfont + overflow checks across all 7

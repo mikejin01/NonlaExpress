@@ -146,6 +146,10 @@ with measured costs.
   25.1 KB, at the cost of freezing the glyph set against live editing.
 - **Q2** (TT Nooks license) · **Q5** (show menu prices?) · **Q6** (is the Burger
   section current?) · **Q7** (Maname's Vietnamese diacritics).
-- Brief §6 leftovers: hours confirmation, newsletter provider, and DNS/registrar
-  access at cutover. (Press entry details are moot — that page is a blog now, so
+- Brief §6 leftovers: hours confirmation and newsletter provider. DNS/registrar
+  access is **done** — the cutover was executed 2026-09-04 and the site is live
+  at <https://www.nonlaexpress.com>: runbook + post-mortem in
+  [docs/dns-cutover.md](docs/dns-cutover.md), live picture via
+  `make dns-status`. Wix is still to be cancelled (not before ~2026-09-11).
+  (Press entry details are moot — that page is a blog now, so
   a mention is just a post. The `/post/*` redirect map is **done**.)

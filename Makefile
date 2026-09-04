@@ -44,6 +44,9 @@ SITEGROUND_DOMAIN         ?= REPLACE_WITH_DOMAIN.com
 SITEGROUND_HOST           ?= ssh.$(SITEGROUND_DOMAIN)
 SITEGROUND_PORT           ?= 18765
 SITEGROUND_IDENTITY_FILE  ?= ~/.ssh/siteground
+# The real (public) domain. Used only by `make dns-status`, which watches the
+# cutover from Wix — see docs/dns-cutover.md. Read-only.
+LIVE_DOMAIN               ?= nonlaexpress.com
 
 # ----- WordPress paths on the server -----
 SITEGROUND_DOCROOT        ?= www/$(SITEGROUND_DOMAIN)/public_html
@@ -66,7 +69,7 @@ WP              := cd $(SITEGROUND_DOCROOT) && wp
 
 .PHONY: help info test-connection ssh connect build push build-and-push pull \
         purge-cache push-functions push-styles push-header \
-        pull-content check-content-drift list-sites push-all build-and-push-all
+        pull-content check-content-drift list-sites push-all build-and-push-all dns-status
 
 .DEFAULT_GOAL := help
 
@@ -92,6 +95,7 @@ help:
 	@echo "Connection:"
 	@echo "  make info                 Show the resolved configuration"
 	@echo "  make test-connection      Verify SSH works"
+	@echo "  make dns-status           Where $(LIVE_DOMAIN) points right now vs the SiteGround IP"
 	@echo "  make ssh / connect        Interactive shell on the live server"
 	@echo "  make list-sites           List configured .live-sites/ fragments"
 	@echo "  make push-all             Push to every configured site"
@@ -176,6 +180,36 @@ check-content-drift:
 	@rm -f $(LIVE_CONTENT_DIR)/.exported
 	@$(MAKE) --no-print-directory $(LIVE_CONTENT_DIR)/.exported
 	@node scripts/merge-live-content.mjs --check
+
+# ------------------------------------------------------------------ DNS
+# Read-only. SiteGround's DNS zone lives in Site Tools (no CLI/API), so the one
+# value this needs from SiteGround — the server IP — comes from the sg-host
+# name's A record. Public resolvers (1.1.1.1, 8.8.8.8) are asked on purpose so
+# a local cache can't hide propagation. The last two lines send the real
+# hostname straight to the server: until the domain is added in Site Tools it
+# answers "This is the default server vhost" — see docs/dns-cutover.md §A.
+dns-status:
+	@ip=$$(dig +short $(SITEGROUND_DOMAIN) A | head -1); \
+	echo "SiteGround server IP ($(SITEGROUND_DOMAIN)):  $$ip"; \
+	echo ""; \
+	for r in 1.1.1.1 8.8.8.8; do \
+	  echo "── as seen by $$r"; \
+	  echo "  NS   $(LIVE_DOMAIN)        $$(dig +short @$$r $(LIVE_DOMAIN) NS  | sort | tr '\n' ' ')"; \
+	  echo "  A    $(LIVE_DOMAIN)        $$(dig +short @$$r $(LIVE_DOMAIN) A   | sort | tr '\n' ' ')"; \
+	  echo "  www  www.$(LIVE_DOMAIN)    $$(dig +short @$$r www.$(LIVE_DOMAIN)  | tr '\n' ' ')"; \
+	  echo "  MX   $(LIVE_DOMAIN)        $$(dig +short @$$r $(LIVE_DOMAIN) MX  | tr '\n' ' ')"; \
+	  echo "  TXT  $(LIVE_DOMAIN)        $$(dig +short @$$r $(LIVE_DOMAIN) TXT | tr '\n' ' ')"; \
+	done; \
+	echo ""; \
+	if dig +short @1.1.1.1 $(LIVE_DOMAIN) A | grep -qx "$$ip"; then \
+	  echo "✅ $(LIVE_DOMAIN) resolves to the SiteGround server."; \
+	else \
+	  echo "⏳ $(LIVE_DOMAIN) does NOT resolve to $$ip yet."; \
+	fi; \
+	title=$$(curl -sk --max-time 10 --resolve www.$(LIVE_DOMAIN):443:$$ip https://www.$(LIVE_DOMAIN)/ | grep -o '<title>[^<]*' | head -1 | sed 's/<title>//'); \
+	echo "SiteGround answers Host www.$(LIVE_DOMAIN) with:  $${title:-<no title>}"; \
+	cert=$$(echo | openssl s_client -connect $$ip:443 -servername www.$(LIVE_DOMAIN) 2>/dev/null | openssl x509 -noout -subject 2>/dev/null | sed 's/^subject= *//'); \
+	echo "TLS certificate it presents for that name:   $${cert:-<none>}"
 
 list-sites:
 	@echo "Configured sites in .live-sites/ ($(words $(SITES_AVAILABLE))):"
