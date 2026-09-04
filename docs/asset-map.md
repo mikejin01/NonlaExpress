@@ -146,7 +146,8 @@ was tried and rejected as looking like an afterthought) → back to an image-les
 `extras` sub-menu (client, PM, when **Beer** joined the drinks with no photo
 and the whole bottled/canned set was demoted with it). `content.js` carries
 them in the drinks section's restored `extras` array and /menu renders that as
-a compact ruled text list — no photos. The two extra-protein `.avif`s in the
+a two-column icon board (since 2026-09-04; the line icons are hand-drawn in
+`src/lib/site/DrinkIcon.svelte`, not svgclean output) — still no photos. The two extra-protein `.avif`s in the
 table are still live items. If the sodas ever get photos again, note the three
 files are the ~220px softest images on the site: pre-upscaled 2× with lanczos +
 light unsharp so the browser downscales, but the detail ceiling is the 220px

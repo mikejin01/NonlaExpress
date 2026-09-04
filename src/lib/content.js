@@ -339,6 +339,10 @@ export const MENU = [
 			},
 			{
 				en: 'Sugarcane Juice', vi: 'Nước Mía', zh: '甘蔗汁',
+				// `tag` renders as a small green label beside the name (client,
+				// 2026-09-04: "add (Seasonal) next to its name"). Any item can
+				// carry one; keep it to a word or two.
+				tag: 'Seasonal',
 				desc: 'Pressed fresh at the drink station.',
 				img: `menu-sugarcane-juice.jpg`
 			},
@@ -357,9 +361,14 @@ export const MENU = [
 		// caption reads 汽水 (Nước Ngọt) — Soda's caption, a printing error we
 		// did not copy — and Soda's price, which the poster gives as $2.0 where
 		// Snackpass had $2.25 (poster wins; it is the stall's own sign).
+		// `icon` names a line drawing in src/lib/site/DrinkIcon.svelte (soda /
+		// water / sparkling / beer, hand-drawn — NOT svgclean art) that /menu
+		// draws where a photo would go (client, 2026-09-04); an entry without
+		// one gets the plain glass.
 		extras: [
 			{
 				en: 'Soda', vi: 'Nước Ngọt', zh: '汽水',
+				icon: 'soda',
 				price: '$2',
 				options: [
 					{ en: 'Coke', zh: '可口可乐', vi: 'Coca' },
@@ -369,10 +378,11 @@ export const MENU = [
 					{ en: 'Ginger Ale', zh: '姜汁汽水', vi: 'Soda Gừng' }
 				]
 			},
-			{ en: 'Bottled Water', vi: 'Nước Đóng Chai', zh: '瓶装水', price: '$2' },
-			{ en: 'Sparkling Water', vi: 'Nước Có Gas', zh: '苏打水', price: '$4.50' },
+			{ en: 'Bottled Water', vi: 'Nước Đóng Chai', zh: '瓶装水', icon: 'water', price: '$2' },
+			{ en: 'Sparkling Water', vi: 'Nước Có Gas', zh: '苏打水', icon: 'sparkling', price: '$4.50' },
 			{
 				en: 'Beer', vi: 'Bia', zh: '啤酒',
+				icon: 'beer',
 				price: '$6',
 				priceNote: 'per bottle; $2 during happy hour',
 				// "Michelob Extra" is verbatim off the poster — the real-world

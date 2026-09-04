@@ -1089,6 +1089,29 @@ original's pure white. ⚠️ **On a phone the lime leaves the absolute layer an
 flows above the heading** — at 3.08:1 it cannot have text over it, which an
 absolutely-positioned decoration on a narrow screen would guarantee.
 
+**Amended 2026-09-04 — the drinks sub-menu became an icon board, and items can
+carry a tag.** The client's read on the image-less `extras` list (Soda ·
+Bottled Water · Sparkling Water · Beer): "they still don't look good", with two
+asks — two columns, and an icon per category. Shipped as: each entry leads with
+a **terracotta line icon** where a photo would sit (`src/lib/site/DrinkIcon.svelte`
+— ⚠️ **hand-drawn, not harvested**; it lives in `src/lib/site/`, NOT in
+`src/lib/art/`, precisely so svgclean.py's "don't hand-edit" rule stays true and
+nobody hunts for a MANIFEST entry that doesn't exist), the entry name takes the
+item-name setting (Maname at `--fs-md`) so the board reads as more of the same
+menu rather than a footnote to it, and the options drop the uppercase label
+face for body face plus caption, like a dish description. Layout is **CSS
+`columns: 2`, not grid**: the entries are lopsided (two carry five options, two
+carry none) and a grid's rows left a tall hole under each short one, where
+column balancing lands one long and one short entry per column
+(`break-inside: avoid` keeps an entry whole). Single column under 620px. The
+icon is keyed by a new `icon` field on each `extras` entry (soda / water /
+sparkling / beer); an entry without one draws a plain glass. Same day:
+**`tag: 'Seasonal'` on Sugarcane Juice** renders as a small outlined green pill
+beside the name (`.item-tag` — text, so it speaks in `--accent-ink`, not the
+badges' terracotta); any item can carry one. `verify.py` at
+`OUT_TAG="menu-extras"`: PASS (0 contrast failures, `fonts=ALL`, `hscroll=no`,
+7 routes × 2 widths), both build shapes clean.
+
 **Still open on this page.** /menu carries **no `InlineEdit`** — the WordPress
 live-edit layer is wired on the homepage only, so the menu's copy is not
 client-editable and cannot drift (the content-sync rule has nothing to check

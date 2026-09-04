@@ -32,6 +32,7 @@
 	import { wpEdit } from '$lib/wp/wpEdit.svelte.js';
 	import { IMG, AN_NAO, BRAND, MENU, ORDER_URL, LUNCH_WINDOW } from '$lib/content.js';
 	import LunchSpecial from '$lib/site/LunchSpecial.svelte';
+	import DrinkIcon from '$lib/site/DrinkIcon.svelte';
 
 	/* Dot colours for the burger sauce row (menu signature). FALLBACK ONLY since
 	   2026-08-20 — all four sauces now carry a real photo and the row renders
@@ -175,7 +176,8 @@
 							<h3 class="item-name">
 								{#if item.num}<span class="num-badge">{item.num}</span>{/if}
 								<span class="item-en"
-									>{item.en}{#if item.spicy}<span class="spicy" title="Spicy">🌶</span>{/if}</span
+									>{item.en}{#if item.spicy}<span class="spicy" title="Spicy">🌶</span
+										>{/if}{#if item.tag}<span class="item-tag">{item.tag}</span>{/if}</span
 								>
 							</h3>
 							{#if item.zh || item.vi}
@@ -215,38 +217,48 @@
 				     beer). Restored 2026-08-21 after being retired the same morning
 				     — content.js has the flip history. Unlike a photo-less ITEM,
 				     which sorts to the grid's tail while it waits for a shot, an
-				     `extras` entry is deliberately photo-free, so it renders as a
-				     compact ruled list rather than an empty grid cell. No prices,
-				     same as everywhere on this page (§5 Q5). -->
+				     `extras` entry is deliberately photo-free — so since 2026-09-04
+				     it draws a line icon where the photo would go and the entries
+				     run as a two-column board (client: the ruled single-column
+				     list read as fine print). No prices, same as everywhere on
+				     this page (§5 Q5). -->
 				{#if section.extras}
 					<ul class="extras">
 						{#each section.extras as x}
-							<li>
-								<span class="extras-name">{x.en}</span>
-								<span class="extras-caption">
-									<span class="zh">{x.zh}</span> <span class="vi">({x.vi})</span>
+							<li class="extra">
+								<span class="extra-icon">
+									<DrinkIcon name={x.icon} />
 								</span>
-								{#if x.desc}<span class="extras-detail">{x.desc}</span>{/if}
-								<!-- Options stack ONE PER LINE with their own zh/vi names,
-								     as the client's drinks poster prints them — the
-								     one-comma-line rule (`choicesOf`) is for dish choice
-								     strings, which carry no translations. -->
-								{#if x.options}
-									<ul class="extras-options">
-										{#each x.options as o}
-											<li>
-												{o.en}
-												{#if o.zh}<span class="zh">{o.zh}</span>{/if}
-												{#if o.vi}<span class="vi">({o.vi})</span>{/if}
-											</li>
-										{/each}
-									</ul>
-								{/if}
+								<div class="extra-body">
+									<h3 class="extra-name">{x.en}</h3>
+									<p class="extra-caption">
+										<span class="zh">{x.zh}</span> <span class="vi">({x.vi})</span>
+									</p>
+									{#if x.desc}<p class="extra-detail">{x.desc}</p>{/if}
+									<!-- Options stack ONE PER LINE with their own zh/vi names,
+									     as the client's drinks poster prints them — the
+									     one-comma-line rule (`choicesOf`) is for dish choice
+									     strings, which carry no translations. -->
+									{#if x.options}
+										<ul class="extra-options">
+											{#each x.options as o}
+												<li>
+													<span class="extra-option">{o.en}</span>
+													{#if o.zh || o.vi}
+														<span class="extra-option-caption">
+															{#if o.zh}<span class="zh">{o.zh}</span>{/if}
+															{#if o.vi}<span class="vi">({o.vi})</span>{/if}
+														</span>
+													{/if}
+												</li>
+											{/each}
+										</ul>
+									{/if}
+								</div>
 							</li>
 						{/each}
 					</ul>
 				{/if}
-
 			</div>
 		</section>
 	{/each}
@@ -478,6 +490,27 @@
 	.spicy {
 		margin-left: 0.4em;
 	}
+	/* A one-word note beside a name ("Seasonal"). Text, so it speaks in GREEN
+	   (--accent-ink, 5.13:1) rather than the terracotta of the numbered
+	   badges, and outlined rather than filled so it doesn't out-weigh the name
+	   it qualifies. Overpass sits high on its line, hence the padding split. */
+	.item-tag {
+		display: inline-block;
+		vertical-align: middle;
+		margin-left: 0.55em;
+		padding: 0.32em 0.65em 0.18em;
+		border: 1px solid var(--accent-ink);
+		border-radius: 999px;
+		font-family: var(--label);
+		font-weight: 700;
+		font-size: 11px;
+		letter-spacing: 0.14em;
+		line-height: 1;
+		text-transform: uppercase;
+		color: var(--accent-ink);
+		transform: translateY(-0.2em);
+		white-space: nowrap;
+	}
 	.item-caption {
 		font-size: var(--fs-label);
 		color: var(--fg-muted);
@@ -554,72 +587,91 @@
 	}
 
 	/* ---------- extras (the image-less sub-menu) ----------
-	   The pre-2026-08-21 extras list minus its dotted leaders and prices — those
-	   existed to carry a price column, and Q5 removed prices from this page. What
-	   is left is the quiet treatment the sub-menu wants: uppercase label-face
-	   name, caption inline, dashed hairlines, capped at a reading measure so it
-	   never mistakes itself for a fourth grid column. */
+	   Re-laid 2026-09-04 (client): the dashed single-column list read as fine
+	   print under four photographed drinks, so each entry now leads with a
+	   terracotta line icon where the photo would be (DrinkIcon.svelte — hand-
+	   drawn, not harvested) and the entries run in TWO COLUMNS. CSS columns,
+	   not grid, on purpose: the entries are very unequal (Soda and Beer carry
+	   five options each, the two waters carry none) and a grid's rows would
+	   leave a tall hole under each short one, where column balancing lands one
+	   long and one short entry in each column. `break-inside: avoid` keeps an
+	   entry's options with its name. Names take the item-name setting so the
+	   board reads as more of the same menu, not as a footnote to it. */
 	.extras {
 		list-style: none;
-		margin: 3rem 0 0;
+		margin: 3.4rem 0 0;
 		padding: 0;
-		max-width: 40rem;
-		border-top: 1px dashed var(--rule);
+		columns: 2;
+		column-gap: 2.6rem;
 	}
-	/* Child combinator on purpose: a bare `.extras li` also catches the NESTED
-	   option lis and hands them this dashed border — which put a hairline under
-	   every soda brand and doubled up under the last one. Entries get rules,
-	   options don't (the poster draws none between options either). */
-	.extras > li {
+	.extra {
+		break-inside: avoid;
+		display: flex;
+		align-items: flex-start;
+		gap: 1.15rem;
+		padding: 1.3rem 0 1.5rem;
+		border-top: 1px solid var(--rule);
+	}
+	.extra-icon {
+		flex: none;
+		width: 54px;
+		color: var(--warm); /* a graphic, so terracotta draws it */
+	}
+	.extra-body {
+		min-width: 0;
+	}
+	.extra-name {
+		font-family: var(--body-font);
+		font-size: var(--fs-md);
+		line-height: 1.25;
+		margin: 0.2rem 0 0.3rem;
+	}
+	.extra-caption {
+		font-size: var(--fs-label);
+		color: var(--fg-muted);
+		margin: 0;
+	}
+	.extra-caption .zh {
+		margin-right: 0.35em;
+	}
+	.extra-detail {
+		font-size: var(--fs-nav);
+		line-height: 1.5;
+		color: var(--fg-muted);
+		margin: 0.5rem 0 0;
+	}
+	/* The per-line option stack (Soda's five, Beer's five): set like a dish
+	   description — body face, muted — with each option's zh/vi caption
+	   trailing it at label size, the way the item captions do above. */
+	.extra-options {
+		list-style: none;
+		margin: 0.9rem 0 0;
+		padding: 0;
+	}
+	.extra-options li {
 		display: flex;
 		align-items: baseline;
 		flex-wrap: wrap;
-		gap: 0.1rem 0.7rem;
-		padding: 0.65rem 0;
-		border-bottom: 1px dashed var(--rule);
-	}
-	.extras-name {
-		font-family: var(--label);
-		font-weight: 600;
-		font-size: 13.5px;
-		letter-spacing: 0.06em;
-		text-transform: uppercase;
-	}
-	.extras-caption {
-		font-size: var(--fs-label);
-		color: var(--fg-muted);
-	}
-	/* Full-width line under the name — a free-text note when an entry has one. */
-	.extras-detail {
-		flex-basis: 100%;
-		font-size: var(--fs-label);
+		gap: 0 0.6em;
+		font-size: var(--fs-nav);
 		line-height: 1.5;
+		color: var(--fg-muted);
+		padding: 0.12rem 0;
+	}
+	.extra-option-caption {
+		font-size: var(--fs-label);
 		color: var(--fg-dim);
 	}
-	/* The per-line option stack (Soda's five, Beer's five), set like the poster:
-	   the same label face as the entry name, one step smaller and muted so the
-	   entry still leads. `uppercase` matches the poster's setting and is inert
-	   on the Han glyphs; the vi names keep their diacritics through it. */
-	.extras-options {
-		flex-basis: 100%;
-		list-style: none;
-		margin: 0.35rem 0 0;
-		padding: 0;
+	.extra-option-caption .zh {
+		margin-right: 0.3em;
 	}
-	.extras-options li {
-		font-family: var(--label);
-		font-weight: 600;
-		font-size: 12px;
-		letter-spacing: 0.06em;
-		text-transform: uppercase;
-		color: var(--fg-muted);
-		padding: 0.18rem 0;
-	}
-	.extras-options .zh {
-		margin-left: 0.35em;
-	}
-	.extras-options .vi {
-		margin-left: 0.2em;
+	@media (max-width: 620px) {
+		.extras {
+			columns: 1;
+		}
+		.extra-icon {
+			width: 46px;
+		}
 	}
 
 	/* ---------- order CTA ---------- */

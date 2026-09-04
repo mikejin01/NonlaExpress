@@ -143,6 +143,16 @@ are ALL harvested **cut-outs** kept un-prefixed on purpose: the carousel sits
 on bare cream where only a cut-out reads right, so it did not follow /menu to
 the in-situ photos. Full table in docs/asset-map.md.
 
+⚠️ **The drinks' image-less sub-menu (`extras`: soda, waters, beer) is a
+two-column ICON BOARD since 2026-09-04**, not the old dashed list — each entry
+leads with a terracotta line icon keyed by its `icon` field. Those icons are
+**hand-drawn in `src/lib/site/DrinkIcon.svelte`**, deliberately outside
+`src/lib/art/`: they have no harvested source, so svgclean.py's MANIFEST does
+not know them and its "don't hand-edit" rule does not apply to them. Layout is
+CSS `columns`, not grid, because the entries are lopsided (plan §2.6, 2026-09-04
+amendment). Items can also carry `tag: 'Seasonal'`, which /menu renders as a
+small outlined green pill beside the name (Sugarcane Juice has one).
+
 ⚠️ **Plan §1.3's claim that the original's /menu ends on a charcoal drinks band
 is WRONG**, and is corrected in place. Its drinks are on cream; the dark band in
 `orig-menu-full.png` is the **original footer's own ground**. Ours differs on
