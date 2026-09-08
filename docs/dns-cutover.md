@@ -57,14 +57,17 @@ would bounce until someone noticed.
 
 ## Sequence
 
-| # | Who | What |
-|---|-----|------|
-| 1 | us | Pre-flight §A — add the domain on SiteGround, confirm with `make dns-status` |
-| 2 | us | Send the admin the instructions (§B) with a "go" |
-| 3 | admin | §B: records + nameserver switch, in one sitting |
-| 4 | us | Watch `make dns-status` until public resolvers return 35.212.98.26 |
-| 5 | us | Post-cutover §C — SSL, `wp search-replace`, redirects, verification |
-| 6 | us | ≥ 1 week later, once §C verifies clean: retire Wix (§D) |
+| # | Who | What | Status |
+|---|-----|------|--------|
+| 1 | us | Pre-flight §A — add the domain on SiteGround, confirm with `make dns-status` | ✅ 09-04 (late — see post-mortem) |
+| 2 | us | Send the admin the instructions (§B) with a "go" | ✅ |
+| 3 | admin | §B: records + nameserver switch, in one sitting | ✅ 09-04 |
+| 4 | us | Watch `make dns-status` until public resolvers return 35.212.98.26 | ✅ 09-04 |
+| 5 | us | Post-cutover §C — SSL, `wp search-replace`, redirects, verification | ✅ 09-04 |
+| 6 | us | Verify nothing depends on Wix any more, snapshot the DB + uploads (§D) | ✅ 09-08 |
+| 7 | client | §E.1 — confirm Google Workspace is not billed through Wix | ⚠️ **blocking** |
+| 8 | client | §E.2 — cancel the Wix Premium plan, then test mail + site | pending E.1 |
+| 9 | admin | §E.3 — Search Console domain property + sitemap (§C.6) | pending, non-blocking |
 
 ## A. Pre-flight (our side, before the admin's "go")
 
@@ -249,6 +252,72 @@ pages**. That is fine — the posts live in WordPress now, with their Yoast
 metadata — but it means the WordPress DB is the sole home of that content, and
 is the reason the dump above was taken.
 
+
+## E. Everything still open is a client action (2026-09-08)
+
+Nothing here can be done from this repo — each needs a login we don't hold
+(Wix, Google Admin, Search Console). Grouped into one handoff so it goes out
+as a single email rather than three.
+
+**Order matters for the first two: check the billing BEFORE cancelling.**
+
+### E.1 — Confirm Google Workspace is not billed through Wix ⚠️ blocking
+
+The one risk no DNS check can see. Wix Premium plans often bundle a Workspace
+mailbox (free year one, billed through Wix after), and cancelling Wix
+terminates a mailbox provisioned that way. The MX gives no signal —
+`smtp.google.com` is Google's standard simplified record, used by direct and
+resold accounts alike.
+
+> Go to **admin.google.com → Billing → Subscriptions**. Open the Google
+> Workspace subscription.
+> - If it shows a **payment method of your own** (card/bank) and no reseller,
+>   it is direct with Google → **safe to cancel Wix.**
+> - If it says **"managed by"** or **"purchased through"** a reseller, or
+>   points at Wix → **STOP.** The mailboxes must be moved to direct Google
+>   billing first, or transferred to another reseller. Cancelling Wix before
+>   that takes company email down.
+
+### E.2 — Cancel the Wix Premium plan (only after E.1 comes back clean)
+
+Verified clear on 2026-09-08 — see §D for the four checks. The Wix DNS zone
+dies with the plan, which no longer matters: the domain is registered at
+**Squarespace** (expires 2027-09-05), never at Wix, so the registration is
+unaffected.
+
+> Wix → **Account Settings → Subscriptions** (or Premium Subscriptions) →
+> the nonlaexpress.com site's plan → **Cancel**. Wix may offer to keep the
+> site on a free `wixsite.com` address; either choice is fine, we depend on
+> nothing there. Don't delete the Wix *account* if the Google Workspace
+> mailboxes were ever provisioned through it (see E.1).
+
+**After cancelling, confirm within a day** — these are the only two things
+that could reveal a missed dependency:
+
+| Check | Expected |
+|---|---|
+| Send and receive a test email to @nonlaexpress.com | works |
+| `make dns-status`, then open the site | resolves to 35.212.98.26, site loads |
+
+If email breaks, it is E.1 — reinstate the Workspace subscription with Google
+directly; the MX and SPF records live in the Squarespace zone and are not
+affected by anything Wix does.
+
+### E.3 — Search Console domain property (§C.6, non-blocking)
+
+Needs a DNS TXT added at Squarespace (same panel as the cutover records) and
+Search Console access. Add the `nonlaexpress.com` **domain** property, verify
+by TXT, and submit `https://www.nonlaexpress.com/sitemap.xml`. Worth doing
+soon so the 301s from the twelve old `/post/` URLs are seen while they still
+carry weight, but nothing breaks if it waits.
+
+### Rollback is gone after E.2
+
+Until Wix is cancelled, the emergency rollback in this file still works
+(nameservers back to `ns4/ns5.wixdns.net`). **Cancelling deletes that zone and
+removes the rollback.** That is the right trade now — the site has been live
+and verified since 2026-09-04 — but it is the reason E.2 comes last.
+
 ## Rollback
 
 - Admin: custom nameservers back to `ns4.wixdns.net` / `ns5.wixdns.net`.
@@ -306,6 +375,6 @@ instead of chasing the command** — and note this contradicts the usual advice
 in the `wp-import-yoast-indexables` memory, which is about *scripted post
 imports*, where the indexable rows are stale in ways a URL rewrite cannot fix.
 
-**Still open:** §C.6 (Search Console domain property — needs the admin to add a
-DNS TXT) and §D (cancel Wix — verified clear 2026-09-08, pending only the
-Google Workspace billing confirmation).
+**Still open — all three are client actions, written up as §E:** confirm Google
+Workspace is not billed through Wix (**blocking**), cancel the Wix plan, and
+add the Search Console domain property. Nothing is left on our side.
