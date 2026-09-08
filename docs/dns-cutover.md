@@ -188,13 +188,66 @@ Wix setup is untouched until Wix is cancelled.
    `.live-sites/nonla.mk` — the fragment's own note explains why
    (`make push` into a folder nothing serves).
 
-## D. Retiring Wix (not before §C verifies clean, and ≥ 1 week after step 3)
+## D. Retiring Wix — CLEARED TO CANCEL 2026-09-08 (verified, not yet done)
 
 The Wix zone is what stale resolvers still read during propagation; the
-registry's NS TTL is 172800s (48h). After that it is dead weight. Cancel the
-Wix Premium plan; the DNS zone goes with it, which no longer matters. The
-original site's HTML is already archived (`docs/assets/original-site/`,
-plan §1 "source-html.tar.gz") — nothing else needs harvesting first.
+registry's NS TTL is 172800s (48h). After that it is dead weight. Cancelling
+the Wix Premium plan takes the DNS zone with it — so the bar is not "a week has
+passed" but **"nothing depends on Wix any more"**. All four checks below were
+run on 2026-09-08 (96h after cutover, 2× the TTL) and all four passed.
+
+1. **Delegation has moved everywhere.** `dig +trace` shows Squarespace NS at
+   the registry, and 1.1.1.1 / 8.8.8.8 / 9.9.9.9 / 208.67.222.222 all agree.
+   No resolver is still reading the Wix zone.
+2. **Nothing lives only in the Wix zone.** Diffed record by record against the
+   live zone (A/CNAME/TXT/MX across apex, `www`, `mail`, `blog`, `shop`,
+   `store`, `m`, `ftp`, `cdn`, `autodiscover`, `_dmarc`, three `_domainkey`
+   selectors, `_acme-challenge`). Wix holds nothing the new zone lacks; the
+   only asymmetry runs the other way — `google._domainkey` (DKIM) exists
+   **only** in the Squarespace zone.
+3. **Nothing on the live site is served by Wix.** Zero `wixstatic`/`wix.com`
+   references in the HTML of `/`, `/menu/`, `/company/`, `/blog/`. Every
+   attachment `guid` is on `www.nonlaexpress.com`, images return 200, and
+   `og:image` is local.
+4. **The migrated content is ours.** All 12 posts `publish`, 1.5k–7.7k chars,
+   original 2025 dates intact.
+
+⚠️ **`static.wixstatic.com` URLs DO still exist in the database** — 14 rows
+each of `_source_url` and `_source_wix_url` in `tns_postmeta`. They are
+provenance stamps written by the 2026-08-12 import script and are **never
+rendered**. Don't mistake them for a live dependency, and don't bother
+scrubbing them; they document where each image came from.
+
+⚠️ **The one risk no DNS check can see: Google Workspace billing.** Wix Premium
+plans often bundle a Workspace mailbox (free year one, then billed through
+Wix), and cancelling Wix can terminate a mailbox provisioned that way. The MX
+gives no signal either way — `smtp.google.com` is Google's standard simplified
+record. **Confirm in Google Admin → Billing that the subscription is direct
+with Google, not resold through Wix, before cancelling.** The domain itself is
+safe regardless: it is registered at Squarespace (expires 2027-09-05), never
+at Wix.
+
+### Backups taken before cancellation (2026-09-08)
+
+Both live in `~/backups/` on the server **and** in `.backups/` locally (which
+`.gitignore` now excludes — a DB dump carries user emails and password hashes,
+so it must never be committed). Neither has anything to do with Wix; both come
+off SiteGround over the usual SSH key.
+
+| File | Size | Verified |
+|---|---|---|
+| `nonla-db-precancel-20260908.sql.gz` | 93K | gzip OK, 21 tables, ends `Dump completed`, posts present |
+| `nonla-uploads-precancel-20260908.tar.gz` | 32M | gzip OK, 71 files, all 12 featured images (4–5 variants each) |
+
+⚠️ **A DB dump is not a full backup.** `wp db export` captures no media, and
+the 12 posts' featured images were imported *from Wix* — so once Wix is gone,
+`wp-content/uploads` is their only copy. That is why the uploads tarball
+exists; take both or neither.
+
+⚠️ The `source-html.tar.gz` harvest holds only **4 top-level pages, no post
+pages**. That is fine — the posts live in WordPress now, with their Yoast
+metadata — but it means the WordPress DB is the sole home of that content, and
+is the reason the dump above was taken.
 
 ## Rollback
 
@@ -254,4 +307,5 @@ in the `wp-import-yoast-indexables` memory, which is about *scripted post
 imports*, where the indexable rows are stale in ways a URL rewrite cannot fix.
 
 **Still open:** §C.6 (Search Console domain property — needs the admin to add a
-DNS TXT) and §D (cancel Wix, not before ~2026-09-11).
+DNS TXT) and §D (cancel Wix — verified clear 2026-09-08, pending only the
+Google Workspace billing confirmation).

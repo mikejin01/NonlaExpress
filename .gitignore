@@ -41,3 +41,8 @@ docs/assets/image-source/
 # Shared cross-project reference, symlinked in from another client repo.
 # Local convenience only — the link would dangle for anyone else.
 docs/SPA-TO-WORDPRESS-THEME-PLAYBOOK.md
+
+# Database dumps — contain user data (emails, password hashes). Never commit.
+.backups/
+*.sql
+*.sql.gz

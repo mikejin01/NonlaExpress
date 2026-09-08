@@ -242,8 +242,24 @@ CSS bundles, not by eye (plan §7).
 its post-mortem in **docs/dns-cutover.md**; live picture via `make dns-status`.
 §C is done: `wp search-replace` ran (132 rows), `home`/`siteurl` are the www
 URL, an apex→www 301 sits above the WordPress block in `.htaccess`, and Let's
-Encrypt covers both names to 2026-12-03. **§D — retiring Wix — is still open
-and must not happen before ~2026-09-11.**
+Encrypt covers both names to 2026-12-03. **§D — retiring Wix — was VERIFIED
+CLEAR 2026-09-08** (delegation moved everywhere, nothing lives only in the Wix
+zone, no Wix-served assets on the live site) **but is not yet done**, and hangs
+on one thing DNS cannot reveal: whether Google Workspace is billed *through*
+Wix, which would kill the client's mailboxes on cancellation. Confirm in Google
+Admin → Billing first.
+
+⚠️ **`static.wixstatic.com` in the DB is NOT a live dependency** — 14 rows each
+of `_source_url`/`_source_wix_url` in `tns_postmeta`, provenance stamps from
+the 2026-08-12 import, never rendered. Don't scrub them, don't panic at them.
+
+⚠️ **`wp db export` captures NO media**, and the blog's featured images were
+imported from Wix — so `wp-content/uploads` is their only remaining copy. The
+2026-09-08 pre-cancellation snapshot is therefore a **pair**: a DB dump *and*
+an uploads tarball, in `~/backups/` on the server and `.backups/` locally
+(gitignored — dumps carry user emails and password hashes). Take both or
+neither. Likewise `source-html.tar.gz` archives only 4 top-level pages, **no
+post pages** — the WordPress DB is the sole home of the 12 migrated posts.
 
 ⚠️ **The admin ran §B before we ran §A, and that is what "the site is down"
 looked like.** DNS landed while SiteGround still had no vhost for the domain,
