@@ -1,5 +1,12 @@
 # DNS cutover — pointing nonlaexpress.com at SiteGround
 
+> **Doing this for another client?** Use the generalized
+> [DNS-CUTOVER-PLAYBOOK.md](./DNS-CUTOVER-PLAYBOOK.md) instead — it is this
+> file's lessons rewritten as a reusable procedure, with the ordering rule that
+> this cutover got wrong stated as a hard rule. This file is the Nón Lá
+> specific record: what was done, what it looked like when it broke, and what
+> is still open.
+
 **Status 2026-09-04: EXECUTED. §A–§C are done; §D (retire Wix) is open.**
 The live site is **https://www.nonlaexpress.com**. `make dns-status` re-checks
 the picture in one command. What actually happened, and what it cost, is the
