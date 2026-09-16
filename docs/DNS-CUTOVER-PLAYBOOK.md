@@ -10,6 +10,12 @@ registrar · Wix-hosted DNS · Google Workspace mail → SiteGround). That one w
 out of order and produced an hour of "the website is down"; every hard rule
 below exists because of something that actually happened.
 
+Extended by the **All State Motors** cutover of 2026-09-16 (Dynadot registrar ·
+third-party-hosted DNS · prerendered WordPress → SiteGround). That one followed
+this file, went in order, and caused **no outage at all** — so what it added is
+the second tier of traps: the ones that only surface once you are doing it
+right. They are marked **ASM** where they appear.
+
 > **Canonical copy:** `XO Clients/Nonla Express/docs/DNS-CUTOVER-PLAYBOOK.md`.
 > Other client repos symlink to this file rather than copying it, so an edit
 > here reaches all of them — and so **paths below are written from the
@@ -38,11 +44,29 @@ below exists because of something that actually happened.
 3. **Never run `wp search-replace` before the new hostname actually serves the
    site.** Pointing WordPress at a hostname that returns a placeholder locks
    you out of wp-admin.
-4. **Verify against public resolvers, never your own machine.** A local cache
-   or a VPN will happily tell you the cutover worked when it hasn't. Use
-   `@1.1.1.1` / `@8.8.8.8` explicitly.
+4. **Verify against public resolvers, never your own machine** — *and against
+   the AUTHORITATIVE server whenever you are checking your own work.* A local
+   cache or a VPN will happily tell you the cutover worked when it hasn't, so
+   use `@1.1.1.1` / `@8.8.8.8` explicitly for **propagation**. But a public
+   resolver also caches a record you have since deleted, which makes a missing
+   record look present. **ASM:** a `www` row was silently dropped by the
+   registrar on save, and `@1.1.1.1` kept answering for it from cache for
+   several minutes while `www` was in fact NXDOMAIN. Resolvers tell you *how
+   far it has spread*; only `dig @<new-ns>` tells you *what you actually
+   saved*.
 5. **Don't cancel the old host until nothing depends on it.** "A week has
    passed" is not the bar — see §7, which is checkable.
+6. **Read the registrar's own DNS panel before you plan — even when the
+   nameservers point somewhere else.** Rule 2 protects the records you can
+   see. This protects you from the ones you cannot. A registrar's DNS panel
+   keeps whatever was last configured in it, **inert**, invisible to every
+   external check, and switching the zone to that registrar **activates all of
+   it at once**. **ASM:** Dynadot's panel held a live-looking Google Workspace
+   `MX` (`smtp.google.com`) and a `google-site-verification` TXT. Every
+   external probe said the domain had no MX and therefore no mail to break;
+   the cutover turned domain email **on**, which nobody had planned, and
+   dragged §7's who-bills-the-mailboxes question along with it. Open the panel
+   and screenshot it in Part 0.
 
 ---
 
@@ -89,6 +113,7 @@ stops the cutover mid-flight.
 | **Mail provider** | `dig +short MX <domain> @8.8.8.8` — and ask **who bills it** (§7) |
 | SiteGround server IP | `dig +short <account>.sg-host.com A` |
 | Which host is canonical today | Whichever their indexed URLs use — see §4 |
+| **What the registrar's panel already holds** | Log in and look. Not checkable by `dig` — see hard rule 6 |
 
 ```bash
 # One-shot survey of an existing domain
@@ -97,6 +122,12 @@ for t in NS A MX TXT; do printf "%-4s %s\n" "$t" "$(dig +short @8.8.8.8 $D $t | 
 printf "www  %s\n" "$(dig +short @8.8.8.8 www.$D | tr '\n' ' ')"
 printf "TTL  %s\n" "$(dig @8.8.8.8 $D A | awk '/^'$D'/{print $2; exit}')"
 ```
+
+⚠️ **The live zone and the registrar's panel are two different inventories,
+and you need both.** The script above reads what the world can see. It cannot
+see records sitting unused in the registrar's DNS panel, and those are the ones
+that go live the instant you delegate to it (hard rule 6). Take a screenshot of
+that panel before you change anything, and diff it against the survey below.
 
 ⚠️ **Record everything the old zone serves, not just A and MX.** DKIM
 (`*._domainkey`), DMARC (`_dmarc`), domain-verification TXTs, and subdomains
@@ -140,7 +171,11 @@ and the real domain. It can be added **before** DNS points anywhere.
 - Do **not** use "Add a new website" — that creates a second, empty docroot,
   and you'd get a blank WordPress instead of the site.
 - "Change Primary Domain" is the tidier end state but SiteGround requires DNS
-  to already point there. That's §5.4, not now.
+  to already point there. That's §5.4, not now — and **ASM:** it also *renames
+  the docroot folder*, so any deploy script, cron or env file holding the
+  `sg-host.com` path deploys into a folder nothing serves. If the project has
+  an unattended nightly build, that breaks silently at 3am. Staying parked
+  costs nothing and avoids it entirely; §5.4 has the checklist if you do it.
 
 Confirm over SSH — a parked domain shows up as a symlink:
 
@@ -172,6 +207,48 @@ Encrypt cannot issue for a domain that doesn't resolve here yet. That is
 expected — use `curl -k` and judge by the headers. SSL comes in §3.
 
 **Do not send the admin the "go" until this check passes.**
+
+### 1.3 SPF and DKIM — get the values **before** you need them
+
+The zone you are about to build needs mail-authentication records for the new
+host, and you want them in the *same* save as the nameserver change (hard rule
+2). That runs into a chicken-and-egg on SiteGround:
+
+⚠️ **ASM: Site Tools has no Email section at all while the account's only
+domain is the `sg-host.com` temporary one.** There is nowhere to read SPF or
+DKIM from, because email cannot be hosted on that name. The obvious order —
+park, then read the values, then do DNS — works, but you can skip the wait
+entirely.
+
+**SiteGround's auto-provisioning service answers for a domain before the domain
+is added to the account.** Both records are derivable, and verifiable, from DNS
+alone:
+
+```bash
+D=example.com
+dig +short TXT $D.spf.auto.dnssmarthost.net            # resolves -> SiteGround's SPF include
+dig +short TXT $D.default.dkim.auto.dnssmarthost.net   # resolves -> a real v=DKIM1 p= key
+```
+
+If those return values, publish:
+
+```
+TXT    @                    v=spf1 include:<domain>.spf.auto.dnssmarthost.net ~all
+CNAME  default._domainkey   <domain>.default.dkim.auto.dnssmarthost.net
+```
+
+⚠️ **Use the CNAME for DKIM, not a pasted key.** A CNAME follows SiteGround if
+they rotate the key; a pasted `v=DKIM1; p=…` string goes stale silently and you
+find out from a spam folder months later.
+
+⚠️ **Add every other sender to the SPF too.** One `v=spf1` record per domain is
+the limit, so it has to name *all* of them. **ASM:** the first draft authorised
+SiteGround only, and would have broken Google Workspace mail the moment the
+Workspace MX from hard rule 6 went live. The corrected record:
+
+```
+v=spf1 include:_spf.google.com include:<domain>.spf.auto.dnssmarthost.net ~all
+```
 
 ---
 
@@ -207,6 +284,44 @@ mail outages. Template:
 >
 > **Step 4 — Screenshot the finished DNS page and send it back.**
 
+### 2.0 Registrar panels bite. Budget for it.
+
+These panels are the least-tested software in the chain, and their failure mode
+is *partial success*, which is worse than an error.
+
+⚠️ **A panel validates rows you did not mean to add.** **ASM:** Dynadot rejects
+the entire save with `Subhost '' is not in the correct format` because one blank
+subdomain row was left behind by an extra click on "Add Record". Nothing saves
+until you delete it.
+
+⚠️ **Fixing that error can silently drop a *different* row.** Deleting the blank
+row also lost the `www` row on the same save. The panel reported success. `www`
+was NXDOMAIN — a hard failure for anyone with it bookmarked or indexed — and no
+error said so.
+
+⚠️ **So re-read the zone from the authoritative server after EVERY save**, not
+from a public resolver, which will happily serve you a cached copy of the record
+you just lost (hard rule 4):
+
+```bash
+D=example.com
+NS=$(dig +short NS $D | head -1)
+for n in @ www _dmarc default._domainkey; do
+  fq=$([ "$n" = "@" ] && echo $D || echo $n.$D)
+  for t in A CNAME TXT MX; do
+    v=$(dig +short @$NS $fq $t 2>/dev/null | tr '\n' ' ')
+    [ -n "$v" ] && printf "%-30s %-6s %s\n" "$fq" "$t" "$v"
+  done
+done
+```
+
+Read that output against your intended record list, line by line, before you
+tell anyone the DNS is done.
+
+💡 **The registrar's nameserver hostnames are rarely its brand name.** Dynadot's
+are `ns1/ns2.dyna-ns.net`, not `dynadot.com`. Don't type them from memory — pick
+the panel's own "use our DNS" mode and let it fill them in.
+
 ### 2.1 Watch it land
 
 ```bash
@@ -225,6 +340,12 @@ client-specific.
 
 ⚠️ **Check MX every time you check A.** The whole risk of a nameserver change
 is mail, and mail is the thing nobody looks at until it's been broken for a day.
+
+⏱️ **On timing, promise the range and not the middle.** The registry NS TTL for
+`.com` allows up to 48 hours and you must tell the client that. But **ASM** saw
+all four public resolvers agree within **minutes** of the save. Both are normal.
+Plan the work as if it will take two days; start checking as if it will take
+five minutes.
 
 ---
 
@@ -267,7 +388,15 @@ less than an extra redirect on every indexed URL.
 Until you do this, **WordPress 301s the new domain back to the old hostname** —
 it compares each request's Host against the `home` option and bounces
 mismatches. That redirect is expected after parking, is not a second bug, and
-has exactly one fix:
+has exactly one fix.
+
+⚠️ **ASM: that redirect does not always appear, and its absence does not mean
+you are finished.** If something serves *before* WordPress resolves the request
+— a static-snapshot theme, a full-page cache, an NGINX rule — the new domain
+answers `200` from the moment DNS lands, with the URLs still unchanged
+underneath. The site looks perfect and the forms still post to the old
+hostname. **Test the endpoint, not the page:** grep a served page for the old
+host, or for whatever URL the app builds from `home`/`siteurl` at runtime.
 
 ```bash
 cd ~/www/<sg-host-docroot>/public_html
@@ -288,6 +417,55 @@ assert against a number written down earlier.
 
 ⚠️ **`--all-tables` matters.** Plugin tables hold URLs too — Yoast alone had
 `permalink`, `open_graph_image` and `twitter_image` columns to rewrite.
+
+#### When SSH is down, or the content isn't in the database
+
+**ASM: no `search-replace` was run at all, and none was needed.** SSH to the
+host timed out for the whole session, so the change went through
+**wp-admin → Settings → General**, setting *WordPress Address* and *Site
+Address*. That writes the same `home` and `siteurl` options the CLI would.
+
+Use the UI route when **both** are true:
+
+- the site's pages are **not** rows in the database — prerendered snapshots,
+  a static export, a headless front end — so there is nothing else to rewrite;
+- the new hostname **already serves the site** (hard rule 3 still applies —
+  point WordPress at a hostname that 404s and you are locked out of wp-admin).
+
+Otherwise use the CLI: the UI touches two options and nothing else, and on a
+normal WordPress site that leaves URLs in post content, widgets and plugin
+tables.
+
+⚠️ **If the two fields are greyed out**, `WP_HOME`/`WP_SITEURL` are pinned as
+constants in `wp-config.php` and the UI cannot change them. Edit that file.
+
+#### ⚠️ The page cache will hide the change you just made
+
+**ASM:** after saving the correct URLs, every live page still carried the old
+endpoint. Nothing was wrong; the pages were cached from before the change. This
+wastes a lot of time because it looks exactly like a failed save.
+
+**Tell them apart with a cache-buster**, which bypasses the full-page cache:
+
+```bash
+curl -s "https://<domain>/<page>?cb=$RANDOM" | grep -o '<the URL the app builds>'
+```
+
+Correct value with the buster + stale value without it = **cache**. Purge it
+(`wp cache flush && wp sg purge`, or Site Tools → Speed → Caching → Flush, or
+the host's plugin). Wrong in both = the save really did fail.
+
+**Judge the urgency before you panic.** If the app posts to a WordPress REST
+route, the stale pages may still work: WordPress returns
+`access-control-allow-origin` for the new domain, so a cached page submits
+cross-origin to the old hostname successfully. Check before treating it as an
+outage:
+
+```bash
+curl -sI -X OPTIONS -H "Origin: https://<new-domain>" \
+  -H "Access-Control-Request-Method: POST" \
+  https://<old-host>/wp-json/<route> | grep -i access-control-allow-origin
+```
 
 ### 4.3 Apex → www 301 (or the reverse)
 
@@ -361,6 +539,22 @@ failure.** Guessed paths produce false alarms — `/find-us/` 404s correctly whe
 SiteGround WAF behaviour, not a regression. Compare against the `sg-host` URL
 before chasing it. `wp-login.php` should return 200.
 
+⚠️ **Verify `www` as its own hostname, not as a redirect target.** The loop
+above follows redirects, so a `www` that resolves and a `www` that 301s look
+identical in the output — and so does a `www` that does not exist, if a
+resolver still has it cached. Ask the question directly:
+
+```bash
+dig +short @$(dig +short NS <domain> | head -1) www.<domain> A   # authoritative
+```
+
+⚠️ **Repoint the project's own live checks at the new domain.** Any QA script,
+smoke test or screenshot runner that hard-codes the `sg-host.com` hostname is
+now testing the wrong URL — it will keep passing, which is the problem. **ASM**
+had two (`verify:wp`, `verify:capone`) defaulting to the old host. Note that
+with a *parked* domain both names serve the same docroot, so the old hostname
+stays useful as an explicit argument for testing the box directly.
+
 ### 5.4 Optional: make it the primary domain
 
 Client Area → Websites → ⋮ → **Change Primary Domain**. Then check whether the
@@ -386,6 +580,12 @@ regardless of the domain change.
 | Let's Encrypt won't issue | Old redirect eating `/.well-known/` | Do §4.2, retry |
 | Locked out of wp-admin | `search-replace` ran before the vhost existed | Reverse it: same command, URLs swapped |
 | `dig` says it worked, browser disagrees | Local/VPN DNS cache | Re-check with `@1.1.1.1`; flush local cache |
+| Registrar refuses the save: `Subhost '' is not in the correct format` | A blank subdomain row, usually one extra click on "Add Record" | Delete the blank row — then §2.0, because fixing it can drop a sibling row |
+| Apex resolves, `www` does not | A row was silently lost on save; a cached resolver answer hides it | `dig @<new-ns> www.<domain>` — re-add and re-verify authoritatively (§2.0) |
+| Everything set correctly, live pages still show the old URLs | Full-page cache serving pre-change copies | Cache-buster query string to confirm, then purge — §4.2 |
+| New domain answers `200` and never 301s, but forms post to the old host | A static/snapshot/cache layer serves before WordPress; `home`/`siteurl` still unchanged | §4.2 — the absence of the redirect is not evidence you are done |
+| Domain email suddenly starts working (or bouncing at a new provider) | Inert records in the registrar's panel went live with the delegation | Hard rule 6. Establish who owns and bills that mail provider — §7 |
+| SiteGround has no Email section to read SPF/DKIM from | The account's only domain is the `sg-host.com` temporary one | §1.3 — derive both from `*.auto.dnssmarthost.net` instead |
 
 ### Rollback
 
@@ -431,6 +631,14 @@ resold accounts alike).
 (Google Admin → Billing → Subscriptions). If it names a reseller, move the
 subscription to direct billing *first*.
 
+⚠️ **This trap can arrive at the cutover rather than at the cancellation.**
+**ASM:** the domain had no MX and looked like it had no mail at all, so the plan
+recorded "no mailboxes to lose." The Workspace MX was sitting inert in the
+registrar's panel (hard rule 6) and went live with the delegation — so the
+cutover *created* a mail dependency, on an account nobody had established was
+active or who paid for it. If hard rule 6 turns up a mail provider, ask the
+billing question the same day, not at retirement.
+
 ### Back up before you cancel — and take **two** things
 
 ⚠️ **A database dump is not a backup of a WordPress site.** `wp db export`
@@ -471,15 +679,23 @@ why this is genuinely the last step.
 | # | Who | What | Gate |
 |---|-----|------|------|
 | 1 | us | Gather facts, enumerate the old zone (§0) | Every record written down |
+| 1b | us | **Open the registrar's DNS panel and screenshot it** (§0, rule 6) | Inert records identified ⟵ *new, ASM* |
 | 2 | us | Lower TTLs if there's lead time (§0.1) | — |
 | 3 | us | **Park the domain on SiteGround** (§1.1) | — |
 | 4 | us | **Verify the vhost with `--resolve`** (§1.2) | No `X-Default-Vhost` ⟵ **go/no-go** |
+| 4b | us | Derive SPF + DKIM (§1.3) | Both resolve ⟵ *new, ASM* |
 | 5 | us | Send the admin the record list + "go" (§2) | — |
 | 6 | admin | Records **and** nameservers, one sitting (§2) | Screenshot back |
+| 6b | us | **Re-read the zone authoritatively** (§2.0) | Every intended record present ⟵ *new, ASM* |
 | 7 | us | Watch public resolvers; **check MX too** (§2.1) | All resolvers agree |
 | 8 | us | Issue SSL, enforce HTTPS (§3) | `curl` with no `-k` succeeds |
-| 9 | us | `search-replace`, `.htaccess`, caches (§4) | `home`/`siteurl` correct |
-| 10 | us | Verify routes, redirects, canonicals (§5) | All green |
+| 9 | us | `search-replace` **or wp-admin**, `.htaccess`, caches (§4) | `home`/`siteurl` correct **and cache purged** |
+| 10 | us | Verify routes, redirects, canonicals (§5); repoint the project's own QA | All green against the **new** host |
 | 11 | client | Confirm mailbox billing is direct (§7) | ⟵ **blocks 13** |
 | 12 | us | Back up DB **and** uploads, verified (§7) | Both open cleanly |
 | 13 | client | Cancel the old host (§7) | Rollback gone after this |
+
+**The three steps marked *new* are the whole of what All State Motors added.**
+Each exists because a step that "succeeded" had quietly not: a record the
+external world could not see, a value the panel would not show yet, and a row
+the registrar dropped on save while reporting success.
