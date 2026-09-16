@@ -8,12 +8,18 @@ outage.
 Generalized from the **Nón Lá Express** cutover of 2026-09-04 (Squarespace
 registrar · Wix-hosted DNS · Google Workspace mail → SiteGround). That one went
 out of order and produced an hour of "the website is down"; every hard rule
-below exists because of something that actually happened. The client-specific
-record of it, with the post-mortem, is [dns-cutover.md](./dns-cutover.md).
+below exists because of something that actually happened.
 
-**Companion doc:** [SPA-TO-WORDPRESS-THEME-PLAYBOOK.md](./SPA-TO-WORDPRESS-THEME-PLAYBOOK.md)
-gets the site onto SiteGround in the first place. This playbook assumes that is
-done and the site is reachable at its `*.sg-host.com` address.
+> **Canonical copy:** `XO Clients/Nonla Express/docs/DNS-CUTOVER-PLAYBOOK.md`.
+> Other client repos symlink to this file rather than copying it, so an edit
+> here reaches all of them — and so **paths below are written from the
+> canonical repo, not from wherever you are reading this.**
+>
+> - The Nón Lá-specific record of that cutover, with the post-mortem:
+>   `XO Clients/Nonla Express/docs/dns-cutover.md`
+> - Getting a SPA onto SiteGround as a theme in the first place — this playbook
+>   assumes it is done and the site answers at its `*.sg-host.com` address:
+>   `iDeal Auto/iDeal Auto Collision/docs/SPA-TO-WORDPRESS-THEME-PLAYBOOK.md`
 
 ---
 
@@ -212,9 +218,10 @@ for r in 1.1.1.1 8.8.8.8 9.9.9.9 208.67.222.222; do
 done
 ```
 
-This repo ships `make dns-status`, which does the above plus the vhost and
-certificate checks in one command. It is generic — set `LIVE_DOMAIN` in the
-Makefile and it works for any project.
+The Nón Lá repo ships a **`make dns-status`** target that does the above plus
+the vhost and certificate checks in one command. It is generic — copy the
+target into the project's Makefile and set `LIVE_DOMAIN`; nothing in it is
+client-specific.
 
 ⚠️ **Check MX every time you check A.** The whole risk of a nameserver change
 is mail, and mail is the thing nobody looks at until it's been broken for a day.
