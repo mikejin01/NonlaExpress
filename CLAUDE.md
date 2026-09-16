@@ -240,6 +240,11 @@ CSS bundles, not by eye (plan §7).
 **https://www.nonlaexpress.com** — Squarespace nameservers, apex + `www` A →
 35.212.98.26, `MX 1 smtp.google.com` and SPF carried over intact. Runbook and
 its post-mortem in **docs/dns-cutover.md**; live picture via `make dns-status`.
+**Doing a cutover for another client? Use docs/DNS-CUTOVER-PLAYBOOK.md** — the
+generalized procedure (this repo is its canonical home; other client repos
+symlink to it, as Nonla does for the SPA→WordPress playbook). Its §1.2
+pre-verifies the vhost with `curl --resolve` before any DNS change, which is
+the step whose absence caused the outage below.
 §C is done: `wp search-replace` ran (132 rows), `home`/`siteurl` are the www
 URL, an apex→www 301 sits above the WordPress block in `.htaccess`, and Let's
 Encrypt covers both names to 2026-12-03. **§D — retiring Wix — was VERIFIED
