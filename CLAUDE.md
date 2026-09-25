@@ -419,11 +419,34 @@ Kit** plugin, not by our theme — the property sits outside
 with. The property has a single stream, every hit's `hostName` is
 `www.nonlaexpress.com`, and post-cutover-only paths (`/blog/<slug>/`,
 `/company/`) record in it, so it is the live site's property. The MCP can't
-read data streams, so the `G-` ID match is inferred from that, not read
-from the Admin API. The property predates the redesign (created 2026-03-09), so
+read data streams, but the match is **confirmed 2026-09-25 from Site Kit's
+own settings** (`wp option get googlesitekit_analytics-4_settings`: stream
+13875453017, `G-YRYJR0DFFH`, `GT-KTRCDZ45`). The property predates the redesign (created 2026-03-09), so
 data runs continuously across the 2026-09-04 cutover: Wix-era `/post/…`
 paths before it, the WordPress site's paths after. `/menu` and `/menu/` report
 as separate `pagePath` rows, so sum them.
+
+## Google Search Console MCP
+`gsc-mcp` (`mcp-server-gsc`) is registered at **user scope** and authenticates
+as the **same** service account as GA4 (key `~/.config/ga4-mcp/sa-key.json`).
+Diagnosis/fix procedure: docs/GSC-INDEXING-PLAYBOOK.md (shared, symlinked —
+log Nonla status here, not there).
+
+| Site | GSC property (`siteUrl`) | Access |
+| --- | --- | --- |
+| www.nonlaexpress.com | `https://www.nonlaexpress.com/` (URL-prefix) | Restricted, granted 2026-09-25 |
+
+✅ **Verified 2026-09-25 as the property Site Kit is connected to** —
+`googlesitekit_search-console_settings.propertyID` is exactly that string.
+Search analytics and sitemap reads both return data. **Restricted** covers
+performance, URL Inspection and sitemap reads; `submit_sitemap` needs Full, so
+submit sitemaps in the console instead. The property has history going back
+through the Wix era, so both `/post/…` (Wix) and `/blog/…` (WordPress) URLs show
+up in it. Like GA4, `/menu` and `/menu/` show up as separate page rows.
+⚠️ The submitted sitemap is the Wix-era `/sitemap.xml` (submitted 2025-04-11);
+it now 301s to Yoast's `sitemap_index.xml` and Google last fetched it
+2026-09-23 with 0 errors. The API's `indexed: 0` count is a deprecated field,
+not a real zero — use URL Inspection instead.
 
 ## Build target (Phase 6) — HISTORICAL
 ⚠️ Everything below describes the original scaffold and is **superseded by
