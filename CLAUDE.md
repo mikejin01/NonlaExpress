@@ -403,6 +403,28 @@ Nón Lá Express — fast-casual Vietnamese Kitchen, stall FH17 inside Tangram f
 hall, 133-33 39th Ave, Flushing NY. Existing Wix site nonlaexpress.com (replace;
 keep URLs for 301s). Styling reference: docs/Menu-1.png / Menu-2.png.
 
+## Google Analytics 4 MCP
+`analytics-mcp` is registered at **user scope** (agency service account
+`claude-ga4-reader@xo-seo-505117.iam.gserviceaccount.com`, key in
+`~/.config/ga4-mcp/`) — see docs/Google-Analytics-Connection-Guide.md. It is
+read-only: sessions, pages, channels, realtime.
+
+| Site | Measurement ID | GA4 property ID |
+| --- | --- | --- |
+| www.nonlaexpress.com | `G-YRYJR0DFFH` (via Site Kit Google tag `GT-KTRCDZ45`) | **527598938** ("Non La Express", account 386972374, web stream 13875453017) |
+
+✅ **Viewer granted and verified 2026-09-25.** The tag is fired by the **Site
+Kit** plugin, not by our theme — the property sits outside
+`admin@xocontinental.com`'s portfolio, in the account Site Kit was connected
+with. The property has a single stream, every hit's `hostName` is
+`www.nonlaexpress.com`, and post-cutover-only paths (`/blog/<slug>/`,
+`/company/`) record in it, so it is the live site's property. The MCP can't
+read data streams, so the `G-` ID match is inferred from that, not read
+from the Admin API. The property predates the redesign (created 2026-03-09), so
+data runs continuously across the 2026-09-04 cutover: Wix-era `/post/…`
+paths before it, the WordPress site's paths after. `/menu` and `/menu/` report
+as separate `pagePath` rows, so sum them.
+
 ## Build target (Phase 6) — HISTORICAL
 ⚠️ Everything below describes the original scaffold and is **superseded by
 "Design system" above** (fonts, palette and tokens all changed). Kept because
