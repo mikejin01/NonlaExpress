@@ -30,7 +30,13 @@
 		global_yelp_url: SOCIAL.yelp.url
 	});
 
-	onMount(() => wpEdit.init());
+	onMount(() => {
+		// WordPress prints a crawlable nav + address block into every page's HTML
+		// ([data-ssr-nav], scripts/build-wordpress-theme.mjs) because the served
+		// shell otherwise has no links. The Navbar and Footer replace it now.
+		document.querySelector('[data-ssr-nav]')?.remove();
+		wpEdit.init();
+	});
 </script>
 
 <!-- First focusable thing in the document on every route, by construction —

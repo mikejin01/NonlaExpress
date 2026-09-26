@@ -160,7 +160,11 @@
 </script>
 
 <svelte:head>
-	<title>Nón Lá Express — Pho & Vietnamese Kitchen in Flushing, NY</title>
+	<!-- Keyword-first since 2026-09-25 (SEO appendix §2): "vietnamese restaurant
+	     flushing ny" is the top local commercial term (390/mo, KD 4) and the old
+	     brand-first title didn't contain it. Keep in step with Yoast's
+	     _yoast_wpseo_title on page 6, which is what the served HTML carries. -->
+	<title>Pho & Vietnamese Restaurant in Flushing, NY | Nón Lá Express</title>
 	<meta name="description" content={META_DESCRIPTION} />
 </svelte:head>
 

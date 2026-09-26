@@ -259,16 +259,62 @@ const ssrPost = `<?php if (is_singular('post') && have_posts()) : the_post(); ?>
 <?php rewind_posts(); endif; ?>
 `;
 
+/**
+ * ⚠️ EVERY PAGE ALSO SHIPS A CRAWLABLE NAV + NAP BLOCK (`[data-ssr-nav]`).
+ *
+ * Until 2026-09-25 the served HTML of /, /menu/ and /blog/ held **zero `<a href>`
+ * links** — the navbar, footer and the blog's post cards all exist only after
+ * the app mounts. Google could reach an internal page only through the sitemap
+ * or a deferred JS render, and exactly the pages nothing linked to in plain HTML
+ * (/blog/, /company/, the English pho post) sat at "Discovered – currently not
+ * indexed" for weeks (docs/SEO-Project-Appendix-Nonla.md §2). This block gives
+ * the crawler the same links the Navbar has, the /blog/ post list, and the
+ * name / address / phone / hours the Footer shows — all read from the same
+ * xo_global_* options, so it can't disagree with the page. src/routes/+layout.svelte
+ * removes it on mount, like `[data-ssr-post]`. No headings in it on purpose:
+ * the hero keeps the page's only <h1>.
+ */
+const ssrNav = `<div class="container" data-ssr-nav>
+	<nav aria-label="Site">
+		<a href="<?php echo esc_url(home_url('/')); ?>">Home</a> ·
+		<a href="<?php echo esc_url(home_url('/menu/')); ?>">Our Menu</a> ·
+		<a href="<?php echo esc_url(home_url('/company/')); ?>">Our Company</a> ·
+		<a href="<?php echo esc_url(home_url('/${THEME.blogBase}/')); ?>">Blog</a> ·
+		<a href="<?php echo esc_url(home_url('/#find-us')); ?>">Find Us</a>
+		<?php if ($${P}_order = get_option('${P}_global_order_url', '')) : ?> ·
+		<a href="<?php echo esc_url($${P}_order); ?>">Order Online</a>
+		<?php endif; ?>
+	</nav>
+	<?php if (is_home()) :
+		$${P}_posts = new WP_Query(array('post_type' => 'post', 'posts_per_page' => 100, 'no_found_rows' => true, 'ignore_sticky_posts' => true));
+		if ($${P}_posts->have_posts()) : ?>
+	<ul>
+		<?php while ($${P}_posts->have_posts()) : $${P}_posts->the_post(); ?>
+		<li><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a> — <time datetime="<?php echo esc_attr(get_the_date('c')); ?>"><?php echo esc_html(get_the_date('F j, Y')); ?></time></li>
+		<?php endwhile; ?>
+	</ul>
+	<?php endif; wp_reset_postdata(); endif; ?>
+	<address>
+		<?php echo esc_html(get_option('${P}_global_business_name', get_bloginfo('name'))); ?><br>
+		<?php echo nl2br(esc_html(get_option('${P}_global_contact_address', ''))); ?><br>
+		<?php if ($${P}_phone = get_option('${P}_global_contact_phone', '')) : ?>
+		<a href="tel:<?php echo esc_attr(preg_replace('/[^0-9+]/', '', '+1' . $${P}_phone)); ?>"><?php echo esc_html($${P}_phone); ?></a><br>
+		<?php endif; ?>
+		<?php echo nl2br(esc_html(get_option('${P}_global_contact_hours', ''))); ?>
+	</address>
+</div>
+`;
+
 const shell = (/** @type {string} */ before = '') => `${BANNER}get_header(); ?>
 ${before}${bootMarkup}
 <?php get_footer(); ?>
 `;
 
-write('index.php', shell(ssrPost));
+write('index.php', shell(ssrPost + ssrNav));
 // A stray URL still boots the app; the SPA router renders its own not-found
 // view while WordPress keeps the 404 status code intact. No post block: a 404
-// has no post to print.
-write('404.php', shell());
+// has no post to print — but it keeps the nav, so a dead link isn't a dead end.
+write('404.php', shell(ssrNav));
 
 write('functions.php', functionsPhp());
 
@@ -682,6 +728,44 @@ function ${P}_seo_plugin_active() {
 }
 
 /**
+ * The editable hours text → schema.org OpeningHoursSpecification[].
+ *
+ * The X.O. Admin field is a day line followed by a time line, repeated
+ * ("Monday – Sunday" / "11:00 AM – 10:00 PM", or "Mon–Fri" / "11AM–3PM").
+ * A pair that doesn't parse is skipped, never guessed.
+ */
+function ${P}_opening_hours_spec($raw) {
+    $names = array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday');
+    $day = function ($word) use ($names) {
+        foreach ($names as $i => $n) if (stripos($n, substr(trim($word), 0, 3)) === 0) return $i;
+        return -1;
+    };
+    $to24 = function ($h, $m, $ap) {
+        $h = (int) $h % 12 + (strtoupper($ap) === 'PM' ? 12 : 0);
+        return sprintf('%02d:%02d', $h, (int) $m);
+    };
+    $lines = array_values(array_filter(array_map('trim', preg_split('/\\n+/', (string) $raw))));
+    $spec = array();
+    for ($i = 0; $i + 1 < count($lines); $i++) {
+        if (!preg_match('/^([A-Za-z]+)\\.?(?:\\s*(?:–|—|-|to)\\s*([A-Za-z]+)\\.?)?$/u', $lines[$i], $d)) continue;
+        if (!preg_match('/(\\d{1,2})(?::(\\d{2}))?\\s*(AM|PM)\\s*(?:–|—|-|to)\\s*(\\d{1,2})(?::(\\d{2}))?\\s*(AM|PM)/iu', $lines[$i + 1], $t)) continue;
+        $from = $day($d[1]);
+        $to = isset($d[2]) && $d[2] !== '' ? $day($d[2]) : $from;
+        if ($from < 0 || $to < 0) continue;
+        $days = array();
+        for ($k = $from; ; $k = ($k + 1) % 7) { $days[] = $names[$k]; if ($k === $to) break; }
+        $spec[] = array(
+            '@type'     => 'OpeningHoursSpecification',
+            'dayOfWeek' => $days,
+            'opens'     => $to24($t[1], $t[2] ?: 0, $t[3]),
+            'closes'    => $to24($t[4], $t[5] ?: 0, $t[6]),
+        );
+        $i++;
+    }
+    return $spec;
+}
+
+/**
  * The Restaurant node.
  *
  * @param bool $standalone true for our own <script>, false when it is being
@@ -726,8 +810,11 @@ function ${P}_restaurant_schema($standalone = true) {
         $schema['address'] = $address;
     }
 
-    $hours = get_option('${P}_global_contact_hours', '');
-    if ($hours) $schema['openingHours'] = $hours;
+    // ⚠️ Never emit the editable hours string raw. Until 2026-09-25 openingHours
+    // shipped as "Monday – Sunday\\n11:00 AM – 10:00 PM", which Google cannot
+    // parse; unparseable hours now drop out rather than ship a wrong field.
+    $hours_spec = ${P}_opening_hours_spec(get_option('${P}_global_contact_hours', ''));
+    if ($hours_spec) $schema['openingHoursSpecification'] = $hours_spec;
 
     $order_url = get_option('${P}_global_order_url', '');
     if ($order_url) {
