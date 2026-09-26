@@ -448,6 +448,44 @@ it now 301s to Yoast's `sitemap_index.xml` and Google last fetched it
 2026-09-23 with 0 errors. The API's `indexed: 0` count is a deprecated field,
 not a real zero — use URL Inspection instead.
 
+## SE Ranking MCP
+`se-ranking` (official remote MCP, `https://api.seranking.com/mcp`) is
+connected via OAuth as the agency master account `admin@xocontinental.com`.
+Setup/troubleshooting: docs/SE-Ranking-Connection-Guide.md.
+
+| Site | Project (`site_id`) | Group | Search engine (`site_engine_id`) |
+| --- | --- | --- | --- |
+| www.nonlaexpress.com | **12978512** "Nonla Express" | 5035 (with Sea&Sea Harlem, Chick Rocks) | **1334596** — Google US, region "Flushing, New York, United States", en, Maps SERPs shown separately (`merge_map 2`) matched on "Nón Lá Express" / (347) 690-1999, Ads tracked |
+
+Created 2026-09-25 with daily checks, depth 100 and subdomain match, the same
+settings every other project on the account uses. **34 keywords** added the
+same day, in six groups: Brand · Local Vietnamese · Tangram / Flushing · Menu
+dishes · Near me (head terms) · Chinese (中文). SE Ranking's US database has
+**no volume data for any Chinese term** — they are tracked on Search Console
+evidence, where they were the biggest non-brand traffic source.
+
+⚠️ **The Chinese blog traffic collapsed on 2026-09-14** — the day Google
+recrawled the migrated `/blog/` post that replaced the Wix `/post/` Flushing
+food guide (法拉盛最佳美食地點). ~45 impressions/day at position 7–9 → 0–9/day
+at 20–80. The 301 is correct and the new URL is "Submitted and indexed".
+Served HTML has zero body text (the post renders client-side), **but the
+rendered DOM is complete** — real `<h1>`, date, ~3,300 Han characters, checked
+2026-09-25 with headless Chrome — so "Google sees an empty page" is NOT the
+explanation. Open candidates: post-migration re-evaluation lag (only 11 days
+since the recrawl), JS-only content indexing slower/weaker than the Wix HTML,
+and `<html lang="en-US">` + `og:locale en_US` on Chinese posts. The Chinese
+keyword group is the gauge for any fix.
+
+**Both fixes DEPLOYED 2026-09-25** and verified live (served HTML carries the
+article; one `<h1>` after mount; `lang` zh-Hant on the guide, back to en-US
+after client nav to /menu): single posts now print the article server-side in
+`index.php` (`[data-ssr-post]`, removed by `blog/[slug]/+page.svelte` in the
+same tick the app mounts), and `xo_post_lang()` sets `<html lang>`, Yoast's
+`og:locale` and schema `inLanguage` to `zh-Hant`/`zh-Hans` from the post body
+(override: `xo_lang` post meta). ⚠️ Several migrated posts MIX scripts — e.g.
+法拉盛的美味面条 has a Simplified title over a Traditional body — so detection
+follows the body, deliberately.
+
 ## Build target (Phase 6) — HISTORICAL
 ⚠️ Everything below describes the original scaffold and is **superseded by
 "Design system" above** (fonts, palette and tokens all changed). Kept because

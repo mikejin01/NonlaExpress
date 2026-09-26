@@ -193,7 +193,10 @@ write(
 	'header.php',
 	`${BANNER}?>
 <!DOCTYPE html>
-<html <?php language_attributes(); ?>>
+<?php // language_attributes() is filtered per post (${P}_post_lang), so the
+      // site's own language rides along separately: the SPA restores it when a
+      // client-side navigation leaves a Chinese post. ?>
+<html <?php language_attributes(); ?> data-site-lang="<?php echo esc_attr(get_bloginfo('language')); ?>">
 <head>
 	<meta charset="<?php bloginfo('charset'); ?>">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -231,15 +234,40 @@ write('footer.php', `${BANNER}?>\n<?php wp_footer(); ?>\n</body>\n</html>\n`);
  * JavaScript, so the hero heading is what actually gets indexed.
  *
  * `${P}_current_route_h1()` is still generated and still feeds <title>.
+ *
+ * ⚠️ SINGLE POSTS ARE THE EXCEPTION: they ship the whole article in the HTML.
+ * A post's text otherwise exists only after the SPA fetches xo/v1/posts, and
+ * the Wix pages these posts replaced served it in the HTML. When the migrated
+ * Chinese Flushing guide lost its rankings on 2026-09-14 (the day Google
+ * recrawled it) the rendered DOM was complete, so this is not a fix for an
+ * empty page — it removes the render step from indexing a post at all. The
+ * block reuses the SPA's own classes so a no-JS view is readable, and
+ * src/routes/blog/[slug]/+page.svelte removes it (`[data-ssr-post]`) the
+ * moment it mounts, so the live page never carries two <h1>s or two articles.
  */
-const shell = () => `${BANNER}get_header(); ?>
-${bootMarkup}
+const ssrPost = `<?php if (is_singular('post') && have_posts()) : the_post(); ?>
+<main class="section padding-md" data-ssr-post>
+	<div class="container container--md">
+		<article class="prose prose-panel on-cream">
+			<time datetime="<?php echo esc_attr(get_the_date('c')); ?>"><?php echo esc_html(get_the_date('F j, Y')); ?></time>
+			<h1 class="display display-lg"><?php the_title(); ?></h1>
+			<?php if (has_post_thumbnail()) the_post_thumbnail('large'); ?>
+			<?php the_content(); ?>
+		</article>
+	</div>
+</main>
+<?php rewind_posts(); endif; ?>
+`;
+
+const shell = (/** @type {string} */ before = '') => `${BANNER}get_header(); ?>
+${before}${bootMarkup}
 <?php get_footer(); ?>
 `;
 
-write('index.php', shell());
+write('index.php', shell(ssrPost));
 // A stray URL still boots the app; the SPA router renders its own not-found
-// view while WordPress keeps the 404 status code intact.
+// view while WordPress keeps the 404 status code intact. No post block: a 404
+// has no post to print.
 write('404.php', shell());
 
 write('functions.php', functionsPhp());
@@ -787,6 +815,65 @@ function ${P}_print_meta_description() {
 add_action('wp_head', '${P}_print_meta_description', 6);
 
 /* =============================================================================
+   5a. Post language — 11 of the 12 migrated posts are Chinese
+   ============================================================================= */
+
+/**
+ * A post's language as a BCP 47 tag, or '' for "the site's own language".
+ *
+ * Without this every Chinese post shipped <html lang="en-US"> and og:locale
+ * en_US. Detection runs on the post text: mostly-Han posts are Chinese, and a
+ * count of characters that exist in only one script picks Traditional or
+ * Simplified — the migrated set is a mix of both. The ${P}_lang post meta
+ * overrides it (e.g. \`wp post meta set <id> ${P}_lang zh-Hant\`).
+ */
+function ${P}_post_lang($post = null) {
+    $post = get_post($post);
+    if (!$post || $post->post_type !== 'post') return '';
+
+    $override = trim((string) get_post_meta($post->ID, '${P}_lang', true));
+    if ($override !== '') return $override;
+
+    $text = preg_replace('/\\s+/u', '', wp_strip_all_tags($post->post_title . ' ' . $post->post_content));
+    $total = mb_strlen((string) $text);
+    if (!$total) return '';
+    if (preg_match_all('/\\p{Han}/u', $text) / $total < 0.3) return '';
+
+    // Pairs of the same common characters in each script. 面/里/后 are left out:
+    // they are also ordinary Traditional characters, so they prove nothing.
+    $trad = preg_match_all('/[們這個來時為說會對與從點還國過麼裡麵廳飯館華區實體驗應該選擇燒湯條]/u', $text);
+    $simp = preg_match_all('/[们这个来时为说会对与从点还国过么厅饭馆华区实体验应该选择烧汤条]/u', $text);
+    return $trad > $simp ? 'zh-Hant' : 'zh-Hans';
+}
+
+/** The post's language on <html>, which is what drives CJK font selection too. */
+add_filter('language_attributes', function ($output) {
+    if (!is_singular('post') || !($lang = ${P}_post_lang())) return $output;
+    return preg_replace('/lang="[^"]*"/', 'lang="' . esc_attr($lang) . '"', $output);
+});
+
+/** og:locale — Yoast takes a locale, not a BCP 47 tag. */
+add_filter('wpseo_locale', function ($locale) {
+    if (!is_singular('post') || !($lang = ${P}_post_lang())) return $locale;
+    return $lang === 'zh-Hant' ? 'zh_TW' : ($lang === 'zh-Hans' ? 'zh_CN' : $locale);
+});
+
+/**
+ * Yoast stamps the site language on every node. Restate the post's on the
+ * nodes that describe this page; the WebSite node stays in the site's language.
+ */
+add_filter('wpseo_schema_graph', function ($graph) {
+    if (!is_singular('post') || !is_array($graph) || !($lang = ${P}_post_lang())) return $graph;
+    foreach ($graph as &$piece) {
+        if (!is_array($piece) || !isset($piece['inLanguage'])) continue;
+        if (in_array('WebSite', (array) ($piece['@type'] ?? array()), true)) continue;
+        $piece['inLanguage'] = $lang;
+    }
+    unset($piece);
+    return $graph;
+}, 20);
+
+/* =============================================================================
    5b. Legacy Wix URLs — 301s for the migrated blog (plan §5 Q4)
    ============================================================================= */
 
@@ -946,6 +1033,9 @@ function ${P}_post_payload($post, $full = false) {
         // apply_the_content, not raw post_content: blocks and shortcodes are
         // stored unrendered and would otherwise reach the page as markup soup.
         $out['content'] = apply_filters('the_content', $post->post_content);
+        // '' means "the site's language"; the SPA sets <html lang> from this
+        // on client-side navigation, where language_attributes() never runs.
+        $out['lang'] = ${P}_post_lang($post);
     }
     return $out;
 }

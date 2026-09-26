@@ -19,9 +19,31 @@
 	let post = $state(/** @type {import('$lib/wp/posts.js').Post|null} */ (null));
 	let loading = $state(true);
 
-	onMount(async () => {
-		post = await fetchPost(pageStore.params.slug);
-		loading = false;
+	onMount(() => {
+		// WordPress prints the article into the HTML for crawlers ([data-ssr-post],
+		// see the shell in scripts/build-wordpress-theme.mjs). Drop it in the same
+		// tick the app first paints, or the page carries two articles and two
+		// <h1>s. Synchronous on purpose — after the await it would sit above the
+		// navbar for as long as the fetch takes.
+		document.querySelector('[data-ssr-post]')?.remove();
+
+		fetchPost(pageStore.params.slug).then((p) => {
+			post = p;
+			loading = false;
+		});
+
+		// language_attributes() sets <html lang> for the post a visitor lands on;
+		// a client-side navigation has to put the site's language back.
+		// data-site-lang only exists under WordPress, so this is a no-op on Pages.
+		return () => {
+			const siteLang = document.documentElement.dataset.siteLang;
+			if (siteLang) document.documentElement.lang = siteLang;
+		};
+	});
+
+	$effect(() => {
+		const siteLang = document.documentElement.dataset.siteLang;
+		if (post && siteLang) document.documentElement.lang = post.lang || siteLang;
 	});
 </script>
 
