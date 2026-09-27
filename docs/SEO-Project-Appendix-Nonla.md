@@ -216,7 +216,7 @@ in flushing ny` #5 (390), `vietnamese food flushing` #6 (140), `nonla` #4 (1,800
 |---|---|---|---|
 | 2026-07-29 | Post 18 `/blog/best-pho-in-flushing-queens/` | best pho in flushing | live — **not indexed as of 09-25** |
 | 2026-09-25 | Post **46** `/blog/vietnamese-rice-plates-flushing/` (source: `docs/blog-drafts/vietnamese-rice-plates-flushing.html`) — featured img att. 44 (1200×630 shaking beef), inline att. 45 (lemongrass beef); category copied from post 18 | vietnamese rice plates | **live** — verified 200, Yoast head, SSR article, one `<h1>` after mount, in post-sitemap. Tracked: `vietnamese rice plates` / `lemongrass beef` / `shaking beef` (ids 65896576/79/82, target_url set, first check queued). Post 18 now links to it. |
-| 2026-09-26 | Post **50** `/blog/ca-phe-sua-da-vietnamese-drinks-flushing/` (source: `docs/blog-drafts/ca-phe-sua-da-vietnamese-drinks-flushing.html`) — featured att. 48 (drink-station dispensers, 1200×630), inline att. 49 (drinks trio) | ca phe sua da | **live** — verified 200, Yoast head (needed the indexable delete — built at insert, before meta), SSR article, one `<h1>`, in sitemap + /blog/ list. Not yet tracked (see action log). |
+| 2026-09-26 | Post **50** `/blog/ca-phe-sua-da-vietnamese-drinks-flushing/` (source: `docs/blog-drafts/ca-phe-sua-da-vietnamese-drinks-flushing.html`) — featured att. 48 (drink-station dispensers, 1200×630), inline att. 49 (drinks trio) | ca phe sua da | **live** — verified 200, Yoast head (needed the indexable delete — built at insert, before meta), SSR article, one `<h1>`, in sitemap + /blog/ list. Tracked in SE Ranking since 2026-09-27: `ca phe sua da` (65927974), `nuoc mia` (65927977), `vietnamese iced coffee near me` (65896408), `sugarcane juice near me` (65896411), `vietnamese coffee near me` (65896429) — all targeted at this URL. |
 
 ---
 
@@ -231,7 +231,7 @@ in flushing ny` #5 (390), `vietnamese food flushing` #6 (140), `nonla` #4 (1,800
 | — | Request indexing in GSC for `/blog/`, `/company/`, `/blog/best-pho-in-flushing-queens/`, `/blog/vietnamese-rice-plates-flushing/`, `/blog/ca-phe-sua-da-vietnamese-drinks-flushing/` | ⏳ **manual in the Search Console UI** — the service account is Restricted, and the API has no request-indexing call for ordinary pages anyway |
 | — | TripAdvisor / atly.com listing + reviews | ⏳ off-site, client/agency |
 | 2026-09-26 | Drinks post (post 50) published; rice post 46 links to it | ✅ live, verified |
-| — | SE Ranking: add `ca phe sua da` + `nuoc mia` and retarget `vietnamese iced coffee near me` / `sugarcane juice near me` / `vietnamese coffee near me` (65896408/411/429, currently → `/menu/`) to post 50 | ⏳ SE Ranking MCP disconnected mid-session 09-26 — re-authorize (`/mcp`) then do it |
+| 2026-09-27 | SE Ranking: add `ca phe sua da` + `nuoc mia` and retarget `vietnamese iced coffee near me` / `sugarcane juice near me` / `vietnamese coffee near me` (65896408/411/429) to post 50 | ✅ done 2026-09-27 — `ca phe sua da` = **65927974**, `nuoc mia` = **65927977** (both group 1388062 "Menu dishes", engine 1334596); 65896408/411 retargeted `/menu/` → post 50 (group 1388062 kept), 65896429 retargeted (it had **no** target URL, not `/menu/`; group 1388065 "Near me" kept); all five verified via `listKeywords`; position check queued for the five (`total: 5`) |
 
 **Re-check due ~2026-10-23** (4 weeks): index state of the four URLs above, first
 tracker positions, GA4 organic sessions vs this baseline.
