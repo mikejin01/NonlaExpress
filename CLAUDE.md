@@ -434,7 +434,13 @@ log Nonla status here, not there).
 
 | Site | GSC property (`siteUrl`) | Access |
 | --- | --- | --- |
-| www.nonlaexpress.com | `https://www.nonlaexpress.com/` (URL-prefix) | Restricted, granted 2026-09-25 |
+| www.nonlaexpress.com | `https://www.nonlaexpress.com/` (URL-prefix) | Restricted, granted 2026-09-25, **re-granted 2026-10-23** |
+
+⚠️ **The property lost owner verification on ~2026-10-23** (the service account read
+`siteUnverifiedUser`, every query 403'd). It is now verified by the HTML file
+**`google552908826747e015.html` in `public_html/`** — outside the theme, so `make push` never
+touches it; **don't delete it**. Re-verifying was not enough on its own: the service account
+also had to be removed and re-added. Details: SEO appendix §1.
 
 ✅ **Verified 2026-09-25 as the property Site Kit is connected to** —
 `googlesitekit_search-console_settings.propertyID` is exactly that string.

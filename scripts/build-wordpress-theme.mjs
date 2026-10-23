@@ -1123,6 +1123,18 @@ function ${P}_post_payload($post, $full = false) {
         // '' means "the site's language"; the SPA sets <html lang> from this
         // on client-side navigation, where language_attributes() never runs.
         $out['lang'] = ${P}_post_lang($post);
+        // Yoast's resolved title + description, so the route's <svelte:head>
+        // says what the served <head> says. Without them the rendered DOM —
+        // which is what Google indexes — swapped the Yoast title for
+        // "<post title> — Nón Lá Express" and added a second, excerpt-based
+        // meta description (SEO appendix, 2026-10-23).
+        if (function_exists('YoastSEO')) {
+            $meta = YoastSEO()->meta->for_post($post->ID);
+            if ($meta) {
+                $out['seoTitle'] = html_entity_decode((string) $meta->title, ENT_QUOTES, 'UTF-8');
+                $out['seoDescription'] = html_entity_decode((string) $meta->description, ENT_QUOTES, 'UTF-8');
+            }
+        }
     }
     return $out;
 }

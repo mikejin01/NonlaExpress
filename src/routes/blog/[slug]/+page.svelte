@@ -48,8 +48,11 @@
 </script>
 
 <svelte:head>
-	<title>{post ? `${post.title} — Nón Lá Express` : 'Blog — Nón Lá Express'}</title>
-	{#if post?.excerpt}<meta name="description" content={post.excerpt} />{/if}
+	<!-- Yoast's title/description first (the served <head> carries them), so
+	     the rendered DOM Google indexes agrees with it; the post title and
+	     excerpt are only the fallback for a post Yoast has nothing for. -->
+	<title>{post ? post.seoTitle || `${post.title} — Nón Lá Express` : 'Blog — Nón Lá Express'}</title>
+	{#if post?.seoDescription || post?.excerpt}<meta name="description" content={post.seoDescription || post.excerpt} />{/if}
 </svelte:head>
 
 <main id="main" tabindex="-1" class="section padding-md">

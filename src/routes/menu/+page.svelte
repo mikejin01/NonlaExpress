@@ -30,7 +30,7 @@
 	 */
 	import Art from '$lib/site/Art.svelte';
 	import { wpEdit } from '$lib/wp/wpEdit.svelte.js';
-	import { IMG, AN_NAO, BRAND, MENU, ORDER_URL, LUNCH_WINDOW } from '$lib/content.js';
+	import { IMG, AN_NAO, BRAND, MENU, ORDER_URL } from '$lib/content.js';
 	import LunchSpecial from '$lib/site/LunchSpecial.svelte';
 	import DrinkIcon from '$lib/site/DrinkIcon.svelte';
 
@@ -84,17 +84,17 @@
 </script>
 
 <svelte:head>
-	<title>Menu — Nón Lá Express | Pho, Rice Plates & Signature Drinks, Flushing NY</title>
-	<!-- Kept under the ~160 that Google truncates at. Two things came out on
-	     purpose in Phase F, and both are about not committing to an answer we
-	     don't have yet: the "$17"/"$6" prices are §5 Q5 (show prices at all?)
-	     and "burgers" is §5 Q6 (is that section still on the menu?). This
-	     wording is correct whichever way the client answers either one.
-	     Measured 142 chars / 151 effective width — Google truncates on PIXELS
-	     and the CJK run is double-width, so the raw count understates it. -->
+	<!-- Rewritten 2026-10-23 for a CTR leak (SEO appendix §2): the brand-menu
+	     queries "non la menu" (45 impr @8.8), "nón lá vietnamese kitchen menu"
+	     (43 @12.9) and "nónlá express menu" (31 @2.0) drew 0 clicks, and the old
+	     72-char title truncated. Keep in step with Yoast's _yoast_wpseo_title /
+	     _metadesc on page 7, which is what the served HTML carries.
+	     Still deliberately silent on prices (§5 Q5) and burgers (§5 Q6). The CJK
+	     run and the lunch window came out to fit 152 chars with the phone. -->
+	<title>Nón Lá Vietnamese Kitchen Menu: Pho & Rice Plates in Flushing</title>
 	<meta
 		name="description"
-		content="Full menu at Nón Lá Express, Tangram Food Hall, Flushing: phở, rice plates and signature drinks. 法拉盛越南河粉菜单 — lunch special {LUNCH_WINDOW}."
+		content="The full Nón Lá Express menu: five phở bowls, rice plates, vermicelli bowls, spring rolls and Vietnamese iced coffee. Tangram, Flushing · (347) 690-1999"
 	/>
 </svelte:head>
 

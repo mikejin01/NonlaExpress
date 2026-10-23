@@ -16,7 +16,7 @@ import { restRoot, underWordPress } from './client.js';
 /** @typedef {{
  *   id: number, slug: string, title: string, date: string, dateISO: string,
  *   url: string, image: string, imageAlt: string, excerpt: string,
- *   content?: string, lang?: string
+ *   content?: string, lang?: string, seoTitle?: string, seoDescription?: string
  * }} Post */
 
 const NS = 'xo/v1';
