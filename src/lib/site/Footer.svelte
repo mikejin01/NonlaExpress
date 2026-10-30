@@ -12,8 +12,10 @@
 	import { ADDRESS, PHONE, ORDER_URL, SOCIAL, SEO_BLURB, NEWSLETTER_PITCH } from '$lib/content.js';
 
 	import { submitNewsletter, wordPressAvailable } from '$lib/wp/leads.js';
+	import { formTracker } from '$lib/analytics.js';
 
 	const year = new Date().getFullYear();
+	const tracking = formTracker('newsletter', 'newsletter_form');
 
 	let email = $state('');
 	let subscribed = $state(false);
@@ -41,8 +43,13 @@
 
 		// A repeat signup is deliberately indistinguishable from a first one —
 		// the visitor only cares that they are on the list.
-		if (result.ok) subscribed = true;
-		else error = result.message ?? 'Something went wrong. Please try again.';
+		if (result.ok) {
+			subscribed = true;
+			tracking.submitted();
+		} else {
+			error = result.message ?? 'Something went wrong. Please try again.';
+			tracking.failed('server', error);
+		}
 	}
 </script>
 
@@ -69,7 +76,16 @@
 			{#if subscribed}
 				<p class="subscribed-msg">Thank you — you're on the list.</p>
 			{:else}
-				<form class="mail-form" onsubmit={subscribe}>
+				<!-- `invalid` is the browser refusing the email field, before
+				     onsubmit ever runs. It doesn't bubble, so it's caught on capture. -->
+				<form
+					class="mail-form"
+					onsubmit={subscribe}
+					oninput={tracking.start}
+					onchange={tracking.start}
+					oninvalidcapture={(e) =>
+						tracking.failed('validation', e.target.validity?.valueMissing ? 'email missing' : 'email format')}
+				>
 					<input
 						type="email"
 						bind:value={email}

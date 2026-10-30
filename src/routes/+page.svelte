@@ -206,7 +206,7 @@
 			     can therefore change the hero's line count — re-measure if it does. -->
 			<h1 class="display hero-title"><InlineEdit k="hero_h1" value={INTRO_SEO.h1} /></h1>
 			<p class="hero-sub"><InlineEdit k="hero_blurb" value={INTRO_SEO.blurb} multiline /></p>
-			<div class="hero-links">
+			<div class="hero-links" data-link-location="hero">
 				<a class="btn btn-primary" href={wpEdit.text('global_order_url', ORDER_URL)} target="_blank" rel="noopener">
 					<InlineEdit k="hero_cta_order" value="Order Online" />
 				</a>
@@ -375,7 +375,7 @@
 		</section>
 
 		<!-- ============================== 7 · FIND US ============================== -->
-		<section class="section padding-md" id="find-us">
+		<section class="section padding-md" id="find-us" data-link-location="find_us">
 			<div class="container container--lg">
 				<div class="info-row">
 					<div class="info-col">

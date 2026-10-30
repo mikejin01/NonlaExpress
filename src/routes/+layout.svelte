@@ -5,6 +5,7 @@
 	import Footer from '$lib/site/Footer.svelte';
 	import EditToolbar from '$lib/inline-edit/EditToolbar.svelte';
 	import { wpEdit } from '$lib/wp/wpEdit.svelte.js';
+	import { trackClicks } from '$lib/analytics.js';
 	import { BRAND, ADDRESS, PHONE, HOURS, ORDER_URL, SOCIAL } from '$lib/content.js';
 
 	let { children } = $props();
@@ -36,6 +37,7 @@
 		// shell otherwise has no links. The Navbar and Footer replace it now.
 		document.querySelector('[data-ssr-nav]')?.remove();
 		wpEdit.init();
+		trackClicks();
 	});
 </script>
 

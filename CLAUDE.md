@@ -426,6 +426,46 @@ data runs continuously across the 2026-09-04 cutover: Wix-era `/post/…`
 paths before it, the WordPress site's paths after. `/menu` and `/menu/` report
 as separate `pagePath` rows, so sum them.
 
+### GA4 events from our own code (since 2026-10-30)
+Set up per **docs/GA4-EVENT-TRACKING-PLAYBOOK.md** (shared, symlinked). The
+list and the "do not rename" rule live in **`src/lib/analytics.js`**; it calls
+Site Kit's `gtag()`, so it is a **no-op for logged-in WordPress users** (Site
+Kit's `trackingDisabled: loggedinUsers`) and on GitHub Pages (no tag). **Test
+logged out.** No GTM, no `AW-` tag, so no `send_to`.
+
+- **Key events:** `order_online` (any Snackpass/Grubhub/… link, `platform`) ·
+  `click_to_call` · `get_directions` · `click_to_email` (no `mailto:` on the
+  site yet; editors can add one) · `newsletter_form_start` ·
+  `newsletter_form_submit` (only after the lead endpoint accepts). Form start
+  as a key event is the agency rule, chosen by the user 2026-10-30.
+- **Plain events:** `social_click` (`platform`), `cta_click`, `form_error`.
+- `link_location` is `header` · `menu` (mobile panel) · `hero` · `find_us` ·
+  `page` · `footer`; the homepage's hero and Find Us carry
+  `data-link-location`.
+- ⚠️ **`order_online` is intent, not a completed order.** The order happens on
+  Snackpass's site, which our code can't see. Snackpass's own dashboard is the
+  order count; never report `order_online` as "orders".
+- **Switched off on purpose:** Site Kit **Plugin conversion tracking**
+  (`googlesitekit_conversion_tracking` → `{"enabled":false}`, 2026-10-30). It
+  sent `contact_link_click` (a duplicate of `click_to_call`) and
+  `read_article`. **Don't re-enable it.** ⏳ Enhanced measurement **Form
+  interactions** is still to be switched off in the GA4 screens (the
+  read-only connection can't do it). Until then GA4's `form_start` fires next
+  to `newsletter_form_start`. Enhanced measurement **outbound clicks stay on**
+  (`click` next to `order_online` is expected, not a duplicate).
+- **Left alone:** the key events `purchase`, `close_convert_lead` and
+  `qualify_lead` (GA4 template defaults that never fire) and `form_start`
+  (starred 2026-08-18; it stops firing once Form interactions is off).
+- **No Google Ads:** no linked account and no paid sessions (checked
+  2026-10-30), so playbook §10 doesn't apply. Re-check if ads ever start.
+- **Test hits, 2026-10-30:** one logged-out live run sent 3 `order_online`,
+  2 `click_to_call`, 1 `get_directions`, 2 `social_click`, 1 `cta_click` and 1
+  `newsletter_form_start`. No newsletter submit was sent live; that path was
+  only tested locally, against a faked endpoint.
+- **Key events and custom dimensions are created by
+  `scripts/ga4-register-events.sh`**, which the user runs with a token from a
+  login holding Editor on GA account 386972374 (not `admin@`'s portfolio).
+
 ## Google Search Console MCP
 `gsc-mcp` (`mcp-server-gsc`) is registered at **user scope** and authenticates
 as the **same** service account as GA4 (key `~/.config/ga4-mcp/sa-key.json`).
