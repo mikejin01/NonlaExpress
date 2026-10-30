@@ -448,11 +448,11 @@ logged out.** No GTM, no `AW-` tag, so no `send_to`.
 - **Switched off on purpose:** Site Kit **Plugin conversion tracking**
   (`googlesitekit_conversion_tracking` → `{"enabled":false}`, 2026-10-30). It
   sent `contact_link_click` (a duplicate of `click_to_call`) and
-  `read_article`. **Don't re-enable it.** ⏳ Enhanced measurement **Form
-  interactions** is still to be switched off in the GA4 screens (the
-  read-only connection can't do it). Until then GA4's `form_start` fires next
-  to `newsletter_form_start`. Enhanced measurement **outbound clicks stay on**
-  (`click` next to `order_online` is expected, not a duplicate).
+  `read_article`. **Don't re-enable it.** Enhanced measurement **Form
+  interactions** is also off (switched off by the user and confirmed through
+  the Admin API, 2026-10-30), because `newsletter_form_start` replaces GA4's
+  `form_start`. Enhanced measurement **outbound clicks stay on** (`click` next
+  to `order_online` is expected, not a duplicate).
 - **Left alone:** the key events `purchase`, `close_convert_lead` and
   `qualify_lead` (GA4 template defaults that never fire) and `form_start`
   (starred 2026-08-18; it stops firing once Form interactions is off).
@@ -465,6 +465,11 @@ logged out.** No GTM, no `AW-` tag, so no `send_to`.
 - **Key events and custom dimensions are created by
   `scripts/ga4-register-events.sh`**, which the user runs with a token from a
   login holding Editor on GA account 386972374 (not `admin@`'s portfolio).
+  ✅ **Run 2026-10-30**: all 6 key events (`ONCE_PER_EVENT`) and 5
+  event-scoped dimensions (`link_location`, `platform`, `form_name`,
+  `error_type`, `cta_text`) confirmed through the Admin API. ⏳ Still to do
+  from 2026-11-01: confirm the `customEvent:` dimensions return real values
+  (playbook §9).
 
 ## Google Search Console MCP
 `gsc-mcp` (`mcp-server-gsc`) is registered at **user scope** and authenticates
